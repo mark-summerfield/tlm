@@ -341,3 +341,4 @@ if __name__ == '__main__':
                 print(f'    Playlist: {playlist.title} containing '
                       f'{len(playlist.tracks):,} tracks totalling '
                       f'{playlist.secs:.0f} secs')
+        # TODO print current & history
