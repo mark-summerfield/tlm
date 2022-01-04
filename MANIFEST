@@ -3,8 +3,11 @@ Cargo.toml
 
 st.sh
 
+# Notes
+musicbox.adoc
+
 # These are for prototyping and experimentation
-mb.py
+mb.py # TODO implement full API
 m3u2mb.py
 
 # vim: syn=yaml

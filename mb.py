@@ -190,13 +190,6 @@ class Mb:
         return total
 
 
-def create_from_folder(folder):
-    mb = Mb(folder.rstrip('\\/') + '.mb')
-    # TODO read folder & subfolders to produce folder.mb with groups,
-    # playlists, & tracks.
-    return mb
-
-
 class _State(enum.Enum):
     MAGIC = enum.auto()
     GROUPS = enum.auto()
@@ -334,10 +327,7 @@ if __name__ == '__main__':
     import sys
 
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
-        raise SystemExit('''usage: mb.py <musicfolder|musicbox.mb>
-if a musicfolder is given, reads all the music files in the musicfolder
-(including subfolders) to produce a single musicbox file: musicfolder.mb
-if a musicbox.mb is given, reads its data and produces a summary''')
+        raise SystemExit('usage: mb.py <musicbox.mb>')
     filename = sys.argv[1]
     if filename.endswith('.mb'):
         mb = Mb(filename)
@@ -351,6 +341,3 @@ if a musicbox.mb is given, reads its data and produces a summary''')
                 print(f'    Playlist: {playlist.title} containing '
                       f'{len(playlist.tracks):,} tracks totalling '
                       f'{playlist.secs:.0f} secs')
-    else:
-        mb = create_from_folder(filename)
-        print(f'wrote {mb.filename}')
