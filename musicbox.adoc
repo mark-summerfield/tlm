@@ -18,28 +18,26 @@ _Then_ add the GUI.
 Note that what's shown here is UTF-8 plain text: the actual `.mb` is
 gzipped.
 
-Every line implicitly ends \n.
-In most cases a syntax line is followed by one or more example lines.
-
     \fMB\t100
-    \fT # tracks
-    tid\tfullpathname\tsecs\trank\tpgid
-    1\t/home/mark/music/Eagles/01-Hotel_California.ogg\t2.16\t1\t2
-	:
-    \fG # groups
-    gid\tname of group\trank\tpgid
+    \fGROUPS
+    \vGID\tNAME\tRANK\tPGID
     1\tPop\t0
     2\tThe Eagles\t1
 	:
-    \fB # bookmarks
-    tid
+    \fTRACKS
+    \vTID\tFILENAME\tSECS\tRANK\tPGID
+    1\t/home/mark/music/Eagles/01-Hotel_California.ogg\t2.16\t1\t2
+	:
+    \fBOOKMARKS
+    \vTID
     381
 	:
-    \fH # history
-    tid
+    \fHISTORY
+    \vTID
     452
 	:
-    \fC # current (just one)
+    \fCURRENT
+    \vTID # (just one)
     87
 
 All ID's start at 1. Tracks and groups can be top-level. A `pgid` of 0

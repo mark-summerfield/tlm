@@ -10,46 +10,108 @@ import sys
 import mutagen
 
 
+class Group:
+
+    def __init__(self, gid, name, rank, pgid=0):
+        self.gid = gid
+        self.name = name
+        self.rank = rank
+        self.pgid = pgid
+
+
+    def __repr__(self):
+        return f'Group({self.gid}, {self.name}, {self.rank}, {self.pgid})'
+
+
+    def __lt__(self, group):
+        sname = self.name.upper()
+        gname = group.name.upper()
+        if sname != gname:
+            return sname < gname
+        return self.gid < group.gid
+
+
+
+class Track:
+
+    def __init__(self, tid, filename, secs, rank, pgid=0):
+        self.tid = tid
+        self.filename = filename
+        self.secs = secs
+        self.rank = rank
+        self.pgid = pgid
+
+
+    def __repr__(self):
+        return (f'Track({self.tid}, {self.filename}, {self.secs:0.3f}, '
+                f'{self.rank}, {self.pgid})')
+
+
+    def __lt__(self, track):
+        sname = self.filename.upper()
+        tname = track.filename.upper()
+        if sname != tname:
+            return sname < tname
+        return self.tid < track.tid
+
+
 def main():
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
         raise SystemExit('usage: m3u2mb.py <dirname>')
     folder = sys.argv[1]
-    create_mb(folder, os.path.basename(folder) + '.mb')
+    tracks, groups = read_folder(folder)
+    write_mb(tracks, groups, os.path.basename(folder) + '.mb')
 
 
-def create_mb(folder, mb):
-    pairs = []
-    groups = set()
+def read_folder(folder):
+    track_list = []
+    groups = dict(playlists=Group(0, '<top-level>', 1))
+    grank = 2
+    sgrank = 1
+    tid = 1
+    gid = 0
     for root, _, files in os.walk(folder):
+        groupname = os.path.basename(root)
+        if groupname not in groups:
+            gid += 1
+            groups[groupname] = Group(gid, groupname, grank)
+            grank += 1
         for filename in files:
             if not filename.upper().endswith('.M3U'):
                 continue
-            group = os.path.basename(root)
-            if group.upper() == 'PLAYLISTS':
-                group = 'Ungrouped'
-            groups.add(group)
+            subgroupname = filename[:-4]
+            if subgroupname not in groups:
+                gid += 1
+                groups[subgroupname] = Group(gid, subgroupname, sgrank,
+                                             groups[groupname].gid)
+                sgrank += 1
             fullname = os.path.join(root, filename)
-            pairs.append((group, fullname))
-    pairs.sort(key=lambda p: (p[0].upper(), p[1].upper()))
-    with gzip.open(mb, 'wt', encoding='utf-8') as file:
-        file.write('*MB>100\n*G\n')
-        for group in sorted(groups, key=str.upper):
-            file.write(f'{group}\n')
-        file.write('*C\n*H\n') # no current; empty history
-        for group, m3u in pairs:
-            name = os.path.splitext(os.path.basename(m3u))[0]
-            track_list = []
-            for track in tracks(m3u):
+            rank = 1
+            for track in tracks(fullname):
                 try:
                     meta = mutagen.File(track)
                     secs = meta.info.length
                 except (mutagen.MutagenError, FileNotFoundError):
                     continue
-                track_list.append((track, secs))
-            if track_list:
-                file.write(f'*P>{group}>{name}\n')
-                for track, secs in track_list:
-                    file.write(f'{track}>{secs:.01f}\n')
+                track_list.append(Track(tid, track, secs, rank, gid))
+                tid += 1
+                rank += 1
+    return track_list, groups.values()
+
+
+def write_mb(tracks, groups, mb):
+    with gzip.open(mb, 'wt', encoding='utf-8') as file:
+        file.write('\fMB\t100\n')
+        file.write('\fGROUPS\n\vGID\tNAME\tRANK\tPGID\n')
+        for group in groups:
+            file.write(f'{group.gid}\t{group.name}\t{group.rank}'
+                       f'\t{group.pgid}\n')
+        file.write('\fTRACKS\n\vTID\tFILENAME\tSECS\tRANK\tPGID\n')
+        for track in tracks:
+            file.write(f'{track.tid}\t{track.filename}\t{track.secs:.03f}'
+                       f'\t{track.rank}\t{track.pgid}\n')
+        file.write(
+            '\fBBOOKMARKS\n\vTID\n\fHISTORY\n\vTID\n\fCURRENT\n\vTID\n')
     print('wrote', mb)
 
 
