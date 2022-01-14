@@ -6,67 +6,58 @@ First create mb/mod.rs mb/*.rs to provide load (both gzipped and
 uncompressed `.mb` data), save (of gzipped `.mb` data), and all the
 fundamental mb functionality.
 
-Sample files: `~/data/Playlist-*.mb` (gzipped) and
-`~/data/Playlist-*-txt.mb` (uncompressed). Once loading of both gzipped
-and uncompressed `.mb` data works, delete the `~/data/Playlist-*-txt.mb`
+Sample files: `~/data/MusicBox-*.mb` (gzipped) and
+`~/data/MusicBox-*-txt.mb` (uncompressed). Once loading of both gzipped
+and uncompressed `.mb` data works, delete the `~/data/MusicBox-*-txt.mb`
 files.
 
 _Then_ add the GUI.
 
-== File Format (.ple)
+== File Format (.mb)
 
 Note that what's shown here is UTF-8 plain text: the actual `.mb` is
 gzipped.
 
-    *MB>100
-    *G
-    group1
-	:
-    groupN # any number of groups (listed in rank order)
-    *C
-    group>playlist>track>pos
-    *H
-    group>playlist>track1
-	:
-    group>playlist>track9 # max of 9 (listed in queue order)
-    *P>group>playlist1
-    track1>secs
-	:
-    trackN>secs # any number of tracks
-    *P>group>playlist2
-    track1>secs
-	:
-    trackN>secs # any number of tracks listed in rank order
-    # any number of playlists listed in rank order
+Every line implicitly ends \n.
+In most cases a syntax line is followed by one or more example lines.
 
-For current (`*C`) pos and for playlist (`*P`) length use one decimal
-place.
+    \fMB\t100
+    \fT # tracks
+    tid\tfullpathname\tsecs\trank\tpgid
+    1\t/home/mark/music/Eagles/01-Hotel_California.ogg\t2.16\t1\t2
+	:
+    \fG # groups
+    gid\tname of group\trank\tpgid
+    1\tPop\t0
+    2\tThe Eagles\t1
+	:
+    \fB # bookmarks
+    tid
+    381
+	:
+    \fH # history
+    tid
+    452
+	:
+    \fC # current (just one)
+    87
 
-When an `.mb` file is read, the first group is given the rank 1, the
-second 2, etc. If a group is moved up through the GUI, its rank is
-swapped with the group before (or left unchanged if it is first).
-Similarly, if a group is moved down, its rank is swapped with the group
-after (or left unchanged if it is last). Any new group gets a rank of
-groups max rank + 1. This approach is also applied to playlists and
-tracks.
+All ID's start at 1. Tracks and groups can be top-level. A `pgid` of 0
+means top-level.
 
-When a `.mb` file is written, groups, playlists, and tracks are written
-out in rank order, with new ranks being given (starting at 1) so that
-there are no gaps (e.g., if any were deleted during user interaction).
+tracks are ordered by rank within their group (or at the top-level);
+groups are ordered by rank within thei group (or at the top-level).
 
 The `secs` is `-1` if unknown. But if all are known then we can report
-the total length of the playlist, and if all playlists in the group have
-totals, then the group's total, and if all the groups have totals, then
-the entire music box's total.
+the total length of the group, and if all groups have totals, then the
+group's total, and if all the groups have totals, then the entire music
+box's total.
 
-Every playlist is in a group (default is "Ungrouped"); groups do _not_
-nest.
+No group may be called "Search Results" "Search Results\t" since this
+name is used by MusicBox itself.
 
-No playlist may be called "Ungrouped" or "Found"; no group may be called
-"Search Results" since these names are used by MusicBox itself.
-
-Clearly the API and the GUI must dissallow group, playlist, or track
-names to include any of `<>:"/\\|?*`.
+The API and the GUI must dissallow group or track names to include any
+of `<>:"/\\|?*\t\f`.
 
 == Menus
 
@@ -92,17 +83,7 @@ names to include any of `<>:"/\\|?*`.
 	-------------
 	Move &Up    # rank
 	Move &Down
-	-------------
-	D&elete...
-
-    &Playlist
-	&New...	    # playlist
-	&Rename...
-	E&xport... # to .m3u, .pls, .xspf, etc.
-	-------------
-	Move &Up    # rank
-	Move &Down
-	Move to &Group # change group
+	Move to &Group # move to another group or to top-level
 	-------------
 	D&elete...
 
@@ -118,8 +99,8 @@ names to include any of `<>:"/\\|?*`.
 	-------------
 	Move &Up    # rank
 	Move &Down
-	Move to &Playlist # change playlist
-	&Copy to Playlist # add to another playlist (same track in multi playlists is fine)
+	Move to &Group # move to another group or to top-level
+	&Copy to Group # add to another group (same track in multi groups is fine)
 	-------------
 	D&elete...
 	-------------
@@ -143,15 +124,15 @@ Could use other Fn keys for common operations?
 
 == Major Dialogs
 
-=== New Playlist
+=== New Group
 
-    &Name  [Playlist #1   ]
-    &Group [   Ungrouped v] # the default; user can add on the fly
+    &Name  [Group #1   ]
+    &Parent Group [   <Top-level> v] # the default; user can add on the fly
     (*) &Add tracks from folder
 	[&Folder] ___________________________
     ( ) &Import tracks from playlist
 	[&Playlist] _________________________ #.m3u, .pls, .xspf, etc.
-    ( ) Create &Empty playlist
+    ( ) Create &Empty group
 		[&OK] [&Cancel]
     
 == UI
@@ -159,26 +140,26 @@ Could use other Fn keys for common operations?
     -------------------------------------------------------------
     MusicBox — _musicbox.mb if any_                              X
     -------------------------------------------------------------
-    &File &Group &Playlist &Track &Bookmarks &Help # main menu
+    &File &Group &Track &Bookmarks &Help # main menu
     -------------------------------------------------------------
     _main toolbar_
     -------------------------------------------------------------
     _Treeview_
+    Track #1 ### tracks can be top-level tool
     Group
-	Playlist
+	Group ### groups can be nested to any depth
 	    Track #1
 	    Track #2
 		:
 	    Track #n
+    Track #2
     Group
-	Playlist
-	    Track #1
-	    Track #2
-		:
-	    Track #n
+	Track #1
+	Track #2
+	    :
+	Track #n
     Search Results ### this only appears if there's a successful search
-	Found
-	    Track #1
+	Track #1
     -------------------------------------------------------------
     status line: currently playing track's artist
     -------------------------------------------------------------

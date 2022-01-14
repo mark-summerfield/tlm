@@ -7,7 +7,9 @@ st.sh
 musicbox.adoc
 
 # These are for prototyping and experimentation
-mb.py # TODO print current & history (if present); then implement full API
+# TODO Use NEW file format
 m3u2mb.py
+# TODO Use NEW file format
+mb.py # TODO print current & history (if present); then implement full API
 
 # vim: syn=yaml
