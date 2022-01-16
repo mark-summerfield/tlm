@@ -6,12 +6,13 @@ First create mb/mod.rs mb/*.rs to provide load (both gzipped and
 uncompressed `.mb` data), save (of gzipped `.mb` data), and all the
 fundamental mb functionality.
 
-Sample files: `~/data/MusicBox-*.mb` (gzipped) and
-`~/data/MusicBox-*-txt.mb` (uncompressed). Once loading of both gzipped
-and uncompressed `.mb` data works, delete the `~/data/MusicBox-*-txt.mb`
-files.
+Test data: `\~/data/playlists-andrea.mb`, `\~/data/playlists-mark.mb`,
+`\~/data/playlists.mb`.
 
 _Then_ add the GUI.
+
+For the GUI use `fltk::tree::TreeItem::set_user_data()` to set each
+item's `gid` (if a group) or `tid` if a track.
 
 == File Format (.mb)
 
@@ -20,12 +21,12 @@ gzipped.
 
     \fMB\t100
     \fGROUPS
-    \vGID\tNAME\tRANK\tPGID
+    \vGID\tNAME\tPGID
     1\tPop\t0
     2\tThe Eagles\t1
 	:
     \fTRACKS
-    \vTID\tFILENAME\tSECS\tRANK\tPGID
+    \vTID\tFILENAME\tSECS\tPGID
     1\t/home/mark/music/Eagles/01-Hotel_California.ogg\t2.16\t1\t2
 	:
     \fBOOKMARKS
@@ -40,19 +41,21 @@ gzipped.
     \vTID # (just one)
     87
 
-All ID's start at 1. Tracks and groups can be top-level. A `pgid` of 0
-means top-level.
+Top-level has a “group” ID of 0; group IDs (`gid`) range from 1 to 9998;
+track IDs (`tid`) start at 10,000. Every group and track has a parent
+group id (`pgid`), which if 0 means top-level.
 
-tracks are ordered by rank within their group (or at the top-level);
-groups are ordered by rank within thei group (or at the top-level).
+Groups and tracks are shown in file order (i.e., in tree order) which is
+user order. They are loaded and saved in tree order and the tree isn't
+sorted; the user can move groups and tracks up and down all they like.
 
 The `secs` is `-1` if unknown. But if all are known then we can report
 the total length of the group, and if all groups have totals, then the
 group's total, and if all the groups have totals, then the entire music
 box's total.
 
-No group may be called "Search Results" "Search Results\t" since this
-name is used by MusicBox itself.
+No group may be called "Search Results" or have a `gid` of 9999 since
+this name and `gid` is used by MusicBox itself.
 
 The API and the GUI must dissallow group or track names to include any
 of `<>:"/\\|?*\t\f`.
@@ -79,7 +82,7 @@ of `<>:"/\\|?*\t\f`.
 	&New...	    # group (enter one line of text dialog)
 	&Rename...
 	-------------
-	Move &Up    # rank
+	Move &Up
 	Move &Down
 	Move to &Group # move to another group or to top-level
 	-------------
@@ -95,7 +98,7 @@ of `<>:"/\\|?*\t\f`.
 	&Back to Previous ^B
 	&Next		  ^N
 	-------------
-	Move &Up    # rank
+	Move &Up
 	Move &Down
 	Move to &Group # move to another group or to top-level
 	&Copy to Group # add to another group (same track in multi groups is fine)

@@ -12,15 +12,14 @@ import mutagen
 
 class Group:
 
-    def __init__(self, gid, name, rank, pgid=0):
+    def __init__(self, gid, name, pgid=0):
         self.gid = gid
         self.name = name
-        self.rank = rank
         self.pgid = pgid
 
 
     def __repr__(self):
-        return f'Group({self.gid}, {self.name}, {self.rank}, {self.pgid})'
+        return f'Group({self.gid}, {self.name}, {self.pgid})'
 
 
     def __lt__(self, group):
@@ -34,17 +33,16 @@ class Group:
 
 class Track:
 
-    def __init__(self, tid, filename, secs, rank, pgid=0):
+    def __init__(self, tid, filename, secs, pgid=0):
         self.tid = tid
         self.filename = filename
         self.secs = secs
-        self.rank = rank
         self.pgid = pgid
 
 
     def __repr__(self):
         return (f'Track({self.tid}, {self.filename}, {self.secs:0.3f}, '
-                f'{self.rank}, {self.pgid})')
+                f'{self.pgid})')
 
 
     def __lt__(self, track):
@@ -66,50 +64,43 @@ def main():
 def read_folder(folder):
     track_list = []
     groups = dict(playlists=Group(0, '<top-level>', 1))
-    grank = 2
-    sgrank = 1
-    tid = 1
     gid = 0
+    tid = 9999
     for root, _, files in os.walk(folder):
         groupname = os.path.basename(root)
         if groupname not in groups:
             gid += 1
-            groups[groupname] = Group(gid, groupname, grank)
-            grank += 1
+            groups[groupname] = Group(gid, groupname)
         for filename in files:
             if not filename.upper().endswith('.M3U'):
                 continue
             subgroupname = filename[:-4]
             if subgroupname not in groups:
                 gid += 1
-                groups[subgroupname] = Group(gid, subgroupname, sgrank,
+                groups[subgroupname] = Group(gid, subgroupname,
                                              groups[groupname].gid)
-                sgrank += 1
             fullname = os.path.join(root, filename)
-            rank = 1
             for track in tracks(fullname):
                 try:
                     meta = mutagen.File(track)
                     secs = meta.info.length
                 except (mutagen.MutagenError, FileNotFoundError):
                     continue
-                track_list.append(Track(tid, track, secs, rank, gid))
                 tid += 1
-                rank += 1
+                track_list.append(Track(tid, track, secs, gid))
     return track_list, groups.values()
 
 
 def write_mb(tracks, groups, mb):
     with gzip.open(mb, 'wt', encoding='utf-8') as file:
         file.write('\fMB\t100\n')
-        file.write('\fGROUPS\n\vGID\tNAME\tRANK\tPGID\n')
+        file.write('\fGROUPS\n\vGID\tNAME\tPGID\n')
         for group in groups:
-            file.write(f'{group.gid}\t{group.name}\t{group.rank}'
-                       f'\t{group.pgid}\n')
-        file.write('\fTRACKS\n\vTID\tFILENAME\tSECS\tRANK\tPGID\n')
+            file.write(f'{group.gid}\t{group.name}\t{group.pgid}\n')
+        file.write('\fTRACKS\n\vTID\tFILENAME\tSECS\tPGID\n')
         for track in tracks:
             file.write(f'{track.tid}\t{track.filename}\t{track.secs:.03f}'
-                       f'\t{track.rank}\t{track.pgid}\n')
+                       f'\t{track.pgid}\n')
         file.write(
             '\fBBOOKMARKS\n\vTID\n\fHISTORY\n\vTID\n\fCURRENT\n\vTID\n')
     print('wrote', mb)
