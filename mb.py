@@ -10,8 +10,16 @@ import os
 import mutagen
 
 
-MAGIC = '*MB>'
+MAGIC = '\fMB\t'
 VERSION = '100'
+
+# TODO
+# These are all that's needed!
+#   self.groups = dict(key=gid, value=Group)
+#   self.tracks = dict(key=tid, value=Track)
+# load should parse the .md to create these to collections (so rewrite the
+#   parser from scratch);
+# save should iterate over them to output a .md
 
 
 class Error(Exception):
