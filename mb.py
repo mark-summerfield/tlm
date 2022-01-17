@@ -15,13 +15,13 @@ VERSION = '100'
 
 # TODO
 # These are all that's needed!
-#   self.groups = [] # list of Group in load order
-#   self.tracks = [] # list of Tracks in load order
-# To find a track or group just iterate.
+#   self.group_for_gid = {} # dict of gid → Group
+#   self.track_for_tid = {} # dict of tid → Tracks
+#   self.tree_list = [] # list of gids then tids in load order
+# To find a track or group just iterate the tree_list or look up directly
+#   via the git or tid.
 # load should parse the .md to create these to collections (so rewrite the
 #   parser from scratch);
-# save should iterate over them to output a .md
-# NOTE file order is tree order is user order
 # NOTE gid = 0 (top-level; unnamed) or 1-9998
 # NOTE gid = 9999 (pseudo-group; Search Results)
 # NOTE tid ≥ 10_000

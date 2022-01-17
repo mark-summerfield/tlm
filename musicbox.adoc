@@ -14,6 +14,13 @@ _Then_ add the GUI.
 For the GUI use `fltk::tree::TreeItem::set_user_data()` to set each
 item's `gid` (if a group) or `tid` if a track.
 
+Internally use `group_for_gid HashMap<i32, Group>`
+`track_for_tid HashMap<i32, Track>` to hold the actual data. The tree
+itself holds the display text (Group Name/Group Name/.../Track Name)
+_and_ the `gid` or `tid` as user data. The tree is populated in file
+order on load and for save the tree is iterated (so the save is in tree
+order).
+
 == File Format (.mb)
 
 Note that what's shown here is UTF-8 plain text: the actual `.mb` is
@@ -86,7 +93,11 @@ of `<>:"/\\|?*\t\f`.
 	Move &Down
 	Move to &Group # move to another group or to top-level
 	-------------
+	&Merge... # merge two groups
+	D&uplicate
+	-------------
 	D&elete...
+	&Undelete
 
     &Track
 	&New...	# (file open)
@@ -104,6 +115,7 @@ of `<>:"/\\|?*\t\f`.
 	&Copy to Group # add to another group (same track in multi groups is fine)
 	-------------
 	D&elete...
+	&Undelete
 	-------------
 	&Clear History
 	&1 _most recently played_ # history
