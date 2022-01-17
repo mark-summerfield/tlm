@@ -8,8 +8,8 @@ musicbox.adoc
 
 # These are for prototyping and experimentation
 m3u2mb.py
-# TODO Use NEW file format
-mb.py
+mb.py # TODO
+
 playlists-txt.mb
 
 # vim: syn=yaml

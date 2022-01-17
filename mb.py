@@ -173,7 +173,10 @@ class Mb:
 
 
     @property
-    def secs(self):
+    def secs_for(self, gid_or_tid=None):
+        # if gid_or_tid is None then the total secs for the entire musicbox
+        # elif gid_or_tid is < 10_000 then the total secs for the group
+        # else the secs for the track (which is easy)
         pass # TODO
 
 
