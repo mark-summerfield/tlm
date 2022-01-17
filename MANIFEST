@@ -10,5 +10,6 @@ musicbox.adoc
 m3u2mb.py
 # TODO Use NEW file format
 mb.py
+playlists-txt.mb
 
 # vim: syn=yaml

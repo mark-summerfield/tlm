@@ -13,15 +13,8 @@ import mutagen
 MAGIC = '\fMB\t'
 VERSION = '100'
 
-# TODO
-# These are all that's needed!
-#   self.group_for_gid = {} # dict of gid → Group
-#   self.track_for_tid = {} # dict of tid → Tracks
-#   self.tree_list = [] # list of gids then tids in load order
-# To find a track or group just iterate the tree_list or look up directly
-#   via the git or tid.
-# load should parse the .md to create these to collections (so rewrite the
-#   parser from scratch);
+# TODO To find a track or group just iterate the tree_list or look up
+#      directly via the git or tid.
 # NOTE gid = 0 (top-level; unnamed) or 1-9998
 # NOTE gid = 9999 (pseudo-group; Search Results)
 # NOTE tid ≥ 10_000
@@ -31,16 +24,15 @@ class Error(Exception):
     pass
 
 
-HistoryItem = collections.namedtuple('HistoryItem', 'group playlist track')
-
-
 class Mb:
 
     def __init__(self, filename=None):
-        self.groups = []
+        self._group_for_gid = {} # gid → Group
+        self._track_for_tid = {} # tid → Tracks
+        self._tree_list = [] # list of gids then tids in load order
         self._filename = filename
-        self.current_group = None
-        self.history = collections.deque()
+        self.current_tid = None
+        self.history = collections.deque() # tids
         if self._filename is not None and os.path.exists(self._filename):
             self.load()
 
@@ -63,119 +55,107 @@ class Mb:
         with open(self._filename, 'rb') as file:
             opener = (open if file.read(4) == MAGIC.encode('ascii') else
                       gzip.open)
-        self.groups.clear()
+        self._group_for_gid.clear()
+        self._track_for_tid.clear()
+        self._tree_list.clear()
         self.history.clear()
-        current = _Current()
-        playlist = None
-        state = _State.MAGIC
+        self.current_tid = None
+        state = _State.WANT_MAGIC
         with opener(self._filename, 'rt', encoding='utf-8') as file:
             for lino, line in enumerate(file, 1):
-                line = line.strip()
+                line = line.rstrip()
                 if not line:
                     continue # ignore blank lines
-                if state is _State.INGROUPS and line == '*C':
-                    state = _State.CURRENT
+                # Change state
+                if state is _State.IN_GROUPS and line == '\fTRACKS':
+                    state = _State.WANT_TRACK_FIELDS
                     continue
-                if state in {_State.CURRENT,
-                             _State.HISTORY} and line == '*H':
-                    state = _State.INHISTORY
+                if state is _State.IN_TRACKS and line == '\fBOOKMARKS':
+                    state = _State.WANT_BOOKMARKS_FIELDS
                     continue
-                if state in {_State.INHISTORY,
-                             _State.TRACK} and line.startswith('*P'):
-                    state = _State.PLAYLIST # No continue: parse whole line
-                if state is _State.MAGIC:
+                if state is _State.IN_BOOKMARKS and line == '\fHISTORY':
+                    state = _State.WANT_HISTORY_FIELDS
+                    continue
+                if state is _State.IN_HISTORY and line == '\fCURRENT':
+                    state = _State.WANT_CURRENT_FIELDS
+                    continue
+                # Read data
+                if state is _State.WANT_MAGIC:
                     if not line.startswith(MAGIC):
                         raise Error(f'error:{lino}: not a .mb file')
                     # NOTE We ignore the version for now
-                    state = _State.GROUPS
-                elif state is _State.GROUPS:
-                    if line != '*G':
-                        raise Error(f'error:{lino}: missing groups list')
-                    state = _State.INGROUPS
-                elif state is _State.INGROUPS:
-                    self.groups.append(Group(line))
-                elif state is _State.CURRENT:
-                    if line != '*H':
-                        self._read_current(lino, line, current)
-                    state = _State.HISTORY
-                elif state is _State.INHISTORY:
+                    state = _State.WANT_GROUP_HEADER
+                elif state is _State.WANT_GROUP_HEADER:
+                    if line != '\fGROUPS':
+                        raise Error(f'error:{lino}: expected groups header')
+                    state = _State.WANT_GROUP_FIELDS
+                elif state is _State.WANT_GROUP_FIELDS:
+                    if not line.startswith('\vGID'):
+                        raise Error(f'error:{lino}: expected groups fields')
+                    state = _State.IN_GROUPS
+                elif state is _State.IN_GROUPS:
+                    self._read_group(lino, line)
+                elif state is _State.WANT_TRACK_FIELDS:
+                    if not line.startswith('\vTID'):
+                        raise Error(f'error:{lino}: expected tracks fields')
+                    state = _State.IN_TRACKS
+                elif state is _State.IN_TRACKS:
+                    self._read_track(lino, line)
+                elif state is _State.WANT_BOOKMARKS_FIELDS:
+                    if not line.startswith('\vTID'):
+                        raise Error(
+                            f'error:{lino}: expected bookmark fields')
+                    state = _State.IN_BOOKMARKS
+                elif state is _State.IN_BOOKMARKS:
+                    self._read_bookmark(lino, line)
+                elif state is _State.WANT_HISTORY_FIELDS:
+                    if not line.startswith('\vTID'):
+                        raise Error(
+                            f'error:{lino}: expected history fields')
+                    state = _State.IN_HISTORY
+                elif state is _State.IN_HISTORY:
                     self._read_history(lino, line)
-                elif state is _State.PLAYLIST:
-                    playlist = self._read_playlist(lino, line)
-                    state = _State.TRACK
-                elif state is _State.TRACK:
-                    self._read_track(lino, line, playlist)
-        self._update_currents(current)
+                elif state is _State.WANT_CURRENT_FIELDS:
+                    if not line.startswith('\vTID'):
+                        raise Error(
+                            f'error:{lino}: expected current fields')
+                    state = _State.IN_CURRENT
+                elif state is _State.IN_CURRENT:
+                    self._read_current(lino, line)
+                else:
+                    raise Error(f'error:{lino}: invalid .mb file')
 
 
-    def _read_current(self, lino, line, current):
-        parts = line.split('>')
-        if len(parts) == 4:
-            current.group_name = parts[0]
-            current.playlist_name = parts[1]
-            current.track_name = parts[2]
-            try:
-                current.pos = float(parts[3])
-            except ValueError:
-                pass
-        else:
-            raise Error(f'error:{lino}: invalid current')
+    def _read_group(self, lino, line):
+        try:
+            gid, name, pgid = line.split('\t', maxsplit=2)
+            group = Group(gid, name, pgid)
+            self._group_for_gid[gid] = group
+            self._tree_list.append(gid)
+        except ValueError as err:
+            raise Error(f'error:{lino}: failed to read group: {err}')
+
+
+    def _read_track(self, lino, line):
+        try:
+            tid, filename, secs, pgid = line.split('\t', maxsplit=3)
+            track = Track(tid, filename, float(secs), pgid)
+            self._track_for_tid[tid] = track
+            self._tree_list.append(tid)
+        except ValueError as err:
+            raise Error(f'error:{lino}: failed to read track: {err}')
+
+
+    def _read_bookmark(self, lino, line):
+        pass # TODO
 
 
     def _read_history(self, lino, line):
-        parts = line.split('>')
-        if len(parts) == 3: # group>playlist>track
-            self.history.append(HistoryItem(*parts))
-        else:
-            raise Error(f'error:{lino}: invalid history item')
+        pass # TODO
 
 
-    def _read_playlist(self, lino, line):
-        if not line.startswith('*P'):
-            raise Error(f'error:{lino}: expected playlist')
-        parts = line.split('>')
-        if len(parts) == 3: # *P>group>playlist
-            playlist = Playlist(parts[2])
-            group_name = parts[1]
-            for group in self.groups:
-                if group.title == group_name:
-                    break
-            else:
-                group = Group(group_name)
-            group.playlists.append(playlist)
-            return playlist
-        raise Error(f'error:{lino}: invalid playlist')
-
-
-    def _read_track(self, lino, line, playlist):
-        if playlist is None:
-            raise Error(f'error:{lino}: track with no playlist')
-        parts = line.split('>')
-        if len(parts) != 2: # track>secs
-            raise Error(f'error:{lino}: invalid track')
-        try:
-            secs = float(parts[1])
-        except ValueError:
-            secs = -1
-        playlist.tracks.append(Track(parts[0], secs))
-
-
-    def _update_currents(self, current):
-        if current.group_name is not None:
-            for group in self.groups:
-                if group.title == current.group_name:
-                    self.current_group = group
-                    if current.playlist_name is not None:
-                        for playlist in group.playlists:
-                            if playlist.title == current.playlist_name:
-                                group.current_playlist = playlist
-                                if current.track_name is not None:
-                                    for track in playlist.tracks:
-                                        if (track.title ==
-                                                current.track_name):
-                                            playlist.current_track = track
-                                            playlist.current_pos = (
-                                                current.pos)
+    def _read_current(self, lino, line):
+        pass # TODO
 
 
     def save(self, *, filename=None, compress=True):
@@ -183,90 +163,81 @@ class Mb:
             self._filename = filename
         opener = gzip.open if compress else open
         with opener(self._filename, 'wt', encoding='utf-8') as file:
-            file.write(f'{MAGIC}{VERSION}\n*G\n')
-            for group in self.groups:
-                file.write(f'{group.title}\n')
-            file.write('*C\n*H\n') # no current; empty history
-            for group in self.groups:
-                for playlist in group.playlists:
-                    file.write(f'*P>{group.title}>{playlist.title}\n')
-                    for track in playlist.tracks:
-                        file.write(f'{track.filename}>{track.secs:0.1f}\n')
+            file.write(f'{MAGIC}{VERSION}\n')
+            # TODO
+
+
+    @property
+    def tree_path(self, gid_or_tid):
+        return '' # TODO 'Group name/Group name/Track name'
 
 
     @property
     def secs(self):
-        total = 0.0
-        for group in self.groups:
-            if group.secs > 0:
-                total += group.secs
-        return total
+        pass # TODO
 
 
+@enum.unique
 class _State(enum.Enum):
-    MAGIC = enum.auto()
-    GROUPS = enum.auto()
-    INGROUPS = enum.auto()
-    CURRENT = enum.auto()
-    HISTORY = enum.auto()
-    INHISTORY = enum.auto()
-    PLAYLIST = enum.auto()
-    TRACK = enum.auto()
-
-
-class _Current:
-
-    def __init__(self):
-        self.group_name = None
-        self.playlist_name = None
-        self.track_name = None
-        self.pos = 0
+    WANT_MAGIC = enum.auto()
+    WANT_GROUP_HEADER = enum.auto()
+    WANT_GROUP_FIELDS = enum.auto()
+    IN_GROUPS = enum.auto()
+    WANT_TRACK_FIELDS = enum.auto()
+    IN_TRACKS = enum.auto()
+    WANT_BOOKMARKS_FIELDS = enum.auto()
+    IN_BOOKMARKS = enum.auto()
+    WANT_HISTORY_FIELDS = enum.auto()
+    IN_HISTORY = enum.auto()
+    WANT_CURRENT_FIELDS = enum.auto()
+    IN_CURRENT = enum.auto()
 
 
 class Group:
 
-    def __init__(self, title):
-        self.title = title
-        self.playlists = []
-        self.current_playlist = None
+    def __init__(self, gid, name, pgid=0):
+        self.gid = gid
+        self.name = name
+        self.pgid = pgid
 
 
-    @property
-    def secs(self):
-        total = 0.0
-        for playlist in self.playlists:
-            if playlist.secs > 0:
-                total += playlist.secs
-        return total
+    def __repr__(self):
+        return f'Group({self.gid}, {self.name}, {self.pgid})'
 
 
-class Playlist:
+    def __lt__(self, group):
+        sname = self.name.upper()
+        gname = group.name.upper()
+        if sname != gname:
+            return sname < gname
+        return self.gid < group.gid
 
-    def __init__(self, title):
-        self.title = title
-        self.tracks = []
-        self.current_track = None
-        self.current_pos = 0
-
-
-    @property
-    def secs(self):
-        total = 0.0
-        for track in self.tracks:
-            if track.secs > 0:
-                total += track.secs
-        return total
 
 
 class Track:
 
-    def __init__(self, filename, secs=-1):
+    def __init__(self, tid, filename, secs, pgid=0):
+        self.tid = tid
         self._filename = filename
+        self.pgid = pgid
         self._title = None
         self._secs = secs
         self._album = None
         self._artist = None
         self._number = 0
+
+
+    def __repr__(self):
+        return (f'Track({self.tid}, {self.filename}, {self.secs:0.3f}, '
+                f'{self.pgid})')
+
+
+    def __lt__(self, track):
+        sname = self.filename.upper()
+        tname = track.filename.upper()
+        if sname != tname:
+            return sname < tname
+        return self.tid < track.tid
 
 
     def _populate_metadata(self):
@@ -344,14 +315,9 @@ if __name__ == '__main__':
     filename = sys.argv[1]
     if filename.endswith('.mb'):
         mb = Mb(filename)
-        print(f'read {mb.filename} containing {len(mb.groups):,} groups '
-              f'totalling {mb.secs:.0f} secs')
-        for group in mb.groups:
-            print(f'  Group: {group.title} containing '
-                  f'{len(group.playlists):,} playlists totalling '
-                  f'{group.secs:.0f} secs')
-            for playlist in group.playlists:
-                print(f'    Playlist: {playlist.title} containing '
-                      f'{len(playlist.tracks):,} tracks totalling '
-                      f'{playlist.secs:.0f} secs')
+        print(f'{len(mb._group_for_gid):,} groups; '
+              f'{len(mb._track_for_tid):,} tracks')
+        # TODO print summary (how many groups & tracks etc)
+        # TODO print all
+        # TODO save as
         # TODO print current & history

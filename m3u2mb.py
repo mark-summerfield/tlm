@@ -102,7 +102,7 @@ def write_mb(tracks, groups, mb):
             file.write(f'{track.tid}\t{track.filename}\t{track.secs:.03f}'
                        f'\t{track.pgid}\n')
         file.write(
-            '\fBBOOKMARKS\n\vTID\n\fHISTORY\n\vTID\n\fCURRENT\n\vTID\n')
+            '\fBOOKMARKS\n\vTID\n\fHISTORY\n\vTID\n\fCURRENT\n\vTID\n')
     print('wrote', mb)
 
 
