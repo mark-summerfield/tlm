@@ -5,6 +5,7 @@
 import enum
 import gzip
 import os
+import pprint
 import sys
 
 import mutagen
@@ -12,73 +13,67 @@ import mutagen
 
 class Group:
 
-    def __init__(self, gid, name, pgid=0):
-        self.gid = gid
+    def __init__(self, name):
         self.name = name
-        self.pgid = pgid
+        self.kids = []
 
 
     def __repr__(self):
-        return f'Group({self.gid}, {self.name}, {self.pgid})'
+        return f'Group({self.name})#{len(self.kids)}'
 
 
-    def __lt__(self, group):
-        sname = self.name.upper()
-        gname = group.name.upper()
-        if sname != gname:
-            return sname < gname
-        return self.gid < group.gid
+    def subgroup(self, group_name):
+        for kid in self.kids:
+            if kid.name == group_name:
+                return kid
 
+
+    def append(self, group_or_track):
+        self.kids.append(group_or_track)
 
 
 class Track:
 
-    def __init__(self, tid, filename, secs, pgid=0):
-        self.tid = tid
+    def __init__(self, filename, secs):
         self.filename = filename
         self.secs = secs
-        self.pgid = pgid
 
 
     def __repr__(self):
-        return (f'Track({self.tid}, {self.filename}, {self.secs:0.3f}, '
-                f'{self.pgid})')
-
-
-    def __lt__(self, track):
-        sname = self.filename.upper()
-        tname = track.filename.upper()
-        if sname != tname:
-            return sname < tname
-        return self.tid < track.tid
+        return f'Track({self.filename}, {self.secs:0.3f})'
 
 
 def main():
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
         raise SystemExit('usage: m3u2mb.py <dirname>')
     folder = sys.argv[1]
-    tracks, groups = read_folder(folder)
-    write_mb(tracks, groups, os.path.basename(folder) + '.mb')
+    tree = read_folder(folder)
+    write_mb(tree, os.path.basename(folder) + '.mb')
 
 
 def read_folder(folder):
-    track_list = []
-    groups = dict(playlists=Group(0, '', 0))
-    gid = 0
-    tid = 9999
+    group = tree = Group('') # top-level
+    subgroup = None
     for root, _, files in os.walk(folder):
         groupname = os.path.basename(root)
-        if groupname not in groups:
-            gid += 1
-            groups[groupname] = Group(gid, groupname)
+        if groupname == 'playlists':
+            group = tree
+            subgroup = None
+        else:
+            subgroup = group.subgroup(groupname)
+            if subgroup is None:
+                subgroup = Group(groupname)
+                group.append(subgroup)
         for filename in files:
             if not filename.upper().endswith('.M3U'):
                 continue
-            subgroupname = filename[:-4]
-            if subgroupname not in groups:
-                gid += 1
-                groups[subgroupname] = Group(gid, subgroupname,
-                                             groups[groupname].gid)
+            subsubgroupname = filename[:-4]
+            if subgroup is None:
+                subgroup = group
+            subsubgroup = subgroup.subgroup(subsubgroupname)
+            if subsubgroup is None:
+                subsubgroup = Group(subsubgroupname)
+                subgroup.append(subsubgroup)
             fullname = os.path.join(root, filename)
             for track in tracks(fullname):
                 try:
@@ -86,24 +81,26 @@ def read_folder(folder):
                     secs = meta.info.length
                 except (mutagen.MutagenError, FileNotFoundError):
                     continue
-                tid += 1
-                track_list.append(Track(tid, track, secs, gid))
-    return track_list, list(groups.values())[1:]
+                subsubgroup.append(Track(track, secs))
+    return tree
 
 
-def write_mb(tracks, groups, mb):
+def write_mb(tree, mb):
     with gzip.open(mb, 'wt', encoding='utf-8') as file:
-        file.write('\fMB\t100\n')
-        file.write('\fGROUPS\n\vGID\tNAME\tPGID\n')
-        for group in groups:
-            file.write(f'{group.gid}\t{group.name}\t{group.pgid}\n')
-        file.write('\fTRACKS\n\vTID\tFILENAME\tSECS\tPGID\n')
-        for track in tracks:
-            file.write(f'{track.tid}\t{track.filename}\t{track.secs:.03f}'
-                       f'\t{track.pgid}\n')
-        file.write(
-            '\fBOOKMARKS\n\vTID\n\fHISTORY\n\vTID\n\fCURRENT\n\vTID\n')
+        file.write('\fMB\t100\n\fTRACKS\n')
+        write_tree(file, tree)
+        file.write('\fBOOKMARKS\n\fHISTORY\n\fCURRENT\n')
     print('wrote', mb)
+
+
+def write_tree(file, tree, depth=1):
+    pad = depth * '>'
+    for item in tree.kids:
+        if isinstance(item, Group):
+            file.write(f'{pad}{item.name}\n')
+            write_tree(file, item, depth + 1)
+        else:
+            file.write(f'{item.filename}\t{item.secs:.03f}\n')
 
 
 class Error(Exception):
