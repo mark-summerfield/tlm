@@ -30,8 +30,8 @@ def valid_tid(n):
 
 
 def treename(filename):
-    return (pathlib.Path(filename).stem.replace('-', ' ').replace('_', ' ').
-            lstrip('0123456789 '))
+    return (pathlib.Path(filename).stem.replace('-', ' ').replace('_', ' ')
+            .lstrip('0123456789 '))
 
 
 class Error(Exception):
