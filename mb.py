@@ -221,9 +221,7 @@ class Mb:
             file.write(f'{MAGIC}{VERSION}\n')
             file.write('\fGROUPS\n\vGID\tNAME\tPGID\n')
             in_tracks = False
-            for n in self.tree_list:
-                if n == 0:
-                    continue
+            for n in self.tree_list[1:]: # Skip top-level
                 if n <= MAX_GID:
                     group = self.group_for_gid[n]
                     file.write(f'{n}\t{group.name}\t{group.pgid}\n')
@@ -411,15 +409,23 @@ if __name__ == '__main__':
     import tempfile
 
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
-        raise SystemExit('usage: mb.py <musicbox.mb>')
-    infile = sys.argv[1]
-    if infile.endswith('.mb'):
-        mb = Mb(infile)
-        print(f'{len(mb.group_for_gid):,} groups; '
-              f'{len(mb.track_for_tid):,} tracks')
-        zoutfile = tempfile.gettempdir() + '/mbz.mb'
-        outfile = tempfile.gettempdir() + '/mb.mb'
-        mb.save(filename=zoutfile)
-        mb.save(filename=outfile, compress=False)
-        print(
-            f'saved compressed to {zoutfile} and uncompressed to {outfile}')
+        raise SystemExit('usage: mb.py [-t|--tree] <musicbox.mb>')
+    tree = False
+    filename = sys.argv[1]
+    if filename in {'-t', '--tree'}:
+        tree = True
+        filename = sys.argv[2]
+    if filename.endswith('.mb'):
+        mb = Mb(filename)
+        if tree:
+            for n in mb.tree_list[1:]:
+                print(mb.path_for(n)) # FIXME TODO doesn't work
+        else:
+            print(f'{len(mb.group_for_gid):,} groups; '
+                  f'{len(mb.track_for_tid):,} tracks')
+            zoutfile = tempfile.gettempdir() + '/mbz.mb'
+            outfile = tempfile.gettempdir() + '/mb.mb'
+            mb.save(filename=zoutfile)
+            mb.save(filename=outfile, compress=False)
+            print(f'saved compressed to {zoutfile} and uncompressed to',
+                  outfile)
