@@ -63,7 +63,7 @@ def main():
 
 def read_folder(folder):
     track_list = []
-    groups = dict(playlists=Group(0, '<top-level>', 1))
+    groups = dict(playlists=Group(0, '', 0))
     gid = 0
     tid = 9999
     for root, _, files in os.walk(folder):
@@ -88,7 +88,7 @@ def read_folder(folder):
                     continue
                 tid += 1
                 track_list.append(Track(tid, track, secs, gid))
-    return track_list, groups.values()
+    return track_list, list(groups.values())[1:]
 
 
 def write_mb(tracks, groups, mb):

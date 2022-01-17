@@ -6,18 +6,32 @@ import collections
 import enum
 import gzip
 import os
+import pathlib
 
 import mutagen
 
-
 MAGIC = '\fMB\t'
 VERSION = '100'
+SEARCH_RESULTS_GID = 9999
+MIN_GID = 0
+MAX_GID = SEARCH_RESULTS_GID - 1
+MIN_TID = MAX_GID + 1
+MAX_TID = 2_000_000_000
 
-# TODO To find a track or group just iterate the tree_list or look up
-#      directly via the git or tid.
-# NOTE gid = 0 (top-level; unnamed) or 1-9998
-# NOTE gid = 9999 (pseudo-group; Search Results)
-# NOTE tid ≥ 10_000
+
+def valid_gid(n, *, allow_search_results=True):
+    if allow_search_results and n == SEARCH_RESULTS_GID:
+        return True
+    return MIN_GID <= n <= MAX_GID
+
+
+def valid_tid(n):
+    return MIN_TID <= n <= MAX_TID
+
+
+def treename(filename):
+    return (pathlib.Path(filename).stem.replace('-', ' ').replace('_', ' ').
+            lstrip('0123456789 '))
 
 
 class Error(Exception):
@@ -27,12 +41,13 @@ class Error(Exception):
 class Mb:
 
     def __init__(self, filename=None):
-        self._group_for_gid = {} # gid → Group
-        self._track_for_tid = {} # tid → Tracks
-        self._tree_list = [] # list of gids then tids in load order
-        self._filename = filename
-        self.current_tid = None
+        self.group_for_gid = {} # gid → Group
+        self.track_for_tid = {} # tid → Tracks
+        self.tree_list = [] # list of gids then tids in load order
+        self.bookmarks = [] # tids
         self.history = collections.deque() # tids
+        self.current_tid = None
+        self._filename = filename
         if self._filename is not None and os.path.exists(self._filename):
             self.load()
 
@@ -49,17 +64,24 @@ class Mb:
             self.load()
 
 
+    def clear(self):
+        self.group_for_gid.clear()
+        self.group_for_gid[0] = Group(0, '', 0) # top-level (own parent)
+        self.track_for_tid.clear()
+        self.tree_list.clear()
+        self.tree_list.append(0) # top-level
+        self.bookmarks.clear()
+        self.history.clear()
+        self.current_tid = None
+
+
     def load(self, filename=None):
         if filename is not None:
             self._filename = filename
         with open(self._filename, 'rb') as file:
             opener = (open if file.read(4) == MAGIC.encode('ascii') else
                       gzip.open)
-        self._group_for_gid.clear()
-        self._track_for_tid.clear()
-        self._tree_list.clear()
-        self.history.clear()
-        self.current_tid = None
+        self.clear()
         state = _State.WANT_MAGIC
         with opener(self._filename, 'rt', encoding='utf-8') as file:
             for lino, line in enumerate(file, 1):
@@ -129,9 +151,18 @@ class Mb:
     def _read_group(self, lino, line):
         try:
             gid, name, pgid = line.split('\t', maxsplit=2)
+            gid = int(gid)
+            if not valid_gid(gid, allow_search_results=False):
+                raise Error(f'error:{lino}: invalid group ID')
+            pgid = int(pgid)
+            if not valid_gid(pgid, allow_search_results=False):
+                raise Error(f'error:{lino}: invalid parent group ID')
+            if gid == pgid:
+                raise Error(f'error:{lino}: only top-level group can be '
+                            'its own parent')
             group = Group(gid, name, pgid)
-            self._group_for_gid[gid] = group
-            self._tree_list.append(gid)
+            self.group_for_gid[gid] = group
+            self.tree_list.append(gid)
         except ValueError as err:
             raise Error(f'error:{lino}: failed to read group: {err}')
 
@@ -139,23 +170,47 @@ class Mb:
     def _read_track(self, lino, line):
         try:
             tid, filename, secs, pgid = line.split('\t', maxsplit=3)
+            tid = int(tid)
+            if not valid_tid(tid):
+                raise Error(f'error:{lino}: invalid track ID')
+            pgid = int(pgid)
+            if not valid_gid(pgid, allow_search_results=False):
+                raise Error(f'error:{lino}: invalid parent group ID')
             track = Track(tid, filename, float(secs), pgid)
-            self._track_for_tid[tid] = track
-            self._tree_list.append(tid)
+            self.track_for_tid[tid] = track
+            self.tree_list.append(tid)
         except ValueError as err:
             raise Error(f'error:{lino}: failed to read track: {err}')
 
 
     def _read_bookmark(self, lino, line):
-        pass # TODO
+        try:
+            tid = int(line)
+            if not valid_tid(tid):
+                raise Error(f'error:{lino}: invalid track ID')
+            self.bookmarks.append(tid)
+        except ValueError as err:
+            raise Error(f'error:{lino}: invalid bookmark: {err}')
 
 
     def _read_history(self, lino, line):
-        pass # TODO
+        try:
+            tid = int(line)
+            if not valid_tid(tid):
+                raise Error(f'error:{lino}: invalid track ID')
+            self.history.append(tid)
+        except ValueError as err:
+            raise Error(f'error:{lino}: invalid history: {err}')
 
 
     def _read_current(self, lino, line):
-        pass # TODO
+        try:
+            tid = int(line)
+            if not valid_tid(tid):
+                raise Error(f'error:{lino}: invalid track ID')
+            self.current_tid = tid
+        except ValueError as err:
+            raise Error(f'error:{lino}: invalid history: {err}')
 
 
     def save(self, *, filename=None, compress=True):
@@ -164,20 +219,62 @@ class Mb:
         opener = gzip.open if compress else open
         with opener(self._filename, 'wt', encoding='utf-8') as file:
             file.write(f'{MAGIC}{VERSION}\n')
-            # TODO
+            file.write('\fGROUPS\n\vGID\tNAME\tPGID\n')
+            in_tracks = False
+            for n in self.tree_list:
+                if n == 0:
+                    continue
+                if n <= MAX_GID:
+                    group = self.group_for_gid[n]
+                    file.write(f'{n}\t{group.name}\t{group.pgid}\n')
+                else:
+                    if not in_tracks:
+                        file.write(
+                            '\fTRACKS\n\vTID\tFILENAME\tSECS\tPGID\n')
+                        in_tracks = True
+                    track = self.track_for_tid[n]
+                    file.write(f'{n}\t{track.filename}\t{track.secs:.03f}'
+                               f'\t{track.pgid}\n')
+            file.write('\fBOOKMARKS\n\vTID\n')
+            for tid in self.bookmarks:
+                file.write(str(tid))
+            file.write('\fHISTORY\n\vTID\n')
+            for tid in self.history:
+                file.write(str(tid))
+            file.write('\fCURRENT\n\vTID\n')
+            if self.current_tid:
+                file.write(f'{self.current_tid}\n')
 
 
-    @property
-    def tree_path(self, gid_or_tid):
-        return '' # TODO 'Group name/Group name/Track name'
+    def path_for(self, gid_or_tid):
+        if gid_or_tid <= MAX_GID:
+            return self._path_for_group(gid_or_tid)
+        return self._path_for_track(gid_or_tid)
 
 
-    @property
+    def _path_for_group(self, gid):
+        path = collections.deque()
+        while gid:
+            group = self.group_for_gid[gid]
+            path.appendleft(group.name)
+            gid = group.pgid
+        return '/'.join(path)
+
+
+    def _path_for_track(self, tid):
+        track = self.track_for_tid[tid]
+        return (self._path_for_group(track.pgid) + '/' +
+                treename(track.filename))
+
+
     def secs_for(self, gid_or_tid=None):
-        # if gid_or_tid is None then the total secs for the entire musicbox
-        # elif gid_or_tid is < 10_000 then the total secs for the group
-        # else the secs for the track (which is easy)
-        pass # TODO
+        if valid_tid(gid_or_tid): # One track
+            return self.track_for_tid[gid_or_tid].secs
+        total = 0.0 # Entire music box or one group (excl. child groups)
+        for track in self.track_for_tid.values():
+            if not gid_or_tid or track.pgid == gid_or_tid:
+                total += track.secs
+        return total
 
 
 @enum.unique
@@ -269,7 +366,6 @@ class Track:
                 os.path.splitext(os.path.basename(self._filename))[0]
                 .replace('-', ' ').replace('_', ' '))
 
-
     @property
     def filename(self):
         return self._filename
@@ -312,15 +408,18 @@ class Track:
 
 if __name__ == '__main__':
     import sys
+    import tempfile
 
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
         raise SystemExit('usage: mb.py <musicbox.mb>')
-    filename = sys.argv[1]
-    if filename.endswith('.mb'):
-        mb = Mb(filename)
-        print(f'{len(mb._group_for_gid):,} groups; '
-              f'{len(mb._track_for_tid):,} tracks')
-        # TODO print summary (how many groups & tracks etc)
-        # TODO print all
-        # TODO save as
-        # TODO print current & history
+    infile = sys.argv[1]
+    if infile.endswith('.mb'):
+        mb = Mb(infile)
+        print(f'{len(mb.group_for_gid):,} groups; '
+              f'{len(mb.track_for_tid):,} tracks')
+        zoutfile = tempfile.gettempdir() + '/mbz.mb'
+        outfile = tempfile.gettempdir() + '/mb.mb'
+        mb.save(filename=zoutfile)
+        mb.save(filename=outfile, compress=False)
+        print(
+            f'saved compressed to {zoutfile} and uncompressed to {outfile}')
