@@ -8,7 +8,7 @@ musicbox.adoc
 
 # These are for prototyping and experimentation
 m3u2mb.py
-mb.py # TODO Redo to read new tree format .mb
+mb.py
 
 playlists-txt.mb
 
