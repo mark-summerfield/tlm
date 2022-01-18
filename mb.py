@@ -7,11 +7,13 @@ import enum
 import gzip
 import os
 import pathlib
+import sys
 
 import mutagen
 
 MAGIC = '\fMB\t'
 VERSION = '100'
+INDENT = '\v'
 
 
 class Error(Exception):
@@ -77,7 +79,7 @@ class Mb:
                         raise Error(f'error:{lino}: missing TRACKS')
                     state = _State.IN_TRACKS
                 elif state is _State.IN_TRACKS:
-                    if line.startswith('>'):
+                    if line.startswith(INDENT):
                         prev_indent = self._read_group(stack, prev_indent,
                                                        lino, line)
                     elif not line.startswith('\f'):
@@ -96,7 +98,7 @@ class Mb:
 
 
     def _read_group(self, stack, prev_indent, lino, line):
-        name = line.lstrip('>')
+        name = line.lstrip(INDENT)
         indent = len(line) - len(name)
         group = Group(name)
         if indent == 1:
@@ -132,7 +134,7 @@ class Mb:
 
 
     def _write_tree(self, file, tree, depth=1):
-        pad = depth * '>'
+        pad = depth * INDENT
         for kid in tree.kids:
             if isinstance(kid, Group):
                 file.write(f'{pad}{kid.name}\n')
@@ -147,11 +149,14 @@ class Mb:
 
 
     def _paths(self, tree, prefix):
+        prefix = f'{prefix}/{tree.name}' if prefix else tree.name
+        if prefix:
+            yield prefix
         for kid in tree.kids:
             if isinstance(kid, Group):
-                for path in self._paths(kid, f'{prefix}/{kid.name}'):
+                for path in self._paths(kid, prefix):
                     yield path
-            else:
+            elif kid.treename:
                 yield f'{prefix}/{kid.treename}'
 
 
@@ -190,7 +195,7 @@ class Group:
 
 
     def __repr__(self):
-        return f'Group({self.name})#{len(self.kids)}'
+        return f'Group({self.name!r})'
 
 
     def subgroup(self, group_name):
@@ -215,7 +220,7 @@ class Track:
 
 
     def __repr__(self):
-        return f'Track({self.filename}, {self.secs:0.3f})'
+        return f'Track({self.filename!r}, {self.secs:0.3f})'
 
 
     def _populate_metadata(self):
@@ -290,8 +295,17 @@ class Track:
         return self._number
 
 
+def print_tree(tree, indent=0):
+    pad = ' ' * indent
+    print(f'{pad}{tree!r}')
+    for kid in tree.kids:
+        if isinstance(kid, Group):
+            print_tree(kid, indent + 1)
+        else:
+            print(f'{pad}{pad}{kid!r}')
+
+
 if __name__ == '__main__':
-    import sys
     import tempfile
 
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
@@ -304,6 +318,7 @@ if __name__ == '__main__':
     if filename.endswith('.mb'):
         mb = Mb(filename)
         if tree:
+            # print_tree(mb.tree)
             for path in mb.paths():
                 print(path)
         else:

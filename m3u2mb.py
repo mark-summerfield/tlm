@@ -64,7 +64,7 @@ def read_folder(folder):
             if subgroup is None:
                 subgroup = Group(groupname)
                 group.append(subgroup)
-        for filename in files:
+        for filename in sorted(files, key=str.upper):
             if not filename.upper().endswith('.M3U'):
                 continue
             subsubgroupname = filename[:-4]
@@ -94,7 +94,7 @@ def write_mb(tree, mb):
 
 
 def write_tree(file, tree, depth=1):
-    pad = depth * '>'
+    pad = depth * '\v'
     for item in tree.kids:
         if isinstance(item, Group):
             file.write(f'{pad}{item.name}\n')
