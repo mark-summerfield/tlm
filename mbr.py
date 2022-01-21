@@ -27,6 +27,15 @@ class Mb:
             self.load()
 
 
+    def clear(self):
+        self.tree = [] # list of TreeData: fltk::tree::Tree
+        self.track_for_tid = {} # key=tid value=Track: HashMap<usize, Track>
+        self.tid = 1
+        self.bookmarks = []
+        self.history = collections.deque()
+        self.current_track = None
+
+
     @property
     def filename(self):
         return self._filename
@@ -37,15 +46,6 @@ class Mb:
         self._filename = filename
         if os.path.exists(filename):
             self.load()
-
-
-    def clear(self):
-        self.tree = [] # list of TreeData
-        self.track_for_tid = {} # key=tid value=Track
-        self.tid = 1
-        self.bookmarks = []
-        self.history = collections.deque()
-        self.current_track = None
 
 
     def load(self, filename=None):
@@ -109,11 +109,11 @@ class Mb:
             path.append(name)
 
 
-    def _read_track(self, group, lino, line):
+    def _read_track(self, path, lino, line):
         try:
             filename, secs = line.split('\t', maxsplit=1)
             self.track_for_tid[self.tid] = Track(filename, float(secs))
-            self.tree.append(TreeData('/'.join(group), self.tid))
+            self.tree.append(TreeData('/'.join(path), self.tid))
             self.tid += 1
         except ValueError as err:
             raise Error(f'error:{lino}: failed to read track: {err}')
