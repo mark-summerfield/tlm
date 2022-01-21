@@ -306,25 +306,19 @@ def print_tree(tree, indent=0):
 
 
 if __name__ == '__main__':
-    import tempfile
-
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
-        raise SystemExit('usage: mb.py [-t|--tree] <musicbox.mb>')
-    tree = False
+        raise SystemExit(
+            'usage: mb.py <-t|--tree> infile.mb | infile.mb outfile.mb')
     filename = sys.argv[1]
     if filename in {'-t', '--tree'}:
-        tree = True
-        filename = sys.argv[2]
-    if filename.endswith('.mb'):
-        mb = Mb(filename)
-        if tree:
-            # print_tree(mb.tree)
-            for path in mb.paths():
-                print(path)
-        else:
-            zoutfile = tempfile.gettempdir() + '/mbz.mb'
-            outfile = tempfile.gettempdir() + '/mb.mb'
-            mb.save(filename=zoutfile)
-            mb.save(filename=outfile, compress=False)
-            print(f'saved compressed to {zoutfile} and uncompressed to',
-                  outfile)
+        mb = Mb(sys.argv[2])
+        for path in mb.paths():
+            print(path)
+    else:
+        infile = pathlib.Path(sys.argv[1]).resolve()
+        outfile = pathlib.Path(sys.argv[2]).resolve()
+        if infile == outfile:
+            raise SystemExit('infile and outfile must be different')
+        mb = Mb(infile)
+        mb.save(filename=outfile)
+        print('saved', outfile)

@@ -7,8 +7,9 @@ st.sh
 musicbox.adoc
 
 # These are for prototyping and experimentation
-m3u2mb.py
+mbr.py # This is the model for porting to Rust
 mb.py
+m3u2mb.py
 
 playlists-txt.mb
 

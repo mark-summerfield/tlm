@@ -5,7 +5,6 @@
 import enum
 import gzip
 import os
-import pprint
 import sys
 
 import mutagen
