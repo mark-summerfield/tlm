@@ -3,11 +3,16 @@ Cargo.toml
 
 st.sh
 
+# TODO Phase #2 copy amp into musicbox
+# TODO Phase #3 menu-ize amp
+# TODO Phase #4 integrate mb into musicbox
+
 # Notes
 musicbox.adoc
 
 # These are for prototyping and experimentation
-mbr.py # This is the model for porting to Rust
+../mb_test/src/mb/mod.rs # This is the rust port of mbr.py
+mbr.py
 mb.py
 m3u2mb.py
 

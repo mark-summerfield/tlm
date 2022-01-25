@@ -8,3 +8,5 @@ codegen-units = 1
 lto = "fat"
 
 [dependencies]
+anyhow = "^1"
+# flate2 = { version = "^1.0", default-features = true }

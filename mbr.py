@@ -55,7 +55,7 @@ class Mb:
             opener = (open if file.read(4) == MAGIC.encode('ascii') else
                       gzip.open)
         self.clear()
-        path = []
+        treepath = []
         state = _State.WANT_MAGIC
         with opener(self._filename, 'rt', encoding='utf-8') as file:
             for lino, line in enumerate(file, 1):
@@ -79,9 +79,9 @@ class Mb:
                     state = _State.IN_TRACKS
                 elif state is _State.IN_TRACKS:
                     if line.startswith(INDENT):
-                        self._read_group(path, lino, line)
+                        self._read_group(treepath, lino, line)
                     elif not line.startswith('\f'):
-                        self._read_track(path, lino, line)
+                        self._read_track(treepath, lino, line)
                 elif state is _State.IN_BOOKMARKS:
                     self.bookmarks.append(line)
                 elif state is _State.IN_HISTORY:
@@ -95,25 +95,25 @@ class Mb:
                     raise Error(f'error:{lino}: invalid .mb file')
 
 
-    def _read_group(self, path, lino, line):
+    def _read_group(self, treepath, lino, line):
         name = line.lstrip(INDENT)
         indent = len(line) - len(name)
-        prev_indent = len(path)
+        prev_indent = len(treepath)
         if indent == 1:
-            path[:] = [name]
+            treepath[:] = [name]
         elif indent > prev_indent: # child
-            path.append(name)
+            treepath.append(name)
         elif indent <= prev_indent: # same level or higher
             for _ in range(prev_indent - indent + 1):
-                path.pop() # move back up to same or higher parent
-            path.append(name)
+                treepath.pop() # move back up to same or higher parent
+            treepath.append(name)
 
 
-    def _read_track(self, path, lino, line):
+    def _read_track(self, treepath, lino, line):
         try:
             filename, secs = line.split('\t', maxsplit=1)
             self.track_for_tid[self.tid] = Track(filename, float(secs))
-            self.tree.append(TreeData('/'.join(path), self.tid))
+            self.tree.append(TreeData('/'.join(treepath), self.tid))
             self.tid += 1
         except ValueError as err:
             raise Error(f'error:{lino}: failed to read track: {err}')
