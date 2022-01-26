@@ -16,14 +16,13 @@ use fltk::{
     frame::Frame,
     group::{Flex, FlexType},
     image::SvgImage,
-    menu::{MenuButton, MenuFlag, SysMenuBar},
+    menu::{MenuFlag, SysMenuBar},
     misc::HelpView,
     prelude::*,
     tree::Tree,
     valuator::HorFillSlider,
     window::Window,
 };
-use std::path::Path;
 
 pub struct Widgets {
     pub main_window: Window,
@@ -55,7 +54,6 @@ pub fn make(sender: Sender<Action>) -> Widgets {
     main_window.make_resizable(true);
     let mut vbox =
         Flex::default().size_of_parent().with_type(FlexType::Column);
-    vbox.set_margin(PAD);
     let menubar = add_menubar(sender, width);
     let toolbar = add_toolbar(sender, width);
     let (track_tree, info_view) = add_views();
@@ -93,7 +91,7 @@ pub fn make(sender: Sender<Action>) -> Widgets {
 
 fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
     let mut menubar = SysMenuBar::default().with_size(width, BUTTON_HEIGHT);
-    menubar.set_frame(FrameType::UpBox);
+    menubar.set_frame(FrameType::NoBox);
     // TODO New etc.
     menubar.add_emit(
         "&File/&Open...\t",
@@ -116,7 +114,6 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
 
 fn add_views() -> (Tree, HelpView) {
     let mut row = Flex::default().with_type(FlexType::Row);
-    row.set_margin(PAD / 2);
     let track_tree = Tree::default();
     let mut info_view = HelpView::default().with_size(200, 200);
     info_view.set_value(
@@ -146,7 +143,6 @@ fn add_player_toolbar(
     let mut row = Flex::default()
         .with_size(width, TOOLBAR_HEIGHT)
         .with_type(FlexType::Row);
-    row.set_margin(PAD);
     let prev_button = add_toolbutton(
         sender,
         "Previous track",
@@ -218,10 +214,10 @@ fn add_sliders(
     let (time_icon_label, time_slider, time_label) =
         add_slider_row(TIME_ICON, "0″/0″");
     let (volume_icon_label, volume_slider, volume_label) = add_volume_row();
-    row.set_size(&time_icon_label, TOOLBUTTON_SIZE + PAD + 8);
-    row.set_size(&time_label, 70);
+    row.set_size(&time_icon_label, TOOLBUTTON_SIZE);
+    row.set_size(&time_label, 80);
     row.set_size(&volume_label, 50);
-    row.set_size(&volume_icon_label, TOOLBUTTON_SIZE + PAD + 8);
+    row.set_size(&volume_icon_label, TOOLBUTTON_SIZE);
     (time_slider, time_label, volume_slider, volume_label)
 }
 
@@ -237,7 +233,7 @@ fn add_slider_row(
     icon: &str,
     label: &str,
 ) -> (Frame, HorFillSlider, Frame) {
-    let icon_height = TOOLBUTTON_SIZE + PAD;
+    let icon_height = TOOLBUTTON_SIZE;
     let icon_width = icon_height + 8;
     let mut icon_label = Frame::default();
     icon_label.set_size(icon_width, icon_height);
@@ -256,7 +252,6 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
     let mut row = Flex::default()
         .with_size(width, TOOLBAR_HEIGHT)
         .with_type(FlexType::Row);
-    row.set_margin(PAD);
     add_toolbutton(
         sender,
         "Open a MusicBox file",
@@ -300,12 +295,9 @@ pub fn add_event_handlers(
         }
     });
     main_window.handle(move |_, event| {
-        if event == Event::KeyUp {
-            let key = app::event_key();
-            if app::event_key() == Key::Help {
-                sender.send(Action::Help);
-                return true;
-            }
+        if event == Event::KeyUp && app::event_key() == Key::Help {
+            sender.send(Action::Help);
+            return true;
         }
         false
     });
