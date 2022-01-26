@@ -8,8 +8,6 @@
 	&Save...   ^S
 	Save &As...
 	-------------
-	&Find...   ^F # on success adds/replaces Search Results/Found in tree
-	-------------
 	&Configure...
 	-------------
 	&Quit      ^Q
@@ -46,6 +44,8 @@
 	Move &Down
 	Move to &Group # move to another group or to top-level
 	&Copy to Group # add to another group (same track in multi groups is fine)
+	-------------
+	&Find...   ^F # on success adds/replaces Search Results/Found in tree
 	-------------
 	D&elete...
 	&Undelete
