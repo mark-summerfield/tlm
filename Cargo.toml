@@ -2,11 +2,40 @@
 name = "musicbox"
 version = "0.1.0"
 edition = "2021"
+publish = false # TODO
+authors = [ "Mark Summerfield <mark@qtrac.eu>",]
+include = [ "Cargo.toml", "src/**/*.rs", "images/*", "data/*",]
+description = "An application to manage playlists and play tracks."
+homepage = "https://github.com/mark-summerfield/musicbox" # TODO check
+readme = "README.md"
+keywords = [ "fltk", "audio", "music", "player", "gui",]
+categories = [ "multimedia::audio",]
+license = "GPL-3.0"
 
 [profile.release]
+opt-level = "z"
+lto = true
 codegen-units = 1
-lto = "fat"
 
 [dependencies]
 anyhow = "^1"
-# flate2 = { version = "^1.0", default-features = true }
+flate2 = { version = "^1.0", default-features = true }
+chrono = "^0.4"
+dirs = "^4"
+lofty = "^0.3"
+num = "^0.4"
+rust-ini = "^0.17"
+rustc_version_runtime = "^0.2"
+state = "^0.5"
+
+[dependencies.fltk]
+version = "^1.2"
+features = [ "no-pango",]
+git = "https://github.com/fltk-rs/fltk-rs"
+
+[dependencies.soloud]
+version = "^1"
+git = "https://github.com/moalyousef/soloud-rs"
+
+[badges.maintenance]
+status = "passively-maintained"

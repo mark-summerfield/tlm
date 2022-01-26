@@ -1,72 +1,5 @@
 = MusicBox
 
-== Notes
-
-First create mb/mod.rs mb/*.rs to provide load (both gzipped and
-uncompressed `.mb` data), save (of gzipped `.mb` data), and all the
-fundamental mb functionality.
-
-Test data: `\~/data/playlists-andrea.mb`, `\~/data/playlists-mark.mb`,
-`\~/data/playlists.mb`.
-
-_Then_ add the GUI.
-
-For the GUI use `fltk::tree::TreeItem::set_user_data()` to set each
-item's `gid` (if a group) or `tid` if a track.
-
-Internally use `group_for_gid HashMap<i32, Group>`
-`track_for_tid HashMap<i32, Track>` to hold the actual data. The tree
-itself holds the display text (Group Name/Group Name/.../Track Name)
-_and_ the `gid` or `tid` as user data. The tree is populated in file
-order on load and for save the tree is iterated (so the save is in tree
-order).
-
-== File Format (.mb)
-
-Note that what's shown here is UTF-8 plain text: the actual `.mb` is
-gzipped.
-
-    \fMB\t100
-    \fGROUPS
-    \vGID\tNAME\tPGID
-    1\tPop\t0
-    2\tThe Eagles\t1
-	:
-    \fTRACKS
-    \vTID\tFILENAME\tSECS\tPGID
-    1\t/home/mark/music/Eagles/01-Hotel_California.ogg\t2.16\t1\t2
-	:
-    \fBOOKMARKS
-    \vTID
-    381
-	:
-    \fHISTORY
-    \vTID
-    452
-	:
-    \fCURRENT
-    \vTID # (just one)
-    87
-
-Top-level has a “group” ID of 0; group IDs (`gid`) range from 1 to 9998;
-track IDs (`tid`) start at 10,000. Every group and track has a parent
-group id (`pgid`), which if 0 means top-level.
-
-Groups and tracks are shown in file order (i.e., in tree order) which is
-user order. They are loaded and saved in tree order and the tree isn't
-sorted; the user can move groups and tracks up and down all they like.
-
-The `secs` is `-1` if unknown. But if all are known then we can report
-the total length of the group, and if all groups have totals, then the
-group's total, and if all the groups have totals, then the entire music
-box's total.
-
-No group may be called "Search Results" or have a `gid` of 9999 since
-this name and `gid` is used by MusicBox itself.
-
-The API and the GUI must dissallow group or track names to include any
-of `<>:"/\\|?*\t\f`.
-
 == Menus
 
     &File
@@ -81,7 +14,7 @@ of `<>:"/\\|?*\t\f`.
 	-------------
 	&Quit      ^Q
 	-------------
-	&1 _most recent musicbox_ # queue-order
+	&1 _most recent musicbox_ # queue-order history
 	    :
 	&9 _9th least recent musicbox_
 
@@ -157,15 +90,15 @@ Could use other Fn keys for common operations?
     -------------------------------------------------------------
     _main toolbar_
     -------------------------------------------------------------
-    _Treeview_
-    Track #1 ### tracks can be top-level tool
-    Group
-	Group ### groups can be nested to any depth
-	    Track #1
-	    Track #2
-		:
-	    Track #n
-    Track #2
+    _Treeview_                                       | current
+    Track #1 ### tracks can be top-level tool        | track
+    Group                                            | info
+	Group ### groups can be nested to any depth  | frame or
+	    Track #1                                 | HtmlView
+	    Track #2                                 |
+		:                                    |
+	    Track #n                                 |
+    Track #2                                         :
     Group
 	Track #1
 	Track #2
@@ -173,8 +106,6 @@ Could use other Fn keys for common operations?
 	Track #n
     Search Results ### this only appears if there's a successful search
 	Track #1
-    -------------------------------------------------------------
-    status line: currently playing track's artist
     -------------------------------------------------------------
     [<<] [@] [>] [>>] [*******   ][3'24"/5'9"] [********** ][95%]
     -------------------------------------------------------------

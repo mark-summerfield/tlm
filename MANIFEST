@@ -1,21 +1,34 @@
+# TODO add splitter & tree
+# TODO menu-ize
+# TODO integrate mb into musicbox
+
 src/main.rs
+src/config.rs
+src/application.rs
+src/actions.rs
+src/main_window.rs
+src/html_form.rs
+src/options_form.rs
+src/fixed.rs # VERSION
+src/util.rs
+
 Cargo.toml
 
+README.md
+data/help.html
 st.sh
 
-# TODO Phase #2 copy amp into musicbox
-# TODO Phase #3 menu-ize amp
-# TODO Phase #4 integrate mb into musicbox
+deploy.sh
+deploy.bat
 
-# Notes
-musicbox.adoc
+musicbox.adoc # notes
 
 # These are for prototyping and experimentation
 ../mb_test/src/mb/mod.rs # This is the rust port of mbr.py
-mbr.py
-mb.py
-m3u2mb.py
+py/mbr.py
+py/mb.py
+py/m3u2mb.py
 
-playlists-txt.mb
+playlists-all-txt.mb
 
 # vim: syn=yaml
