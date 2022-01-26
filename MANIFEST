@@ -1,12 +1,11 @@
-# TODO add splitter & tree
-# TODO menu-ize
+# TODO add menu
 # TODO integrate mb into musicbox
 
 src/main.rs
 src/config.rs
 src/application.rs
 src/actions.rs
-src/main_window.rs
+src/main_window.rs # TODO refactor
 src/html_form.rs
 src/options_form.rs
 src/fixed.rs # VERSION

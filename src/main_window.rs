@@ -3,7 +3,7 @@
 
 use super::CONFIG;
 use crate::fixed::{
-    Action, APPNAME, BUTTON_HEIGHT, ICON, LOAD_ICON, NEXT_ICON, PAD,
+    Action, APPNAME, BUTTON_WIDTH, ICON, LOAD_ICON, NEXT_ICON, PAD,
     PATH_SEP, PLAY_ICON, PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT,
     TOOLBUTTON_SIZE, VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
@@ -14,7 +14,7 @@ use fltk::{
     button::Button,
     enums::{Event, Font, FrameType, Key, Shortcut},
     frame::Frame,
-    group::{Flex, FlexType, Tile},
+    group::{Flex, FlexType},
     image::SvgImage,
     menu::{MenuButton, MenuFlag},
     misc::HelpView,
@@ -56,12 +56,11 @@ pub fn make(sender: Sender<Action>) -> Widgets {
         Flex::default().size_of_parent().with_type(FlexType::Column);
     vbox.set_margin(PAD);
     let (track_tree, info_view) = add_views();
-    let (volume_box, volume_slider, volume_label) = add_volume_row(width);
-    vbox.set_size(&volume_box, BUTTON_HEIGHT);
-    let (time_box, time_slider, time_label) =
-        add_slider_row(width, TIME_ICON, "0″/0″");
-    vbox.set_size(&time_box, BUTTON_HEIGHT);
     let (
+        time_slider,
+        time_label,
+        volume_slider,
+        volume_label,
         prev_button,
         replay_button,
         play_pause_button,
@@ -103,27 +102,29 @@ fn add_views() -> (Tree, HelpView) {
 fn add_toolbar(
     sender: Sender<Action>,
     width: i32,
-) -> (Button, Button, Button, Button, Flex) {
-    let mut button_box = Flex::default()
+) -> (
+    HorFillSlider,
+    Frame,
+    HorFillSlider,
+    Frame,
+    Button,
+    Button,
+    Button,
+    Button,
+    Flex,
+) {
+    let mut row = Flex::default()
         .with_size(width, TOOLBAR_HEIGHT)
         .with_type(FlexType::Row);
-    button_box.set_frame(FrameType::UpBox);
-    button_box.set_margin(PAD);
-    add_toolbutton(
-        sender,
-        Shortcut::from_char('o'),
-        "Open a track ready to play • o",
-        Action::Load,
-        LOAD_ICON,
-        &mut button_box,
-    );
+    row.set_frame(FrameType::UpBox);
+    row.set_margin(PAD);
     let prev_button = add_toolbutton(
         sender,
         Shortcut::from_key(Key::F4),
         "Previous track • F4",
         Action::Previous,
         PREV_ICON,
-        &mut button_box,
+        &mut row,
     );
     let replay_button = add_toolbutton(
         sender,
@@ -131,7 +132,7 @@ fn add_toolbar(
         "Replay the current track • r or F5",
         Action::Replay,
         REPLAY_ICON,
-        &mut button_box,
+        &mut row,
     );
     let play_pause_button = add_toolbutton(
         sender,
@@ -139,7 +140,7 @@ fn add_toolbar(
         "Play or Pause the current track • p or Space",
         Action::PlayOrPause,
         PLAY_ICON,
-        &mut button_box,
+        &mut row,
     );
     let next_button = add_toolbutton(
         sender,
@@ -147,11 +148,29 @@ fn add_toolbar(
         "Next track • F6",
         Action::Next,
         NEXT_ICON,
-        &mut button_box,
+        &mut row,
     );
-    Frame::default().with_size(PAD, PAD);
-    button_box.end();
-    (prev_button, replay_button, play_pause_button, next_button, button_box)
+    // TODO refactor into add_sliders(), pass &mut row
+    let (time_icon_label, time_slider, time_label) =
+        add_slider_row(TIME_ICON, "0″/0″");
+    let (volume_icon_label, volume_slider, volume_label) = add_volume_row();
+    row.set_size(&time_icon_label, TOOLBUTTON_SIZE + PAD + 8);
+    row.set_size(&time_label, 70);
+    row.set_size(&volume_label, 50);
+    row.set_size(&volume_icon_label, TOOLBUTTON_SIZE + PAD + 8);
+    // END OF REFACTOR
+    row.end();
+    (
+        time_slider,
+        time_label,
+        volume_slider,
+        volume_label,
+        prev_button,
+        replay_button,
+        play_pause_button,
+        next_button,
+        row,
+    )
 }
 
 fn add_toolbutton(
@@ -177,144 +196,18 @@ fn add_toolbutton(
     button
 }
 
-fn add_menubutton(
-    sender: Sender<Action>,
-    action: Action,
-    codepoint: i32,
-    tooltip: &str,
-    icon: &str,
-    button_box: &mut Flex,
-) -> MenuButton {
-    let width = TOOLBUTTON_SIZE + PAD + 8;
-    let mut button = MenuButton::default();
-    button.set_size(width, TOOLBUTTON_SIZE + PAD);
-    button.visible_focus(false);
-    button.set_label_size(0);
-    button.set_tooltip(tooltip);
-    let mut icon = SvgImage::from_data(icon).unwrap();
-    icon.scale(TOOLBUTTON_SIZE, TOOLBUTTON_SIZE, true, true);
-    button.set_image(Some(icon));
-    button.handle(move |_, event| {
-        if event == Event::KeyUp && app::event_key().bits() == codepoint {
-            sender.send(action);
-            return true;
-        }
-        false
-    });
-    button_box.set_size(&button, width);
-    button
-}
-
-pub(crate) fn populate_history_menu_button(
-    menu_button: &mut MenuButton,
-    sender: Sender<Action>,
-) {
-    dbg!("populate_history_menu_button");
-    // TODO
-    /*
-    menu_button.clear();
-    let config = CONFIG.get().read().unwrap();
-    let size = config.history_size;
-    let base = if (10..=26).contains(&size) { 9 } else { 0 };
-    for (i, track) in config.history.iter().enumerate() {
-        if i == size {
-            break;
-        }
-        menu_button.add_emit(
-            &track_menu_option(MENU_CHARS[base + i], track),
-            Shortcut::None,
-            MenuFlag::Normal,
-            sender,
-            Action::LoadHistoryTrack,
-        );
-    }
-    */
-}
-
-pub(crate) fn populate_bookmarks_menu_button(
-    menu_button: &mut MenuButton,
-    sender: Sender<Action>,
-) {
-    dbg!("populate_bookmarks_menu_button");
-    // TODO
-    /*
-    menu_button.clear();
-    let config = CONFIG.get().read().unwrap();
-    let base =
-        if (10..=26).contains(&config.bookmarks.len()) { 9 } else { 0 };
-    for (i, track) in config.bookmarks.iter().enumerate() {
-        menu_button.add_emit(
-            &track_menu_option(MENU_CHARS[base + i], track),
-            Shortcut::None,
-            MenuFlag::Normal,
-            sender,
-            Action::LoadBookmarkedTrack,
-        );
-    }
-    */
-}
-
-fn track_menu_option(c: char, track: &Path) -> String {
-    format!(
-        "&{c} {}",
-        track
-            .to_string_lossy()
-            .replace(&['\\', '/'][..], &PATH_SEP.to_string())
-    )
-}
-
-fn initialize_menu_button(
-    menu_button: &mut MenuButton,
-    sender: Sender<Action>,
-) {
-    menu_button.set_label("&Menu");
-    menu_button.add_emit(
-        "&Options…",
-        Shortcut::None,
-        MenuFlag::MenuDivider,
-        sender,
-        Action::Options,
-    );
-    menu_button.add_emit(
-        "&Help • F1",
-        Shortcut::None, // handled elsewhere
-        MenuFlag::Normal,
-        sender,
-        Action::Help,
-    );
-    menu_button.add_emit(
-        "&About",
-        Shortcut::None,
-        MenuFlag::MenuDivider,
-        sender,
-        Action::About,
-    );
-    menu_button.add_emit(
-        "&Quit • Esc",
-        Shortcut::None, // handled elsewhere
-        MenuFlag::Normal,
-        sender,
-        Action::Quit,
-    );
-}
-
-fn add_volume_row(width: i32) -> (Flex, HorFillSlider, Frame) {
-    let (volume_box, mut volume_slider, volume_label) =
-        add_slider_row(width, VOLUME_ICON, "0%");
+fn add_volume_row() -> (Frame, HorFillSlider, Frame) {
+    let (icon_label, mut volume_slider, volume_label) =
+        add_slider_row(VOLUME_ICON, "0%");
     volume_slider.set_range(0.0, 1.0);
     volume_slider.set_step(1.0, 10); // 1/10
-    (volume_box, volume_slider, volume_label)
+    (icon_label, volume_slider, volume_label)
 }
 
 fn add_slider_row(
-    width: i32,
     icon: &str,
     label: &str,
-) -> (Flex, HorFillSlider, Frame) {
-    let mut row = Flex::default()
-        .with_size(width, TOOLBAR_HEIGHT)
-        .with_type(FlexType::Row);
-    row.set_margin(PAD / 2);
+) -> (Frame, HorFillSlider, Frame) {
     let icon_height = TOOLBUTTON_SIZE + PAD;
     let icon_width = icon_height + 8;
     let mut icon_label = Frame::default();
@@ -327,10 +220,7 @@ fn add_slider_row(
     let slider = HorFillSlider::default();
     let mut label = Frame::default().with_label(label);
     label.set_frame(FrameType::EngravedFrame);
-    row.set_size(&icon_label, icon_width);
-    row.set_size(&label, icon_width * 3);
-    row.end();
-    (row, slider, label)
+    (icon_label, slider, label)
 }
 
 fn get_config_window_rect() -> (i32, i32, i32, i32) {
