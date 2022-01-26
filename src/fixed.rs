@@ -57,7 +57,7 @@ pub const PATH_SEP: char = '→';
 pub enum Action {
     About,
     Help,
-    Load,
+    OpenMusicBox,
     Next,
     OnStartup,
     Options,

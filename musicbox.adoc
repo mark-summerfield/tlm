@@ -6,7 +6,7 @@
 	&New...    ^N # (file new) new musicbox .mb
 	&Open...   ^O # (file open)
 	&Save...   ^S
-	Save &As
+	Save &As...
 	-------------
 	&Find...   ^F # on success adds/replaces Search Results/Found in tree
 	-------------

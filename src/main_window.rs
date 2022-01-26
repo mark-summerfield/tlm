@@ -3,8 +3,8 @@
 
 use super::CONFIG;
 use crate::fixed::{
-    Action, APPNAME, BUTTON_WIDTH, ICON, LOAD_ICON, NEXT_ICON, PAD,
-    PATH_SEP, PLAY_ICON, PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT,
+    Action, APPNAME, BUTTON_HEIGHT, ICON, LOAD_ICON, NEXT_ICON, PAD,
+    PLAY_ICON, PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT,
     TOOLBUTTON_SIZE, VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
 use crate::util;
@@ -16,7 +16,7 @@ use fltk::{
     frame::Frame,
     group::{Flex, FlexType},
     image::SvgImage,
-    menu::{MenuButton, MenuFlag},
+    menu::{MenuButton, MenuFlag, SysMenuBar},
     misc::HelpView,
     prelude::*,
     tree::Tree,
@@ -27,6 +27,7 @@ use std::path::Path;
 
 pub struct Widgets {
     pub main_window: Window,
+    pub menubar: SysMenuBar,
     pub prev_button: Button,
     pub replay_button: Button,
     pub play_pause_button: Button,
@@ -55,6 +56,8 @@ pub fn make(sender: Sender<Action>) -> Widgets {
     let mut vbox =
         Flex::default().size_of_parent().with_type(FlexType::Column);
     vbox.set_margin(PAD);
+    let menubar = add_menubar(sender, width);
+    let toolbar = add_toolbar(sender, width);
     let (track_tree, info_view) = add_views();
     let (
         time_slider,
@@ -65,13 +68,16 @@ pub fn make(sender: Sender<Action>) -> Widgets {
         replay_button,
         play_pause_button,
         next_button,
-        toolbar,
-    ) = add_toolbar(sender, width);
+        player_toolbar,
+    ) = add_player_toolbar(sender, width);
+    vbox.set_size(&menubar, BUTTON_HEIGHT);
     vbox.set_size(&toolbar, TOOLBAR_HEIGHT);
+    vbox.set_size(&player_toolbar, TOOLBAR_HEIGHT);
     vbox.end();
     main_window.end();
     Widgets {
         main_window,
+        menubar,
         prev_button,
         replay_button,
         play_pause_button,
@@ -85,13 +91,37 @@ pub fn make(sender: Sender<Action>) -> Widgets {
     }
 }
 
+fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
+    let mut menubar = SysMenuBar::default().with_size(width, BUTTON_HEIGHT);
+    menubar.set_frame(FrameType::UpBox);
+    // TODO New etc.
+    menubar.add_emit(
+        "&File/&Open...\t",
+        Shortcut::Ctrl | 'o',
+        MenuFlag::Normal,
+        sender,
+        Action::OpenMusicBox,
+    );
+    // TODO etc.
+    // prev flag should be MenuDivider
+    menubar.add_emit(
+        "&File/&Quit...\t",
+        Shortcut::Ctrl | 'q',
+        MenuFlag::Normal,
+        sender,
+        Action::Quit,
+    );
+    menubar
+}
+
 fn add_views() -> (Tree, HelpView) {
     let mut row = Flex::default().with_type(FlexType::Row);
     row.set_margin(PAD / 2);
     let track_tree = Tree::default();
     let mut info_view = HelpView::default().with_size(200, 200);
-    info_view
-        .set_value("<font color=green>Click Open to load a track…</font>");
+    info_view.set_value(
+        "<font color=green>Click File→Open to open a music box…</font>",
+    );
     info_view.set_text_font(Font::Helvetica);
     info_view.set_text_size((info_view.text_size() as f64 * 1.3) as i32);
     row.set_size(&info_view, 200);
@@ -99,7 +129,7 @@ fn add_views() -> (Tree, HelpView) {
     (track_tree, info_view)
 }
 
-fn add_toolbar(
+fn add_player_toolbar(
     sender: Sender<Action>,
     width: i32,
 ) -> (
@@ -116,49 +146,37 @@ fn add_toolbar(
     let mut row = Flex::default()
         .with_size(width, TOOLBAR_HEIGHT)
         .with_type(FlexType::Row);
-    row.set_frame(FrameType::UpBox);
     row.set_margin(PAD);
     let prev_button = add_toolbutton(
         sender,
-        Shortcut::from_key(Key::F4),
-        "Previous track • F4",
+        "Previous track",
         Action::Previous,
         PREV_ICON,
         &mut row,
     );
     let replay_button = add_toolbutton(
         sender,
-        Shortcut::from_char('r'),
-        "Replay the current track • r or F5",
+        "Replay the current track",
         Action::Replay,
         REPLAY_ICON,
         &mut row,
     );
     let play_pause_button = add_toolbutton(
         sender,
-        Shortcut::from_char('p'),
-        "Play or Pause the current track • p or Space",
+        "Play or Pause the current track",
         Action::PlayOrPause,
         PLAY_ICON,
         &mut row,
     );
     let next_button = add_toolbutton(
         sender,
-        Shortcut::from_key(Key::F6),
-        "Next track • F6",
+        "Next track",
         Action::Next,
         NEXT_ICON,
         &mut row,
     );
-    // TODO refactor into add_sliders(), pass &mut row
-    let (time_icon_label, time_slider, time_label) =
-        add_slider_row(TIME_ICON, "0″/0″");
-    let (volume_icon_label, volume_slider, volume_label) = add_volume_row();
-    row.set_size(&time_icon_label, TOOLBUTTON_SIZE + PAD + 8);
-    row.set_size(&time_label, 70);
-    row.set_size(&volume_label, 50);
-    row.set_size(&volume_icon_label, TOOLBUTTON_SIZE + PAD + 8);
-    // END OF REFACTOR
+    let (time_slider, time_label, volume_slider, volume_label) =
+        add_sliders(&mut row);
     row.end();
     (
         time_slider,
@@ -175,25 +193,36 @@ fn add_toolbar(
 
 fn add_toolbutton(
     sender: Sender<Action>,
-    shortcut: Shortcut,
     tooltip: &str,
     action: Action,
     icon: &str,
-    button_box: &mut Flex,
+    row: &mut Flex,
 ) -> Button {
     let width = TOOLBUTTON_SIZE + PAD + 8;
     let mut button = Button::default();
     button.set_size(width, TOOLBUTTON_SIZE + PAD);
     button.visible_focus(false);
     button.set_label_size(0);
-    button.set_shortcut(shortcut);
     button.set_tooltip(tooltip);
     let mut icon = SvgImage::from_data(icon).unwrap();
     icon.scale(TOOLBUTTON_SIZE, TOOLBUTTON_SIZE, true, true);
     button.set_image(Some(icon));
     button.emit(sender, action);
-    button_box.set_size(&button, width);
+    row.set_size(&button, width);
     button
+}
+
+fn add_sliders(
+    row: &mut Flex,
+) -> (HorFillSlider, Frame, HorFillSlider, Frame) {
+    let (time_icon_label, time_slider, time_label) =
+        add_slider_row(TIME_ICON, "0″/0″");
+    let (volume_icon_label, volume_slider, volume_label) = add_volume_row();
+    row.set_size(&time_icon_label, TOOLBUTTON_SIZE + PAD + 8);
+    row.set_size(&time_label, 70);
+    row.set_size(&volume_label, 50);
+    row.set_size(&volume_icon_label, TOOLBUTTON_SIZE + PAD + 8);
+    (time_slider, time_label, volume_slider, volume_label)
 }
 
 fn add_volume_row() -> (Frame, HorFillSlider, Frame) {
@@ -223,6 +252,22 @@ fn add_slider_row(
     (icon_label, slider, label)
 }
 
+fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
+    let mut row = Flex::default()
+        .with_size(width, TOOLBAR_HEIGHT)
+        .with_type(FlexType::Row);
+    row.set_margin(PAD);
+    add_toolbutton(
+        sender,
+        "Open a MusicBox file",
+        Action::OpenMusicBox,
+        LOAD_ICON,
+        &mut row,
+    );
+    row.end();
+    row
+}
+
 fn get_config_window_rect() -> (i32, i32, i32, i32) {
     let mut config = CONFIG.get().write().unwrap();
     let x = if config.window_x >= 0 {
@@ -250,30 +295,15 @@ pub fn add_event_handlers(
 ) {
     // Both of these are really needed!
     main_window.set_callback(move |_| {
-        // TODO drop Escape once I have the menus working (then: Ctrl+Q)
-        if app::event() == Event::Close || app::event_key() == Key::Escape {
+        if app::event() == Event::Close {
             sender.send(Action::Quit);
         }
     });
     main_window.handle(move |_, event| {
         if event == Event::KeyUp {
             let key = app::event_key();
-            if key.bits() == 0x2B || key.bits() == 0x3D {
-                sender.send(Action::VolumeUp); // + or =
-                return true;
-            }
-            if key.bits() == 0x2D {
-                sender.send(Action::VolumeDown); // -
-                return true;
-            }
-            // TODO drop F1 and F5 is these can be done via the menus
-            if app::event_key() == Key::Help || app::event_key() == Key::F1
-            {
+            if app::event_key() == Key::Help {
                 sender.send(Action::Help);
-                return true;
-            }
-            if app::event_key() == Key::F5 {
-                sender.send(Action::Replay);
                 return true;
             }
         }

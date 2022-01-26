@@ -1,11 +1,11 @@
-# TODO add menu
+# TODO complete menus
 # TODO integrate mb into musicbox
 
 src/main.rs
 src/config.rs
 src/application.rs
 src/actions.rs
-src/main_window.rs # TODO refactor
+src/main_window.rs
 src/html_form.rs
 src/options_form.rs
 src/fixed.rs # VERSION

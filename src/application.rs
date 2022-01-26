@@ -9,6 +9,7 @@ use fltk::{
     app::{channel, App, Receiver, Scheme, Sender},
     button::Button,
     frame::Frame,
+    menu::SysMenuBar,
     misc::HelpView,
     prelude::*,
     tree::Tree,
@@ -20,6 +21,7 @@ use soloud::{audio::Wav, prelude::*, Soloud};
 pub struct Application {
     pub(crate) app: App,
     pub(crate) main_window: Window,
+    pub(crate) menubar: SysMenuBar,
     pub(crate) prev_button: Button,
     pub(crate) replay_button: Button,
     pub(crate) play_pause_button: Button,
@@ -56,6 +58,7 @@ impl Application {
         let mut app = Self {
             app,
             main_window: widgets.main_window,
+            menubar: widgets.menubar,
             prev_button: widgets.prev_button,
             replay_button: widgets.replay_button,
             play_pause_button: widgets.play_pause_button,
@@ -102,7 +105,7 @@ impl Application {
             if let Some(action) = self.receiver.recv() {
                 match action {
                     Action::OnStartup => self.on_startup(),
-                    Action::Load => self.on_open(),
+                    Action::OpenMusicBox => self.on_open(),
                     Action::Previous => self.on_previous(),
                     Action::Replay => self.on_replay(),
                     Action::PlayOrPause => self.on_play_or_pause(),
