@@ -1,11 +1,11 @@
-= MLM
+= TLM
 
-“Music List Manager” — an application to manage playlists and play tracks.
+“Track List Manager” — an application to manage playlists and play tracks.
 
 == Menus
 
     &File
-	&New...    ^N # (file new) new database .mlm
+	&New...    ^N # (file new) new database .tlm
 	&Open...   ^O # (file open)
 	&Save...   ^S
 	Save &As...
@@ -14,9 +14,9 @@
 	-------------
 	&Quit      ^Q
 	-------------
-	&1 _most recent mlm_ # queue-order history
+	&1 _most recent tlm_ # queue-order history
 	    :
-	&9 _9th least recent mlm_
+	&9 _9th least recent tlm_
 
     &Group
 	&New...	    # group (enter one line of text dialog)
@@ -86,7 +86,7 @@ Could use other Fn keys for common operations?
 == UI
 
     -------------------------------------------------------------
-    MLM — _db.mlm if any_                                     |X|
+    TLM — _db.tlm if any_                                     |X|
     -------------------------------------------------------------
     &File &Group &Track &Bookmarks &Help # main menu
     -------------------------------------------------------------

@@ -1,12 +1,12 @@
 [package]
-name = "mlm"
+name = "tlm"
 version = "0.1.0"
 edition = "2021"
 publish = false # TODO
 authors = [ "Mark Summerfield <mark@qtrac.eu>",]
 include = [ "Cargo.toml", "src/**/*.rs", "images/*", "data/*",]
 description = "An application to manage playlists and play tracks."
-homepage = "https://github.com/mark-summerfield/mlm" # TODO check
+homepage = "https://github.com/mark-summerfield/tlm" # TODO check
 readme = "README.md"
 keywords = [ "fltk", "audio", "music", "player", "gui",]
 categories = [ "multimedia::audio",]

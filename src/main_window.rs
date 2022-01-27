@@ -98,7 +98,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Shortcut::Ctrl | 'o',
         MenuFlag::Normal,
         sender,
-        Action::FileOpenMLM,
+        Action::FileOpenTLM,
     );
     // TODO etc.
     // prev flag should be MenuDivider
@@ -119,7 +119,7 @@ fn add_views() -> (Tree, HelpView) {
     info_view.set_value(
         "<font color=green>Click <b>Group→New</b> to add a folder of tracks
          or <b>Track→New</b> to add an individual track 
-         or <b>File→Open</b> to open an existing MLD file…</font>",
+         or <b>File→Open</b> to open an existing TLM file…</font>",
     );
     info_view.set_text_font(Font::Helvetica);
     info_view.set_text_size((info_view.text_size() as f64 * 1.3) as i32);
@@ -256,8 +256,8 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
         .with_type(FlexType::Row);
     add_toolbutton(
         sender,
-        "Open a MLM file",
-        Action::FileOpenMLM,
+        "Open a TLM file",
+        Action::FileOpenTLM,
         LOAD_ICON,
         &mut row,
     );

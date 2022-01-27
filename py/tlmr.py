@@ -9,7 +9,7 @@ import os
 import pathlib
 import sys
 
-MAGIC = '\fMLM\t'
+MAGIC = '\fTLM\t'
 VERSION = '100'
 INDENT = '\v'
 
@@ -18,7 +18,7 @@ class Error(Exception):
     pass
 
 
-class Mlm:
+class Tlm:
 
     def __init__(self, filename=None):
         self.clear()
@@ -70,7 +70,7 @@ class Mlm:
                     state = _State.IN_CURRENT
                 elif state is _State.WANT_MAGIC:
                     if not line.startswith(MAGIC):
-                        raise Error(f'error:{lino}: not a .mlm file')
+                        raise Error(f'error:{lino}: not a .tlm file')
                     # NOTE We ignore the version for now
                     state = _State.WANT_TRACK_HEADER
                 elif state is _State.WANT_TRACK_HEADER:
@@ -92,7 +92,7 @@ class Mlm:
                 elif state is _State.END:
                     raise Error(f'error:{lino}: spurious data at the end')
                 else:
-                    raise Error(f'error:{lino}: invalid .mlm file')
+                    raise Error(f'error:{lino}: invalid .tlm file')
 
 
     def _read_group(self, treepath, lino, line):
@@ -125,7 +125,7 @@ class Mlm:
         done = set()
         opener = gzip.open if compress else open
         with opener(self._filename, 'wt', encoding='utf-8') as file:
-            file.write('\fMLM\t100\n\fTRACKS\n')
+            file.write('\fTLM\t100\n\fTRACKS\n')
             for treedata in self.tree:
                 for i, path in enumerate(treedata.treepath.split('/'), 1):
                     path = f'{i * INDENT}{path}\n'
@@ -154,20 +154,20 @@ TreeData = collections.namedtuple('TreeData', 'treepath tid')
 
 if __name__ == '__main__':
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
-        raise SystemExit('usage: mlmr.py <-t|--tree> infile.mlm | '
-                         'infile.mlm outfile.mlm')
+        raise SystemExit('usage: tlmr.py <-t|--tree> infile.tlm | '
+                         'infile.tlm outfile.tlm')
     filename = sys.argv[1]
     if filename in {'-t', '--tree'}:
-        mlm = Mlm(sys.argv[2])
-        for treedata in mlm.tree:
+        tlm = Tlm(sys.argv[2])
+        for treedata in tlm.tree:
             print(treedata)
-        for (tid, track) in mlm.track_for_tid.items():
+        for (tid, track) in tlm.track_for_tid.items():
             print(tid, track)
     else:
         infile = pathlib.Path(sys.argv[1]).resolve()
         outfile = pathlib.Path(sys.argv[2]).resolve()
         if infile == outfile:
             raise SystemExit('infile and outfile must be different')
-        mlm = Mlm(infile)
-        mlm.save(filename=outfile)
+        tlm = Tlm(infile)
+        tlm.save(filename=outfile)
         print('saved', outfile)

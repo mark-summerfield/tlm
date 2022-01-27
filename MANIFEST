@@ -1,5 +1,5 @@
 # TODO complete menus
-# TODO integrate mlm into MLM
+# TODO integrate tlm into TLM
 
 src/main.rs
 src/config.rs
@@ -20,12 +20,12 @@ st.sh
 deploy.sh
 deploy.bat
 
-mlm.adoc # notes
+tlm.adoc # notes
 
 # These are for prototyping and experimentation
-../test_mlm/src/mlm/mod.rs # This is the rust port of mlmr.py
-py/mlmr.py
-py/mlm.py
-py/m3u2mlm.py
+../test_tlm/src/tlm/mod.rs # This is the rust port of tlmr.py
+py/tlmr.py
+py/tlm.py
+py/m3u2tlm.py
 
 # vim: syn=yaml

@@ -11,7 +11,7 @@ import sys
 
 import mutagen
 
-MAGIC = '\fMLM\t'
+MAGIC = '\fTLM\t'
 VERSION = '100'
 INDENT = '\v'
 
@@ -20,7 +20,7 @@ class Error(Exception):
     pass
 
 
-class Mlm:
+class Tlm:
 
     def __init__(self, filename=None):
         self.clear()
@@ -71,7 +71,7 @@ class Mlm:
                     state = _State.IN_CURRENT
                 elif state is _State.WANT_MAGIC:
                     if not line.startswith(MAGIC):
-                        raise Error(f'error:{lino}: not a .mlm file')
+                        raise Error(f'error:{lino}: not a .tlm file')
                     # NOTE We ignore the version for now
                     state = _State.WANT_TRACK_HEADER
                 elif state is _State.WANT_TRACK_HEADER:
@@ -94,7 +94,7 @@ class Mlm:
                 elif state is _State.END:
                     raise Error(f'error:{lino}: spurious data at the end')
                 else:
-                    raise Error(f'error:{lino}: invalid .mlm file')
+                    raise Error(f'error:{lino}: invalid .tlm file')
 
 
     def _read_group(self, stack, prev_indent, lino, line):
@@ -128,7 +128,7 @@ class Mlm:
             self._filename = filename
         opener = gzip.open if compress else open
         with opener(self._filename, 'wt', encoding='utf-8') as file:
-            file.write('\fMLM\t100\n\fTRACKS\n')
+            file.write('\fTLM\t100\n\fTRACKS\n')
             self._write_tree(file, self.tree)
             file.write('\fBOOKMARKS\n\fHISTORY\n\fCURRENT\n')
 
@@ -308,17 +308,17 @@ def print_tree(tree, indent=0):
 if __name__ == '__main__':
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
         raise SystemExit(
-            'usage: mlm.py <-t|--tree> infile.mlm | infile.mlm outfile.mlm')
+            'usage: tlm.py <-t|--tree> infile.tlm | infile.tlm outfile.tlm')
     filename = sys.argv[1]
     if filename in {'-t', '--tree'}:
-        mlm = Mlm(sys.argv[2])
-        for path in mlm.paths():
+        tlm = Tlm(sys.argv[2])
+        for path in tlm.paths():
             print(path)
     else:
         infile = pathlib.Path(sys.argv[1]).resolve()
         outfile = pathlib.Path(sys.argv[2]).resolve()
         if infile == outfile:
             raise SystemExit('infile and outfile must be different')
-        mlm = Mlm(infile)
-        mlm.save(filename=outfile)
+        tlm = Tlm(infile)
+        tlm.save(filename=outfile)
         print('saved', outfile)

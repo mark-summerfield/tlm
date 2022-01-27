@@ -1,2 +1,2 @@
 #!/bin/bash
-cp -f $HOME/app/rs/mlm/target/release/mlm $HOME/opt/bin/mlm
+cp -f $HOME/app/rs/tlm/target/release/tlm $HOME/opt/bin/tlm

@@ -7,10 +7,10 @@ use fltk::app;
 use soloud::Soloud;
 use std::env;
 
-pub static APPNAME: &str = "MLM";
+pub static APPNAME: &str = "TLM";
 pub static VERSION: &str = "1.0.0";
 pub static HELP_HTML: &str = include_str!("../data/help.html");
-pub const ICON: &str = include_str!("../images/mlm.svg");
+pub const ICON: &str = include_str!("../images/tlm.svg");
 pub const LOAD_ICON: &str = include_str!("../images/document-open.svg");
 pub const PREV_ICON: &str =
     include_str!("../images/media-seek-backward.svg");
@@ -56,7 +56,7 @@ pub const PATH_SEP: char = '→';
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {
     FileConfigure,
-    FileOpenMLM,
+    FileOpenTLM,
     FileQuit,
     HelpAbout,
     HelpHelp,
@@ -85,7 +85,7 @@ pub fn about_html(player: &Soloud) -> String {
 <p><center><font color=navy size=5>An application to manage playlists and play tracks.</font>
 </center></p>
 <p><center><font size=4>
-<a href=\"https://github.com/mark-summerfield/mlm\">https://github.com/mark-summerfield/mlm</a>
+<a href=\"https://github.com/mark-summerfield/tlm\">https://github.com/mark-summerfield/tlm</a>
 </font></center></p>
 <p><center>
 <font size=4 color=green>

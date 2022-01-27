@@ -105,7 +105,7 @@ impl Application {
             if let Some(action) = self.receiver.recv() {
                 match action {
                     Action::FileConfigure => self.on_file_configure(),
-                    Action::FileOpenMLM => self.on_file_open(),
+                    Action::FileOpenTLM => self.on_file_open(),
                     Action::FileQuit => self.on_file_quit(),
                     Action::HelpAbout => self.on_help_about(),
                     Action::HelpHelp => self.on_help_help(),

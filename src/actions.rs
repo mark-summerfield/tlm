@@ -26,10 +26,10 @@ impl Application {
 
     pub(crate) fn on_file_open(&mut self) {
         let mut form = FileDialog::new(FileDialogType::BrowseFile);
-        form.set_title(&format!("Open MLM File — {APPNAME}"));
+        form.set_title(&format!("Open TLM File — {APPNAME}"));
         // TODO get_data_dir
         // let _ = form.set_directory(&util::get_track_dir()); // Ignore error
-        form.set_filter("MLM Files\t*.mlm");
+        form.set_filter("TLM Files\t*.tlm");
         form.show();
         let filename = form.filename();
         if filename.exists() {

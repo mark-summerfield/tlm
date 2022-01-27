@@ -1,12 +1,12 @@
-# MLM
+# TLM
 
-“Music List Manager” — an application to manage playlists and play tracks.
+“Track List Manager” — an application to manage playlists and play tracks.
 
 Tested on Linux and Windows.
 
 ![Screenshot](screenshot.png)
 
-`mlm.exe` *is a precompiled Windows binary that should run on any 64-bit
+`tlm.exe` *is a precompiled Windows binary that should run on any 64-bit
 version of Windows* (MB; MD5 )
 
 ## Dependencies
