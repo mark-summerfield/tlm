@@ -105,7 +105,7 @@ impl Application {
             if let Some(action) = self.receiver.recv() {
                 match action {
                     Action::OnStartup => self.on_startup(),
-                    Action::OpenMusicBox => self.on_open(),
+                    Action::OpenMLM => self.on_open(),
                     Action::Previous => self.on_previous(),
                     Action::Replay => self.on_replay(),
                     Action::PlayOrPause => self.on_play_or_pause(),

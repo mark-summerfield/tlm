@@ -98,7 +98,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Shortcut::Ctrl | 'o',
         MenuFlag::Normal,
         sender,
-        Action::OpenMusicBox,
+        Action::OpenMLM,
     );
     // TODO etc.
     // prev flag should be MenuDivider
@@ -254,8 +254,8 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
         .with_type(FlexType::Row);
     add_toolbutton(
         sender,
-        "Open a MusicBox file",
-        Action::OpenMusicBox,
+        "Open a MLM file",
+        Action::OpenMLM,
         LOAD_ICON,
         &mut row,
     );

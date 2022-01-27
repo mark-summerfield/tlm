@@ -286,7 +286,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "musicbox"
+name = "mlm"
 version = "0.1.0"
 dependencies = [
  "anyhow",

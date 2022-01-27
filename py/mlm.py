@@ -11,7 +11,7 @@ import sys
 
 import mutagen
 
-MAGIC = '\fMB\t'
+MAGIC = '\fMLM\t'
 VERSION = '100'
 INDENT = '\v'
 
@@ -20,7 +20,7 @@ class Error(Exception):
     pass
 
 
-class Mb:
+class Mlm:
 
     def __init__(self, filename=None):
         self.clear()
@@ -71,7 +71,7 @@ class Mb:
                     state = _State.IN_CURRENT
                 elif state is _State.WANT_MAGIC:
                     if not line.startswith(MAGIC):
-                        raise Error(f'error:{lino}: not a .mb file')
+                        raise Error(f'error:{lino}: not a .mlm file')
                     # NOTE We ignore the version for now
                     state = _State.WANT_TRACK_HEADER
                 elif state is _State.WANT_TRACK_HEADER:
@@ -94,7 +94,7 @@ class Mb:
                 elif state is _State.END:
                     raise Error(f'error:{lino}: spurious data at the end')
                 else:
-                    raise Error(f'error:{lino}: invalid .mb file')
+                    raise Error(f'error:{lino}: invalid .mlm file')
 
 
     def _read_group(self, stack, prev_indent, lino, line):
@@ -128,7 +128,7 @@ class Mb:
             self._filename = filename
         opener = gzip.open if compress else open
         with opener(self._filename, 'wt', encoding='utf-8') as file:
-            file.write('\fMB\t100\n\fTRACKS\n')
+            file.write('\fMLM\t100\n\fTRACKS\n')
             self._write_tree(file, self.tree)
             file.write('\fBOOKMARKS\n\fHISTORY\n\fCURRENT\n')
 
@@ -308,17 +308,17 @@ def print_tree(tree, indent=0):
 if __name__ == '__main__':
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
         raise SystemExit(
-            'usage: mb.py <-t|--tree> infile.mb | infile.mb outfile.mb')
+            'usage: mlm.py <-t|--tree> infile.mlm | infile.mlm outfile.mlm')
     filename = sys.argv[1]
     if filename in {'-t', '--tree'}:
-        mb = Mb(sys.argv[2])
-        for path in mb.paths():
+        mlm = Mlm(sys.argv[2])
+        for path in mlm.paths():
             print(path)
     else:
         infile = pathlib.Path(sys.argv[1]).resolve()
         outfile = pathlib.Path(sys.argv[2]).resolve()
         if infile == outfile:
             raise SystemExit('infile and outfile must be different')
-        mb = Mb(infile)
-        mb.save(filename=outfile)
+        mlm = Mlm(infile)
+        mlm.save(filename=outfile)
         print('saved', outfile)

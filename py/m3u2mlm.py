@@ -44,10 +44,10 @@ class Track:
 
 def main():
     if len(sys.argv) == 1 or sys.argv[1] in {'-h', '--help', 'help'}:
-        raise SystemExit('usage: m3u2mb.py <dirname>')
+        raise SystemExit('usage: m3u2mlm.py <dirname>')
     folder = sys.argv[1]
     tree = read_folder(folder)
-    write_mb(tree, os.path.basename(folder) + '.mb')
+    write_mlm(tree, os.path.basename(folder) + '.mlm')
 
 
 def read_folder(folder):
@@ -84,12 +84,12 @@ def read_folder(folder):
     return tree
 
 
-def write_mb(tree, mb):
-    with gzip.open(mb, 'wt', encoding='utf-8') as file:
-        file.write('\fMB\t100\n\fTRACKS\n')
+def write_mlm(tree, mlm):
+    with gzip.open(mlm, 'wt', encoding='utf-8') as file:
+        file.write('\fMLM\t100\n\fTRACKS\n')
         write_tree(file, tree)
         file.write('\fBOOKMARKS\n\fHISTORY\n\fCURRENT\n')
-    print('wrote', mb)
+    print('wrote', mlm)
 
 
 def write_tree(file, tree, depth=1):

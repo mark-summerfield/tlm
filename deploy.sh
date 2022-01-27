@@ -1,2 +1,2 @@
 #!/bin/bash
-cp -f $HOME/app/rs/musicbox/target/release/musicbox $HOME/opt/bin/musicbox
+cp -f $HOME/app/rs/mlm/target/release/mlm $HOME/opt/bin/mlm

@@ -1,9 +1,11 @@
-= MusicBox
+= MLM
+
+“Music List Manager” — an application to manage playlists and play tracks.
 
 == Menus
 
     &File
-	&New...    ^N # (file new) new musicbox .mb
+	&New...    ^N # (file new) new database .mlm
 	&Open...   ^O # (file open)
 	&Save...   ^S
 	Save &As...
@@ -12,9 +14,9 @@
 	-------------
 	&Quit      ^Q
 	-------------
-	&1 _most recent musicbox_ # queue-order history
+	&1 _most recent mlm_ # queue-order history
 	    :
-	&9 _9th least recent musicbox_
+	&9 _9th least recent mlm_
 
     &Group
 	&New...	    # group (enter one line of text dialog)
@@ -84,7 +86,7 @@ Could use other Fn keys for common operations?
 == UI
 
     -------------------------------------------------------------
-    MusicBox — _musicbox.mb if any_                              X
+    MLM — _db.mlm if any_                                     |X|
     -------------------------------------------------------------
     &File &Group &Track &Bookmarks &Help # main menu
     -------------------------------------------------------------

@@ -1,5 +1,5 @@
 # TODO complete menus
-# TODO integrate mb into musicbox
+# TODO integrate mlm into MLM
 
 src/main.rs
 src/config.rs
@@ -20,14 +20,12 @@ st.sh
 deploy.sh
 deploy.bat
 
-musicbox.adoc # notes
+mlm.adoc # notes
 
 # These are for prototyping and experimentation
-../mb_test/src/mb/mod.rs # This is the rust port of mbr.py
-py/mbr.py
-py/mb.py
-py/m3u2mb.py
-
-playlists-all-txt.mb
+../test_mlm/src/mlm/mod.rs # This is the rust port of mlmr.py
+py/mlmr.py
+py/mlm.py
+py/m3u2mlm.py
 
 # vim: syn=yaml
