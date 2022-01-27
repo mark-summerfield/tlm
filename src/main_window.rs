@@ -117,7 +117,9 @@ fn add_views() -> (Tree, HelpView) {
     let track_tree = Tree::default();
     let mut info_view = HelpView::default().with_size(200, 200);
     info_view.set_value(
-        "<font color=green>Click File→Open to open a music box…</font>",
+        "<font color=green>Click <b>Group→New</b> to add a folder of tracks
+         or <b>Track→New</b> to add an individual track 
+         or <b>File→Open</b> to open an existing MLD file…</font>",
     );
     info_view.set_text_font(Font::Helvetica);
     info_view.set_text_size((info_view.text_size() as f64 * 1.3) as i32);
