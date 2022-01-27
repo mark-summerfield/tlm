@@ -92,23 +92,127 @@ pub fn make(sender: Sender<Action>) -> Widgets {
 fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
     let mut menubar = SysMenuBar::default().with_size(width, BUTTON_HEIGHT);
     menubar.set_frame(FrameType::NoBox);
-    // TODO New etc.
     menubar.add_emit(
-        "&File/&Open...\t",
+        "&File/&New…\t",
+        Shortcut::Ctrl | 'n',
+        MenuFlag::Normal,
+        sender,
+        Action::FileNew,
+    );
+    menubar.add_emit(
+        "&File/&Open…\t",
         Shortcut::Ctrl | 'o',
         MenuFlag::Normal,
         sender,
-        Action::FileOpenTLM,
+        Action::FileOpen,
     );
-    // TODO etc.
-    // prev flag should be MenuDivider
     menubar.add_emit(
-        "&File/&Quit...\t",
+        "&File/&Save\t",
+        Shortcut::Ctrl | 's',
+        MenuFlag::Normal,
+        sender,
+        Action::FileSave,
+    );
+    menubar.add_emit(
+        "&File/Save &As…\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::FileSaveAs,
+    );
+    menubar.add_emit(
+        "&File/&Configure…\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::FileConfigure,
+    );
+    menubar.add_emit(
+        "&File/&Quit\t",
         Shortcut::Ctrl | 'q',
         MenuFlag::Normal,
         sender,
         Action::FileQuit,
     );
+    // TODO etc.
+    menubar.add_emit(
+        "&List/&New…\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::ListNew,
+    );
+    menubar.add_emit(
+        "&List/&Rename\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::ListRename,
+    );
+    menubar.add_emit(
+        "&List/Move &Up\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::ListMoveUp,
+    );
+    menubar.add_emit(
+        "&List/Move &Down\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::ListMoveDown,
+    );
+    menubar.add_emit(
+        "&List/Move &To…\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::ListMoveTo,
+    );
+    menubar.add_emit(
+        "&List/&Merge…\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::ListMerge,
+    );
+    menubar.add_emit(
+        "&List/&Copy\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::ListCopy,
+    );
+    menubar.add_emit(
+        "&List/E&xport…\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::ListExport,
+    );
+    menubar.add_emit(
+        "&List/&Import…\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::ListImport,
+    );
+    menubar.add_emit(
+        "&List/D&elete…\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::ListDelete,
+    );
+    menubar.add_emit(
+        "&List/Unde&lete\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::ListUndelete,
+    );
+    // TODO ################
     menubar.add_emit(
         "&Help/&Help\t",
         Shortcut::from_key(Key::F1),
@@ -131,7 +235,7 @@ fn add_views() -> (Tree, HelpView) {
     let track_tree = Tree::default();
     let mut info_view = HelpView::default().with_size(200, 200);
     info_view.set_value(
-        "<font color=green>Click <b>Group→New</b> to add a folder of tracks
+        "<font color=green>Click <b>List→New</b> to add a folder of tracks
          or <b>Track→New</b> to add an individual track 
          or <b>File→Open</b> to open an existing TLM file…</font>",
     );
@@ -271,7 +375,7 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
     add_toolbutton(
         sender,
         "Open a TLM file",
-        Action::FileOpenTLM,
+        Action::FileOpen,
         LOAD_ICON,
         &mut row,
     );

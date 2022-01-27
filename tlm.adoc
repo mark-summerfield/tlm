@@ -18,41 +18,44 @@
 	    :
 	&9 _9th least recent tlm_
 
-    &Group
-	&New...	    # group (enter one line of text dialog)
+    &List
+	&New...	    # list (enter one line of text dialog)
 	&Rename...
 	-------------
 	Move &Up
 	Move &Down
-	Move to &Group # move to another group or to top-level
+	Move &To... # move to another list or to top-level
 	-------------
-	&Merge... # merge two groups
-	D&uplicate
+	&Merge... # merge two lists
+	&Copy
+	-------------
+	E&xport... # to .m3u, .pls, .xspf, etc.
+	&Import... # from .m3u, .pls, .xspf, etc. (like List→New)
 	-------------
 	D&elete...
-	&Undelete
+	Unde&lete
 
     &Track
 	&New...	# (file open)
 	-------------
 	&Play/&Pause      ^P
-	&Replay		  ^R
-	&Louder           ^+ | ^=
-	&Quieter	  ^-
-	&Back to Previous ^B
-	&Next		  ^N
+	&Replay		  ^R | F5
+	Pl&ay Previous	  F4
+	Play Nex&t	  F6
+	&Increase Volume  ^+ | ^=
+	Decrease &Volume   ^-
 	-------------
 	Move &Up
 	Move &Down
-	Move to &Group # move to another group or to top-level
-	&Copy to Group # add to another group (same track in multi groups is fine)
+	Mo&ve to List # move to another list or to top-level
+	&Copy to List # add to another list (same track in multi list is fine)
 	-------------
 	&Find...   ^F # on success adds/replaces Search Results/Found in tree
 	-------------
 	D&elete...
-	&Undelete
+	Unde&lete
 	-------------
-	&Clear History
+	Clear &History
 	&1 _most recently played_ # history
 	    :
 	&9 _9th least recent played_
@@ -72,41 +75,41 @@ Could use other Fn keys for common operations?
 
 == Major Dialogs
 
-=== New Group
+=== New List
 
-    &Name  [Group #1   ]
-    &Parent Group [   <Top-level> v] # the default; user can add on the fly
+    &Name  [List #1   ] # based of folder name but editable
+    &Parent List [   <Top-level> v] # the default; user can add on the fly
     (*) &Add tracks from folder
 	[&Folder] ___________________________
     ( ) &Import tracks from playlist
 	[&Playlist] _________________________ #.m3u, .pls, .xspf, etc.
-    ( ) Create &Empty group
+    ( ) Create &Empty List
 		[&OK] [&Cancel]
     
 == UI
 
     -------------------------------------------------------------
-    TLM — _db.tlm if any_                                     |X|
+    TLM — _playlists.tlm if any_                              |X|
     -------------------------------------------------------------
-    &File &Group &Track &Bookmarks &Help # main menu
+    &File &List &Track &Bookmarks &Help # main menu
     -------------------------------------------------------------
     _main toolbar_
     -------------------------------------------------------------
     _Treeview_                                       | current
     Track #1 ### tracks can be top-level tool        | track
-    Group                                            | info
-	Group ### groups can be nested to any depth  | frame or
-	    Track #1                                 | HtmlView
+    List                                             | info
+	List ### lists can be nested to any depth    | HtmlView 
+	    Track #1                                 |
 	    Track #2                                 |
 		:                                    |
 	    Track #n                                 |
     Track #2                                         :
-    Group
+    List
 	Track #1
 	Track #2
 	    :
 	Track #n
-    Search Results ### this only appears if there's a successful search
+    Search Results ### this list only appears if there's a successful search
 	Track #1
     -------------------------------------------------------------
     [<<] [@] [>] [>>] [*******   ][3'24"/5'9"] [********** ][95%]

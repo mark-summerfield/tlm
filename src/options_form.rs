@@ -194,4 +194,4 @@ fn add_event_handlers(
 }
 
 const WIDTH: i32 = 340;
-const HEIGHT: i32 = 120;
+const HEIGHT: i32 = 150;
