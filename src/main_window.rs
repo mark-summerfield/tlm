@@ -109,6 +109,20 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         sender,
         Action::FileQuit,
     );
+    menubar.add_emit(
+        "&Help/&Help\t",
+        Shortcut::from_key(Key::F1),
+        MenuFlag::Normal,
+        sender,
+        Action::HelpHelp,
+    );
+    menubar.add_emit(
+        "&Help/&About\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::HelpAbout,
+    );
     menubar
 }
 

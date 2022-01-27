@@ -164,7 +164,7 @@ impl Application {
             "About",
             &about_html(&self.player),
             true,
-            480,
+            540,
             300,
             false,
         );

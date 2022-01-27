@@ -80,25 +80,21 @@ pub fn about_html(player: &Soloud) -> String {
         format!("2022-{}", year - 2000)
     };
     format!(
-        "<p><center><font size=6 color=navy><b>{}</b> v{}</font>
-</center></p>
-<p><center><font color=navy size=5>An application to manage playlists and play tracks.</font>
-</center></p>
+        "<p><center><font size=6 color=navy><b>{APPNAME}</b> v{VERSION}
+</font></center></p>
+<p><center><font color=navy size=5>An application to manage playlists and play tracks.</font></center></p>
 <p><center><font size=4>
 <a href=\"https://github.com/mark-summerfield/tlm\">https://github.com/mark-summerfield/tlm</a>
 </font></center></p>
 <p><center>
 <font size=4 color=green>
-Copyright © {} Mark Summerfield.<br>
+Copyright © {year} Mark Summerfield.<br>
 All rights reserved.<br>
 License: GPLv3.</font>
 </center></p>
 <p><center><font size=4 color=#555>
 Rust {} • fltk-rs {} • FLTK {}<br>Soloud {}/{} • {}/{}
 </font></center></p>",
-        APPNAME,
-        VERSION,
-        year,
         rustc_version_runtime::version(),
         app::crate_version(),
         app::version_str(),
