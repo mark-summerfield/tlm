@@ -55,20 +55,20 @@ pub const PATH_SEP: char = '→';
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {
-    About,
-    Help,
-    OpenMLM,
-    Next,
+    FileConfigure,
+    FileOpenMLM,
+    FileQuit,
+    HelpAbout,
+    HelpHelp,
     OnStartup,
-    Options,
-    PlayOrPause,
-    Previous,
-    Quit,
-    Replay,
     Tick,
     TimeUpdate,
-    VolumeDown,
-    VolumeUp,
+    TrackLouder,
+    TrackNext,
+    TrackPlayOrPause,
+    TrackPrevious,
+    TrackQuieter,
+    TrackReplay,
     VolumeUpdate,
 }
 
@@ -108,8 +108,3 @@ Rust {} • fltk-rs {} • FLTK {}<br>Soloud {}/{} • {}/{}
         env::consts::ARCH
     )
 }
-
-pub static LOAD_ERROR: &str = "
-<font color=red><b>Error</b><br>Failed to open</font>
-<font color=magenta>\"FILE\".</font>
-</body>";

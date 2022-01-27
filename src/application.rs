@@ -104,21 +104,23 @@ impl Application {
         while self.app.wait() {
             if let Some(action) = self.receiver.recv() {
                 match action {
+                    Action::FileConfigure => self.on_file_configure(),
+                    Action::FileOpenMLM => self.on_file_open(),
+                    Action::FileQuit => self.on_file_quit(),
+                    Action::HelpAbout => self.on_help_about(),
+                    Action::HelpHelp => self.on_help_help(),
                     Action::OnStartup => self.on_startup(),
-                    Action::OpenMLM => self.on_open(),
-                    Action::Previous => self.on_previous(),
-                    Action::Replay => self.on_replay(),
-                    Action::PlayOrPause => self.on_play_or_pause(),
                     Action::Tick => self.on_tick(),
-                    Action::Next => self.on_next(),
-                    Action::VolumeDown => self.on_volume_down(),
-                    Action::VolumeUp => self.on_volume_up(),
-                    Action::VolumeUpdate => self.on_volume_update(),
                     Action::TimeUpdate => self.on_time_update(),
-                    Action::Options => self.on_options(),
-                    Action::About => self.on_about(),
-                    Action::Help => self.on_help(),
-                    Action::Quit => self.on_quit(),
+                    Action::TrackLouder => self.on_volume_up(),
+                    Action::TrackNext => self.on_track_next(),
+                    Action::TrackPlayOrPause => {
+                        self.on_track_play_or_pause()
+                    }
+                    Action::TrackPrevious => self.on_track_previous(),
+                    Action::TrackQuieter => self.on_volume_down(),
+                    Action::TrackReplay => self.on_track_replay(),
+                    Action::VolumeUpdate => self.on_volume_update(),
                 }
             }
         }

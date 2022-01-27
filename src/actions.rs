@@ -24,21 +24,21 @@ impl Application {
         self.load_track();
     }
 
-    pub(crate) fn on_open(&mut self) {
+    pub(crate) fn on_file_open(&mut self) {
         let mut form = FileDialog::new(FileDialogType::BrowseFile);
-        form.set_title(&format!("Choose MLM File — {APPNAME}"));
+        form.set_title(&format!("Open MLM File — {APPNAME}"));
         // TODO get_data_dir
         // let _ = form.set_directory(&util::get_track_dir()); // Ignore error
         form.set_filter("MLM Files\t*.mlm");
         form.show();
         let filename = form.filename();
         if filename.exists() {
-            dbg!("on_open", filename);
+            dbg!("on_file_open", filename);
         }
     }
 
-    pub(crate) fn on_previous(&mut self) {
-        dbg!("on_previous");
+    pub(crate) fn on_track_previous(&mut self) {
+        dbg!("on_track_previous");
         // TODO
         /*
         let track = {
@@ -53,8 +53,8 @@ impl Application {
         */
     }
 
-    pub(crate) fn on_replay(&mut self) {
-        dbg!("on_replay");
+    pub(crate) fn on_track_replay(&mut self) {
+        dbg!("on_track_replay");
         // TODO
         /*
         {
@@ -64,18 +64,18 @@ impl Application {
             }
         }
         if self.playing {
-            self.on_play_or_pause(); // PAUSE
+            self.on_track_play_or_pause(); // PAUSE
         }
         {
             let mut config = CONFIG.get().write().unwrap();
             config.pos = 0.0;
         }
         self.seek(0.0);
-        self.on_play_or_pause(); // PLAY
+        self.on_track_play_or_pause(); // PLAY
         */
     }
 
-    pub(crate) fn on_play_or_pause(&mut self) {
+    pub(crate) fn on_track_play_or_pause(&mut self) {
         let icon = if self.playing {
             self.player.set_pause(self.handle, true);
             PLAY_ICON
@@ -94,8 +94,8 @@ impl Application {
         self.playing = !self.playing;
     }
 
-    pub(crate) fn on_next(&mut self) {
-        dbg!("on_next");
+    pub(crate) fn on_track_next(&mut self) {
+        dbg!("on_track_next");
         // TODO
         /*
         let track = {
@@ -135,8 +135,8 @@ impl Application {
         app::redraw(); // redraws the world
     }
 
-    pub(crate) fn on_options(&mut self) {
-        dbg!("on_options");
+    pub(crate) fn on_file_configure(&mut self) {
+        dbg!("on_file_configure");
         // TODO
         /*
         let old_size = {
@@ -159,7 +159,7 @@ impl Application {
         */
     }
 
-    pub(crate) fn on_about(&mut self) {
+    pub(crate) fn on_help_about(&mut self) {
         html_form::Form::new(
             "About",
             &about_html(&self.player),
@@ -170,7 +170,7 @@ impl Application {
         );
     }
 
-    pub(crate) fn on_help(&mut self) {
+    pub(crate) fn on_help_help(&mut self) {
         if let Some(helpform) = &mut self.helpform {
             helpform.show();
         } else {
@@ -180,7 +180,7 @@ impl Application {
         }
     }
 
-    pub(crate) fn on_quit(&mut self) {
+    pub(crate) fn on_file_quit(&mut self) {
         let mut config = CONFIG.get().write().unwrap();
         config.window_x = self.main_window.x();
         config.window_y = self.main_window.y();
@@ -197,7 +197,7 @@ impl Application {
             let length = self.wav.length();
             if self.player.voice_count() == 0 {
                 // Reached the end
-                self.on_next();
+                self.on_track_next();
                 return;
             }
             self.time_slider.set_value(pos);
@@ -217,7 +217,7 @@ impl Application {
 
     pub(crate) fn load_track(&mut self) {
         if self.playing {
-            self.on_play_or_pause(); // PAUSE
+            self.on_track_play_or_pause(); // PAUSE
             self.player.stop_all();
         }
         dbg!("load_track");
@@ -270,7 +270,7 @@ impl Application {
         // TODO
         /*
         if self.playing {
-            self.on_play_or_pause(); // PAUSE
+            self.on_track_play_or_pause(); // PAUSE
         }
         {
             let mut config = CONFIG.get().write().unwrap();
@@ -278,7 +278,7 @@ impl Application {
             config.pos = 0.0;
         }
         self.load_track();
-        self.on_play_or_pause(); // PLAY
+        self.on_track_play_or_pause(); // PLAY
         */
     }
 

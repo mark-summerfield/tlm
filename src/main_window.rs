@@ -98,7 +98,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Shortcut::Ctrl | 'o',
         MenuFlag::Normal,
         sender,
-        Action::OpenMLM,
+        Action::FileOpenMLM,
     );
     // TODO etc.
     // prev flag should be MenuDivider
@@ -107,7 +107,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Shortcut::Ctrl | 'q',
         MenuFlag::Normal,
         sender,
-        Action::Quit,
+        Action::FileQuit,
     );
     menubar
 }
@@ -148,28 +148,28 @@ fn add_player_toolbar(
     let prev_button = add_toolbutton(
         sender,
         "Previous track",
-        Action::Previous,
+        Action::TrackPrevious,
         PREV_ICON,
         &mut row,
     );
     let replay_button = add_toolbutton(
         sender,
         "Replay the current track",
-        Action::Replay,
+        Action::TrackReplay,
         REPLAY_ICON,
         &mut row,
     );
     let play_pause_button = add_toolbutton(
         sender,
         "Play or Pause the current track",
-        Action::PlayOrPause,
+        Action::TrackPlayOrPause,
         PLAY_ICON,
         &mut row,
     );
     let next_button = add_toolbutton(
         sender,
         "Next track",
-        Action::Next,
+        Action::TrackNext,
         NEXT_ICON,
         &mut row,
     );
@@ -257,7 +257,7 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
     add_toolbutton(
         sender,
         "Open a MLM file",
-        Action::OpenMLM,
+        Action::FileOpenMLM,
         LOAD_ICON,
         &mut row,
     );
@@ -293,12 +293,12 @@ pub fn add_event_handlers(
     // Both of these are really needed!
     main_window.set_callback(move |_| {
         if app::event() == Event::Close {
-            sender.send(Action::Quit);
+            sender.send(Action::FileQuit);
         }
     });
     main_window.handle(move |_, event| {
         if event == Event::KeyUp && app::event_key() == Key::Help {
-            sender.send(Action::Help);
+            sender.send(Action::HelpHelp);
             return true;
         }
         false
