@@ -7,7 +7,6 @@ use crate::fixed::{
 };
 use crate::util;
 use fltk::{app, image::SvgImage, prelude::*};
-use soloud::prelude::*;
 use std::{thread, time::Duration};
 
 impl Application {

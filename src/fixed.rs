@@ -11,7 +11,14 @@ pub static APPNAME: &str = "TLM";
 pub static VERSION: &str = "1.0.0";
 pub static HELP_HTML: &str = include_str!("../data/help.html");
 pub const ICON: &str = include_str!("../images/tlm.svg");
-pub const LOAD_ICON: &str = include_str!("../images/document-open.svg");
+pub const FILE_NEW_ICON: &str =
+    include_str!("../images/document-new.svg");
+pub const FILE_OPEN_ICON: &str =
+    include_str!("../images/document-open.svg");
+pub const FILE_SAVE_ICON: &str =
+    include_str!("../images/document-save.svg");
+pub const LIST_NEW_ICON: &str =
+    include_str!("../images/list-new.svg");
 pub const PREV_ICON: &str =
     include_str!("../images/media-seek-backward.svg");
 pub const REPLAY_ICON: &str = include_str!("../images/replay.svg");

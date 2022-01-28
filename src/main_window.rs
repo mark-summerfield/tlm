@@ -3,9 +3,10 @@
 
 use super::CONFIG;
 use crate::fixed::{
-    Action, APPNAME, BUTTON_HEIGHT, ICON, LOAD_ICON, NEXT_ICON, PAD,
-    PLAY_ICON, PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT,
-    TOOLBUTTON_SIZE, VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
+    Action, APPNAME, BUTTON_HEIGHT, FILE_NEW_ICON, FILE_OPEN_ICON,
+    FILE_SAVE_ICON, ICON, LIST_NEW_ICON, NEXT_ICON, PAD, PLAY_ICON,
+    PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
+    VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
 use crate::util;
 use fltk::{
@@ -316,7 +317,8 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         sender,
         Action::TrackUndelete,
     );
-    menubar.add_emit( // TODO add &1..&9 &A..&Z below as appropriate
+    menubar.add_emit(
+        // TODO add &1..&9 &A..&Z below as appropriate
         "H&istory/Clear\t",
         Shortcut::None,
         MenuFlag::MenuDivider,
@@ -330,7 +332,8 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         sender,
         Action::BookmarksAdd,
     );
-    menubar.add_emit( // TODO add &1..&9 &A..&Z below as appropriate
+    menubar.add_emit(
+        // TODO add &1..&9 &A..&Z below as appropriate
         "&Bookmarks/Remove Current Track\t",
         Shortcut::None,
         MenuFlag::MenuDivider,
@@ -498,13 +501,42 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
         .with_type(FlexType::Row);
     add_toolbutton(
         sender,
-        "Open a TLM file",
+        "New TLM file…",
+        Action::FileNew,
+        FILE_NEW_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "Open a TLM file…",
         Action::FileOpen,
-        LOAD_ICON,
+        FILE_OPEN_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "Save the TLM file",
+        Action::FileSave,
+        FILE_SAVE_ICON,
+        &mut row,
+    );
+    add_separator(&mut row);
+    add_toolbutton(
+        sender,
+        "New List…",
+        Action::ListNew,
+        LIST_NEW_ICON,
         &mut row,
     );
     row.end();
     row
+}
+
+fn add_separator(row: &mut Flex) {
+    let mut frame =
+        Frame::default().with_size(PAD / 2, TOOLBUTTON_SIZE + PAD);
+    frame.set_frame(FrameType::DownBox);
+    row.set_size(&frame, PAD / 2);
 }
 
 fn get_config_window_rect() -> (i32, i32, i32, i32) {
