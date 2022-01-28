@@ -6,6 +6,7 @@ use crate::fixed::{
     Action, APPNAME, BUTTON_HEIGHT, FILE_NEW_ICON, FILE_OPEN_ICON,
     FILE_SAVE_ICON, ICON, LIST_NEW_ICON, NEXT_ICON, PAD, PLAY_ICON,
     PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
+    LIST_MOVE_DOWN_ICON, LIST_MOVE_UP_ICON,
     VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
 use crate::util;
@@ -528,6 +529,27 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
         LIST_NEW_ICON,
         &mut row,
     );
+    add_toolbutton(
+        sender,
+        "List Move Up",
+        Action::ListMoveUp,
+        LIST_MOVE_UP_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "List Move Down",
+        Action::ListMoveDown,
+        LIST_MOVE_DOWN_ICON,
+        &mut row,
+    );
+    // TODO List Import
+    add_separator(&mut row);
+    // TODO
+    //   Track New
+    //   Track Move Up
+    //   Track Move Down
+    //   Track Find
     row.end();
     row
 }

@@ -1,5 +1,8 @@
-# TODO complete toolbar: first decide on which actions need toolbuttons
-# TODO integrate tlm into TLM
+# TODO complete toolbar
+# TODO complete each action in turn
+# start with File→Open and File→Save, then play/pause/etc. current track,
+# then autoplay next track, play prev, play next, etc.
+# TODO Config & Configure set bookmarks size (2..35) same as history
 # TODO File→Recent→… submenu
 # TODO History→… submenu
 # TODO Bookmarks→… submenu

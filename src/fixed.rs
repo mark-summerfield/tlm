@@ -19,6 +19,10 @@ pub const FILE_SAVE_ICON: &str =
     include_str!("../images/document-save.svg");
 pub const LIST_NEW_ICON: &str =
     include_str!("../images/list-new.svg");
+pub const LIST_MOVE_UP_ICON: &str =
+    include_str!("../images/list-move-up.svg");
+pub const LIST_MOVE_DOWN_ICON: &str =
+    include_str!("../images/list-move-down.svg");
 pub const PREV_ICON: &str =
     include_str!("../images/media-seek-backward.svg");
 pub const REPLAY_ICON: &str = include_str!("../images/replay.svg");
