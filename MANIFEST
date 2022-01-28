@@ -1,6 +1,9 @@
 # TODO complete each action in turn
 # start with File→Open and File→Save, then play/pause/etc. current track,
 # then autoplay next track, play prev, play next, etc.
+# TODO update_ui to activate/deactivate all menu options & toobar
+# buttons depending on the state (has_track, has_history, has_list
+# <since all tracks could be list-less at the top-level>).
 # TODO File→Recent→… submenu
 # TODO History→… submenu
 
