@@ -36,26 +36,27 @@
 	Unde&lete
 
     &Track
-	&New...	# (file open)
+	&New...		  # (file open)
 	-------------
-	&Play/&Pause      ^P
-	&Replay		  ^R | F5
-	Pl&ay Previous	  F4
-	Play Nex&t	  F6
-	&Increase Volume  ^+ | ^=
-	Decrease &Volume   ^-
+	Play Pre&vious	  F4
+	&Play/&Pause      F5
+	&Replay		  F6
+	Play Nex&t	  F7
+	&Increase Volume  Shift+F8
+	Decre&ase Volume  F8
 	-------------
 	Move &Up
 	Move &Down
-	Mo&ve to List # move to another list or to top-level
+	&Move to List # move to another list or to top-level
 	&Copy to List # add to another list (same track in multi list is fine)
 	-------------
 	&Find...   ^F # on success adds/replaces Search Results/Found in tree
 	-------------
 	D&elete...
 	Unde&lete
-	-------------
-	Clear &History
+
+    &History
+	&Clear History
 	&1 _most recently played_ # history
 	    :
 	&9 _9th least recent played_

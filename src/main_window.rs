@@ -134,10 +134,9 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         sender,
         Action::FileQuit,
     );
-    // TODO etc.
     menubar.add_emit(
         "&List/&New…\t",
-        Shortcut::None,
+        Shortcut::Shift | Shortcut::Ctrl | 'n',
         MenuFlag::Normal,
         sender,
         Action::ListNew,
@@ -211,6 +210,104 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         MenuFlag::Normal,
         sender,
         Action::ListUndelete,
+    );
+    menubar.add_emit(
+        "&Track/&New…\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::TrackNew,
+    );
+    menubar.add_emit(
+        "&Track/Play Pre&vious\t",
+        Shortcut::from_key(Key::F4),
+        MenuFlag::Normal,
+        sender,
+        Action::TrackPrevious,
+    );
+    menubar.add_emit(
+        "&Track/&Play or Pause\t",
+        Shortcut::from_key(Key::F5),
+        MenuFlag::Normal,
+        sender,
+        Action::TrackPlayOrPause,
+    );
+    menubar.add_emit(
+        "&Track/&Replay\t",
+        Shortcut::from_key(Key::F6),
+        MenuFlag::Normal,
+        sender,
+        Action::TrackReplay,
+    );
+    menubar.add_emit(
+        "&Track/Play Ne&xt\t",
+        Shortcut::from_key(Key::F7),
+        MenuFlag::Normal,
+        sender,
+        Action::TrackNext,
+    );
+    menubar.add_emit(
+        "&Track/&Increase Volume\t",
+        Shortcut::Shift | Shortcut::from_key(Key::F8),
+        MenuFlag::Normal,
+        sender,
+        Action::TrackLouder,
+    );
+    menubar.add_emit(
+        "&Track/Decre&ase Volume\t",
+        Shortcut::from_key(Key::F8),
+        MenuFlag::MenuDivider,
+        sender,
+        Action::TrackQuieter,
+    );
+    menubar.add_emit(
+        "&Track/Move &Up\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::TrackMoveUp,
+    );
+    menubar.add_emit(
+        "&Track/Move &Down\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::TrackMoveDown,
+    );
+    menubar.add_emit(
+        "&Track/&Move to List…\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::TrackMoveToList,
+    );
+    menubar.add_emit(
+        "&Track/&Copy to List…\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::TrackCopyToList,
+    );
+    menubar.add_emit(
+        "&Track/&Find…\t",
+        Shortcut::Ctrl | 'f',
+        MenuFlag::MenuDivider,
+        sender,
+        Action::TrackFind,
+    );
+    menubar.add_emit(
+        "&Track/D&elete…\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::TrackDelete,
+    );
+    menubar.add_emit(
+        "&Track/Unde&lete\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::TrackUndelete,
     );
     // TODO ################
     menubar.add_emit(

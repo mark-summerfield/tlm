@@ -126,14 +126,22 @@ impl Application {
                     Action::OnStartup => self.on_startup(),
                     Action::Tick => self.on_tick(),
                     Action::TimeUpdate => self.on_time_update(),
-                    Action::TrackLouder => self.on_volume_up(),
-                    Action::TrackNext => self.on_track_next(),
+                    Action::TrackNew => println!("TrackNew"),
+                    Action::TrackPrevious => self.on_track_previous(),
                     Action::TrackPlayOrPause => {
                         self.on_track_play_or_pause()
                     }
-                    Action::TrackPrevious => self.on_track_previous(),
-                    Action::TrackQuieter => self.on_volume_down(),
                     Action::TrackReplay => self.on_track_replay(),
+                    Action::TrackNext => self.on_track_next(),
+                    Action::TrackLouder => self.on_volume_up(),
+                    Action::TrackQuieter => self.on_volume_down(),
+                    Action::TrackMoveUp => println!("TrackMoveUp"),
+                    Action::TrackMoveDown => println!("TrackMoveDown"),
+                    Action::TrackMoveToList => println!("TrackMoveToList"),
+                    Action::TrackCopyToList => println!("TrackCopyToList"),
+                    Action::TrackFind => println!("TrackFind"),
+                    Action::TrackDelete => println!("TrackDelete"),
+                    Action::TrackUndelete => println!("TrackUndelete"),
                     Action::VolumeUpdate => self.on_volume_update(),
                 }
             }
