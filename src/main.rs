@@ -3,6 +3,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod actions;
+mod file_actions;
+mod list_actions;
+mod track_actions;
+mod history_actions;
+mod bookmark_actions;
+mod help_actions;
 mod application;
 mod config;
 mod fixed;

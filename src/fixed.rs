@@ -92,6 +92,9 @@ pub enum Action {
     TrackDelete,
     TrackUndelete,
     VolumeUpdate,
+    HistoryClear,
+    BookmarksAdd,
+    BookmarksRemove,
 }
 
 pub fn about_html(player: &Soloud) -> String {

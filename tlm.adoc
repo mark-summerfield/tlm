@@ -7,16 +7,13 @@
     &File
 	&New...    ^N # (file new) new database .tlm
 	&Open...   ^O # (file open)
+	Open &Recent → &1 ... &9
 	&Save...   ^S
 	Save &As...
 	-------------
 	&Configure...
 	-------------
 	&Quit      ^Q
-	-------------
-	&1 _most recent tlm_ # queue-order history
-	    :
-	&9 _9th least recent tlm_
 
     &List
 	&New...	    # list (enter one line of text dialog)
@@ -56,17 +53,19 @@
 	Unde&lete
 
     &History
-	&Clear History
+	Clear History
 	&1 _most recently played_ # history
 	    :
 	&9 _9th least recent played_
+	&A ... &Z
 
     &Bookmarks
-	&1 Add Current Track
-	&2 Remove Current Track
-	&A _first bookmarked track_
+	Add Current Track
+	Remove Current Track
+	&1 _first bookmarked track_
 	    :
-	&Z _26th bookmarked track_
+	&9 _9th bookmarked track_
+	&A ... &Z
 
     &Help
 	&Help	    F1

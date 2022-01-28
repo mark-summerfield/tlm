@@ -1,11 +1,18 @@
-# TODO complete menus
-# TODO add more shortcuts Fn & Ctrl+
 # TODO integrate tlm into TLM
+# TODO File→Recent→… submenu
+# TODO History→… submenu
+# TODO Bookmarks→… submenu
 
 src/main.rs
 src/config.rs
 src/application.rs
 src/actions.rs
+src/file_actions.rs
+src/list_actions.rs
+src/track_actions.rs
+src/history_actions.rs
+src/bookmark_actions.rs
+src/help_actions.rs
 src/main_window.rs
 src/html_form.rs
 src/options_form.rs
