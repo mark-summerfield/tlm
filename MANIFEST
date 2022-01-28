@@ -1,11 +1,8 @@
-# TODO complete toolbar
 # TODO complete each action in turn
 # start with File→Open and File→Save, then play/pause/etc. current track,
 # then autoplay next track, play prev, play next, etc.
-# TODO Config & Configure set bookmarks size (2..35) same as history
 # TODO File→Recent→… submenu
 # TODO History→… submenu
-# TODO Bookmarks→… submenu
 
 src/main.rs
 src/config.rs
@@ -15,7 +12,6 @@ src/file_actions.rs
 src/list_actions.rs
 src/track_actions.rs
 src/history_actions.rs
-src/bookmark_actions.rs
 src/help_actions.rs
 src/main_window.rs
 src/html_form.rs

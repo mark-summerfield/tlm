@@ -23,6 +23,16 @@ pub const LIST_MOVE_UP_ICON: &str =
     include_str!("../images/list-move-up.svg");
 pub const LIST_MOVE_DOWN_ICON: &str =
     include_str!("../images/list-move-down.svg");
+pub const LIST_IMPORT_ICON: &str =
+    include_str!("../images/import.svg");
+pub const TRACK_NEW_ICON: &str =
+    include_str!("../images/track-new.svg");
+pub const TRACK_MOVE_UP_ICON: &str =
+    include_str!("../images/track-move-up.svg");
+pub const TRACK_MOVE_DOWN_ICON: &str =
+    include_str!("../images/track-move-down.svg");
+pub const TRACK_FIND_ICON: &str =
+    include_str!("../images/track-find.svg");
 pub const PREV_ICON: &str =
     include_str!("../images/media-seek-backward.svg");
 pub const REPLAY_ICON: &str = include_str!("../images/replay.svg");
@@ -36,16 +46,10 @@ pub const VOLUME_ICON: &str =
     include_str!("../images/audio-volume-high.svg");
 pub const TIME_ICON: &str = include_str!("../images/time.svg");
 pub const HISTORY_ICON: &str = include_str!("../images/history.svg");
-pub const BOOKMARKS_ICON: &str = include_str!("../images/bookmarks.svg");
-pub const ADD_BOOKMARK_ICON: &str =
-    include_str!("../images/addbookmark.svg");
-pub const DELETE_BOOKMARK_ICON: &str =
-    include_str!("../images/deletebookmark.svg");
 pub const MENU_ICON: &str = include_str!("../images/menu.svg");
 pub const DEF_HISTORY_SIZE: usize = 26;
 pub const MIN_HISTORY_SIZE: usize = 2;
 pub const MAX_HISTORY_SIZE: usize = 35;
-pub const BOOKMARKS_SIZE: usize = 35;
 pub const PAD: i32 = 6;
 pub const WINDOW_WIDTH_MIN: i32 = 640;
 pub const WINDOW_HEIGHT_MIN: i32 = 400;
@@ -104,8 +108,6 @@ pub enum Action {
     TrackUndelete,
     VolumeUpdate,
     HistoryClear,
-    BookmarksAdd,
-    BookmarksRemove,
 }
 
 pub fn about_html(player: &Soloud) -> String {

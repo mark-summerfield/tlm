@@ -144,8 +144,6 @@ impl Application {
                     Action::TrackUndelete => self.on_track_undelete(),
                     Action::VolumeUpdate => self.on_volume_update(),
                     Action::HistoryClear => self.on_history_clear(),
-                    Action::BookmarksAdd => self.on_bookmarks_add(),
-                    Action::BookmarksRemove => self.on_bookmarks_remove(),
                 }
             }
         }
@@ -155,12 +153,11 @@ impl Application {
         dbg!("update_ui");
         // TODO
         /*
-        let (has_track, has_history, has_bookmarks) = {
+        let (has_track, has_history) = {
             let config = CONFIG.get().read().unwrap();
             (
                 config.track.exists(),
                 !config.history.is_empty(),
-                !config.bookmarks.is_empty(),
             )
         };
         if has_track {
@@ -169,26 +166,17 @@ impl Application {
             self.play_pause_button.activate();
             self.next_button.activate();
             self.time_slider.activate();
-            self.add_bookmark_button.activate();
         } else {
             self.prev_button.deactivate();
             self.replay_button.deactivate();
             self.play_pause_button.deactivate();
             self.next_button.deactivate();
             self.time_slider.deactivate();
-            self.add_bookmark_button.deactivate();
         }
         if has_history {
             self.history_menu_button.activate();
         } else {
             self.history_menu_button.deactivate();
-        }
-        if has_bookmarks {
-            self.bookmarks_menu_button.activate();
-            self.delete_bookmark_button.activate();
-        } else {
-            self.bookmarks_menu_button.deactivate();
-            self.delete_bookmark_button.deactivate();
         }
         */
     }

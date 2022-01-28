@@ -4,10 +4,11 @@
 use super::CONFIG;
 use crate::fixed::{
     Action, APPNAME, BUTTON_HEIGHT, FILE_NEW_ICON, FILE_OPEN_ICON,
-    FILE_SAVE_ICON, ICON, LIST_NEW_ICON, NEXT_ICON, PAD, PLAY_ICON,
-    PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
-    LIST_MOVE_DOWN_ICON, LIST_MOVE_UP_ICON,
-    VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
+    FILE_SAVE_ICON, ICON, LIST_IMPORT_ICON, LIST_MOVE_DOWN_ICON,
+    LIST_MOVE_UP_ICON, LIST_NEW_ICON, NEXT_ICON, PAD, PLAY_ICON, PREV_ICON,
+    REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
+    TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON, TRACK_MOVE_UP_ICON,
+    TRACK_NEW_ICON, VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
 use crate::util;
 use fltk::{
@@ -327,21 +328,6 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::HistoryClear,
     );
     menubar.add_emit(
-        "&Bookmarks/Add Current Track\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::BookmarksAdd,
-    );
-    menubar.add_emit(
-        // TODO add &1..&9 &A..&Z below as appropriate
-        "&Bookmarks/Remove Current Track\t",
-        Shortcut::None,
-        MenuFlag::MenuDivider,
-        sender,
-        Action::BookmarksRemove,
-    );
-    menubar.add_emit(
         "&Help/&Help\t",
         Shortcut::from_key(Key::F1),
         MenuFlag::Normal,
@@ -531,25 +517,54 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
     );
     add_toolbutton(
         sender,
-        "List Move Up",
+        "Move List Up",
         Action::ListMoveUp,
         LIST_MOVE_UP_ICON,
         &mut row,
     );
     add_toolbutton(
         sender,
-        "List Move Down",
+        "Move List Down",
         Action::ListMoveDown,
         LIST_MOVE_DOWN_ICON,
         &mut row,
     );
-    // TODO List Import
+    add_toolbutton(
+        sender,
+        "Import List…",
+        Action::ListImport,
+        LIST_IMPORT_ICON,
+        &mut row,
+    );
     add_separator(&mut row);
-    // TODO
-    //   Track New
-    //   Track Move Up
-    //   Track Move Down
-    //   Track Find
+    add_toolbutton(
+        sender,
+        "New Track…",
+        Action::TrackNew,
+        TRACK_NEW_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "Move Track Up",
+        Action::TrackMoveUp,
+        TRACK_MOVE_UP_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "Move Track Down",
+        Action::TrackMoveDown,
+        TRACK_MOVE_DOWN_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "Find Track…",
+        Action::TrackFind,
+        TRACK_FIND_ICON,
+        &mut row,
+    );
     row.end();
     row
 }
