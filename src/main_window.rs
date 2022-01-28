@@ -617,15 +617,10 @@ pub fn add_event_handlers(
 }
 
 pub fn update_widgets_from_config(widgets: &mut Widgets) -> bool {
-    dbg!("update_widgets_from_config");
-    // TODO
-    /*
     let config = CONFIG.get().read().unwrap();
     widgets.volume_slider.set_value(config.volume);
     widgets
         .volume_label
         .set_label(&format!("{}%", (config.volume * 100.0).round()));
-    config.track.exists()
-    */
-    false
+    config.last_file.exists()
 }

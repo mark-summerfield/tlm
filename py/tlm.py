@@ -63,9 +63,7 @@ class Tlm:
                 line = line.rstrip()
                 if not line:
                     continue # ignore blank lines
-                if state is _State.IN_TRACKS and line == '\fBOOKMARKS':
-                    state = _State.IN_BOOKMARKS
-                elif state is _State.IN_BOOKMARKS and line == '\fHISTORY':
+                if state is _State.IN_TRACKS and line == '\fHISTORY':
                     state = _State.IN_HISTORY
                 elif state is _State.IN_HISTORY and line == '\fCURRENT':
                     state = _State.IN_CURRENT
@@ -84,8 +82,6 @@ class Tlm:
                                                        lino, line)
                     elif not line.startswith('\f'):
                         self._read_track(stack[-1], lino, line)
-                elif state is _State.IN_BOOKMARKS:
-                    self.bookmarks.append(line)
                 elif state is _State.IN_HISTORY:
                     self.history.append(line)
                 elif state is _State.IN_CURRENT:
@@ -130,7 +126,7 @@ class Tlm:
         with opener(self._filename, 'wt', encoding='utf-8') as file:
             file.write('\fTLM\t100\n\fTRACKS\n')
             self._write_tree(file, self.tree)
-            file.write('\fBOOKMARKS\n\fHISTORY\n\fCURRENT\n')
+            file.write('\fHISTORY\n\fCURRENT\n')
 
 
     def _write_tree(self, file, tree, depth=1):
@@ -181,7 +177,6 @@ class _State(enum.Enum):
     WANT_MAGIC = enum.auto()
     WANT_TRACK_HEADER = enum.auto()
     IN_TRACKS = enum.auto()
-    IN_BOOKMARKS = enum.auto()
     IN_HISTORY = enum.auto()
     IN_CURRENT = enum.auto()
     END = enum.auto()

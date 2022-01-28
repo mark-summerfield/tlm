@@ -33,11 +33,12 @@ pub struct Application {
     pub(crate) time_slider: HorFillSlider,
     pub(crate) time_label: Frame,
     pub(crate) helpform: Option<html_form::Form>,
+    // TODO track_list_manager: Tlm,
+    // this stores filename, track_for_tid, history, and current_track
     pub(crate) player: Soloud,
     pub(crate) wav: Wav,
     pub(crate) handle: soloud::Handle,
     pub(crate) playing: bool,
-    pub(crate) first_to_play: bool,
     pub(crate) sender: Sender<Action>,
     pub(crate) receiver: Receiver<Action>,
 }
@@ -74,7 +75,6 @@ impl Application {
             wav: Wav::default(),
             handle: unsafe { soloud::Handle::from_raw(0) },
             playing: false,
-            first_to_play: true,
             sender,
             receiver,
         };

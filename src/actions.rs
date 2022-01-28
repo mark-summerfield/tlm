@@ -2,14 +2,15 @@
 // License: GPLv3
 
 use crate::application::Application;
-use crate::fixed::{Action, PATH_SEP, TICK_TIMEOUT};
+use crate::fixed::{Action, TICK_TIMEOUT};
 use crate::util;
 use fltk::{app, prelude::*};
 use std::path::PathBuf;
 
 impl Application {
     pub(crate) fn on_startup(&mut self) {
-        self.load_track();
+        // load config.last_file & then load the Tlm's current_track
+        //self.load_track();
     }
 
     pub(crate) fn on_time_update(&mut self) {
@@ -42,8 +43,9 @@ impl Application {
     }
 
     fn load_remembered_track(&mut self, track: &str) {
-        let track = track.replace(PATH_SEP, "/");
-        let (_, track) = track.split_at(3);
-        self.auto_play_track(PathBuf::from(track));
+        dbg!("load_remembered_track");
+        //let track = track.replace(PATH_SEP, "/");
+        //let (_, track) = track.split_at(3);
+        //self.auto_play_track(PathBuf::from(track));
     }
 }

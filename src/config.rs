@@ -19,9 +19,9 @@ pub struct Config {
     pub window_width: i32,
     pub window_scale: f32,
     pub volume: f64,
-    pub filename: PathBuf,
     pub last_file: PathBuf,
     pub recent_files: RecentFiles,
+    pub filename: PathBuf,
 }
 
 impl Config {
@@ -91,9 +91,9 @@ impl Default for Config {
             window_width: 640,
             window_scale: 1.0,
             volume: 0.5,
-            filename: PathBuf::new(),
             last_file: PathBuf::new(),
             recent_files: RecentFiles::new(),
+            filename: PathBuf::new(),
         }
     }
 }
