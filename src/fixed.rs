@@ -11,28 +11,23 @@ pub static APPNAME: &str = "TLM";
 pub static VERSION: &str = "1.0.0";
 pub static HELP_HTML: &str = include_str!("../data/help.html");
 pub const ICON: &str = include_str!("../images/tlm.svg");
-pub const FILE_NEW_ICON: &str =
-    include_str!("../images/document-new.svg");
+pub const FILE_NEW_ICON: &str = include_str!("../images/document-new.svg");
 pub const FILE_OPEN_ICON: &str =
     include_str!("../images/document-open.svg");
 pub const FILE_SAVE_ICON: &str =
     include_str!("../images/document-save.svg");
-pub const LIST_NEW_ICON: &str =
-    include_str!("../images/list-new.svg");
+pub const LIST_NEW_ICON: &str = include_str!("../images/list-new.svg");
 pub const LIST_MOVE_UP_ICON: &str =
     include_str!("../images/list-move-up.svg");
 pub const LIST_MOVE_DOWN_ICON: &str =
     include_str!("../images/list-move-down.svg");
-pub const LIST_IMPORT_ICON: &str =
-    include_str!("../images/import.svg");
-pub const TRACK_NEW_ICON: &str =
-    include_str!("../images/track-new.svg");
+pub const LIST_IMPORT_ICON: &str = include_str!("../images/import.svg");
+pub const TRACK_NEW_ICON: &str = include_str!("../images/track-new.svg");
 pub const TRACK_MOVE_UP_ICON: &str =
     include_str!("../images/track-move-up.svg");
 pub const TRACK_MOVE_DOWN_ICON: &str =
     include_str!("../images/track-move-down.svg");
-pub const TRACK_FIND_ICON: &str =
-    include_str!("../images/track-find.svg");
+pub const TRACK_FIND_ICON: &str = include_str!("../images/track-find.svg");
 pub const PREV_ICON: &str =
     include_str!("../images/media-seek-backward.svg");
 pub const REPLAY_ICON: &str = include_str!("../images/replay.svg");
@@ -45,8 +40,6 @@ pub const NEXT_ICON: &str =
 pub const VOLUME_ICON: &str =
     include_str!("../images/audio-volume-high.svg");
 pub const TIME_ICON: &str = include_str!("../images/time.svg");
-pub const HISTORY_ICON: &str = include_str!("../images/history.svg");
-pub const MENU_ICON: &str = include_str!("../images/menu.svg");
 pub const DEF_HISTORY_SIZE: usize = 26;
 pub const MIN_HISTORY_SIZE: usize = 2;
 pub const MAX_HISTORY_SIZE: usize = 35;
@@ -66,7 +59,6 @@ pub static MENU_CHARS: [char; 35] = [
     'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
     'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 ];
-pub const PATH_SEP: char = '→';
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {

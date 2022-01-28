@@ -3,17 +3,17 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod actions;
-mod file_actions;
-mod list_actions;
-mod track_actions;
-mod history_actions;
-mod help_actions;
 mod application;
 mod config;
+mod file_actions;
 mod fixed;
+mod help_actions;
+mod history_actions;
 mod html_form;
+mod list_actions;
 mod main_window;
 mod options_form;
+mod track_actions;
 mod util;
 
 use crate::application::Application;
