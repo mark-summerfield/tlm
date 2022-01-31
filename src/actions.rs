@@ -5,10 +5,10 @@ use crate::application::Application;
 use crate::fixed::{Action, TICK_TIMEOUT};
 use crate::util;
 use fltk::{app, prelude::*};
-use std::path::PathBuf;
 
 impl Application {
     pub(crate) fn on_startup(&mut self) {
+        // TODO
         // load config.last_file & then load the Tlm's current_track
         //self.load_track();
     }

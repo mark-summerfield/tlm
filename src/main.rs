@@ -12,6 +12,7 @@ mod history_actions;
 mod html_form;
 mod list_actions;
 mod main_window;
+mod model;
 mod options_form;
 mod track_actions;
 mod util;

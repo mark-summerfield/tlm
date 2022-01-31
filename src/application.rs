@@ -4,6 +4,7 @@
 use crate::fixed::Action;
 use crate::html_form;
 use crate::main_window;
+use crate::model::Model;
 use fltk::{
     app,
     app::{channel, App, Receiver, Scheme, Sender},
@@ -12,7 +13,6 @@ use fltk::{
     menu::SysMenuBar,
     misc::HelpView,
     prelude::*,
-    tree::Tree,
     valuator::HorFillSlider,
     window::Window,
 };
@@ -26,7 +26,6 @@ pub struct Application {
     pub(crate) replay_button: Button,
     pub(crate) play_pause_button: Button,
     pub(crate) next_button: Button,
-    pub(crate) track_tree: Tree,
     pub(crate) info_view: HelpView,
     pub(crate) volume_slider: HorFillSlider,
     pub(crate) volume_label: Frame,
@@ -39,6 +38,7 @@ pub struct Application {
     pub(crate) wav: Wav,
     pub(crate) handle: soloud::Handle,
     pub(crate) playing: bool,
+    pub(crate) tlm: Model,
     pub(crate) sender: Sender<Action>,
     pub(crate) receiver: Receiver<Action>,
 }
@@ -64,7 +64,6 @@ impl Application {
             replay_button: widgets.replay_button,
             play_pause_button: widgets.play_pause_button,
             next_button: widgets.next_button,
-            track_tree: widgets.track_tree,
             info_view: widgets.info_view,
             volume_slider: widgets.volume_slider,
             volume_label: widgets.volume_label,
@@ -75,6 +74,7 @@ impl Application {
             wav: Wav::default(),
             handle: unsafe { soloud::Handle::from_raw(0) },
             playing: false,
+            tlm: Model::new(widgets.track_tree),
             sender,
             receiver,
         };

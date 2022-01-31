@@ -5,7 +5,9 @@ use super::CONFIG;
 use crate::application::Application;
 use crate::fixed::APPNAME;
 use crate::options_form;
+use crate::util;
 use fltk::{
+    app,
     dialog::{FileDialog, FileDialogType},
     prelude::*,
 };
@@ -18,13 +20,21 @@ impl Application {
     pub(crate) fn on_file_open(&mut self) {
         let mut form = FileDialog::new(FileDialogType::BrowseFile);
         form.set_title(&format!("Open TLM File — {APPNAME}"));
-        // TODO get_data_dir
-        // let _ = form.set_directory(&util::get_track_dir()); // Ignore error
+        let _ = form.set_directory(&util::get_tlm_dir()); // Ignore error
         form.set_filter("TLM Files\t*.tlm");
         form.show();
         let filename = form.filename();
         if filename.exists() {
-            dbg!("on_file_open", filename);
+            let reply = self.tlm.load(&filename);
+            if reply.is_err() {
+                // TODO pop up warning dialog message
+            } else {
+                // TODO Update titlebar to:  filename.stem() — TLM
+                // TODO add as config.last_file and add to recent_files
+                // TODO If self.tlm.has_current_treepath() then select it
+                // ready to play
+                app::redraw(); // redraws the world
+            }
         }
     }
 

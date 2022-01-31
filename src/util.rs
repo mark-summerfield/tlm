@@ -1,6 +1,7 @@
 // Copyright © 2021-22 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
+use super::CONFIG;
 use fltk::app;
 use lofty::{self, Accessor, ItemKey, ItemValue, Probe};
 use std::{
@@ -44,9 +45,30 @@ pub fn isone32(n: f32) -> bool {
     (1.0..=(1.0 + f32::EPSILON)).contains(&n)
 }
 
+pub fn get_tlm_dir() -> PathBuf {
+    let config = CONFIG.get().read().unwrap();
+    if config.last_file.exists() {
+        if let Some(path) = config.last_file.parent() {
+            return path.to_path_buf();
+        }
+    }
+    for file in &config.recent_files {
+        if let Some(path) = file.parent() {
+            return path.to_path_buf();
+        }
+    }
+    if let Some(path) = dirs::document_dir() {
+        return path;
+    }
+    if let Some(path) = dirs::home_dir() {
+        return path;
+    }
+    PathBuf::from(".")
+}
+
 pub fn get_track_dir() -> PathBuf {
     dbg!("get_track_dir");
-    // TODO
+    // TODO GET FROM tlm Model
     /*
     let config = CONFIG.get().read().unwrap();
     if config.track.exists() {
@@ -258,4 +280,20 @@ fn get_sorted_tracks(track: &Path) -> Vec<PathBuf> {
         }
     }
     tracks
+}
+
+// Returns a name suitable as the last component of a tree path
+pub fn canonicalize(track: &Path) -> String {
+    let mut s = String::new();
+    if let Some(stem) = track.file_stem() {
+        s = stem.to_string_lossy().to_string();
+    }
+    s = s.trim_end_matches(&['-', '_', ' ']).to_string();
+    let t = &s.trim_start_matches(&[
+        '-', '_', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    ]);
+    if !t.is_empty() {
+        s = t.to_string();
+    }
+    s.replace(&['-', '_', '/', '\\'], " ")
 }

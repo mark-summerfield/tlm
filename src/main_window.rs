@@ -346,7 +346,8 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
 
 fn add_views() -> (Tree, HelpView) {
     let mut row = Flex::default().with_type(FlexType::Row);
-    let track_tree = Tree::default();
+    let mut track_tree = Tree::default();
+    track_tree.set_show_root(false);
     let mut info_view = HelpView::default().with_size(200, 200);
     info_view.set_value(
         "<font color=green>Click <b>List→New</b> to add a folder of tracks

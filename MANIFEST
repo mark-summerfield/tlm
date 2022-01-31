@@ -1,9 +1,6 @@
 # TODO complete each action in turn
-# - canonicalize(track: &Path) -> String
-#   This string must be suitable as the last element of a tree path:
-#	basename & stem & strip leading [-_ 0-9] & replace [-_] with ' '
 # - File→Open
-# - File→Save
+# - File→Save: iterate over the track_tree depth-first
 # - play/pause/etc. current (i.e., first in history) track,
 # - autoplay next track
 # - play prev
@@ -18,6 +15,7 @@
 src/main.rs
 src/config.rs
 src/application.rs
+src/model.rs
 src/actions.rs
 src/file_actions.rs
 src/list_actions.rs
