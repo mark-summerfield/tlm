@@ -88,7 +88,7 @@ def write_tlm(tree, tlm):
     with gzip.open(tlm, 'wt', encoding='utf-8') as file:
         file.write('\fTLM\t100\n\fTRACKS\n')
         write_tree(file, tree)
-        file.write('\fHISTORY\n\fCURRENT\n')
+        file.write('\fHISTORY\n')
     print('wrote', tlm)
 
 

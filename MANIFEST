@@ -34,7 +34,7 @@ deploy.bat
 tlm.adoc # notes
 
 # These are for prototyping and experimentation
-../test_tlm/src/tlm/mod.rs # This is the rust port of tlmr.py
+../test_tlm/src/model.rs # This is the rust port of tlmr.py
 py/tlmr.py
 py/tlm.py
 py/m3u2tlm.py

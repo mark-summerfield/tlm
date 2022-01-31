@@ -20,7 +20,7 @@ class Error(Exception):
     pass
 
 
-class Tlm:
+class Model:
 
     def __init__(self, filename=None):
         self.clear()
@@ -43,9 +43,7 @@ class Tlm:
 
     def clear(self):
         self.tree = Group('')
-        self.bookmarks = []
         self.history = collections.deque()
-        self.current_track = None
 
 
     def load(self, filename=None):
@@ -65,8 +63,6 @@ class Tlm:
                     continue # ignore blank lines
                 if state is _State.IN_TRACKS and line == '\fHISTORY':
                     state = _State.IN_HISTORY
-                elif state is _State.IN_HISTORY and line == '\fCURRENT':
-                    state = _State.IN_CURRENT
                 elif state is _State.WANT_MAGIC:
                     if not line.startswith(MAGIC):
                         raise Error(f'error:{lino}: not a .tlm file')
@@ -84,11 +80,6 @@ class Tlm:
                         self._read_track(stack[-1], lino, line)
                 elif state is _State.IN_HISTORY:
                     self.history.append(line)
-                elif state is _State.IN_CURRENT:
-                    self.current_track = line
-                    state = _State.END
-                elif state is _State.END:
-                    raise Error(f'error:{lino}: spurious data at the end')
                 else:
                     raise Error(f'error:{lino}: invalid .tlm file')
 
@@ -126,7 +117,7 @@ class Tlm:
         with opener(self._filename, 'wt', encoding='utf-8') as file:
             file.write('\fTLM\t100\n\fTRACKS\n')
             self._write_tree(file, self.tree)
-            file.write('\fHISTORY\n\fCURRENT\n')
+            file.write('\fHISTORY\n')
 
 
     def _write_tree(self, file, tree, depth=1):
@@ -178,8 +169,6 @@ class _State(enum.Enum):
     WANT_TRACK_HEADER = enum.auto()
     IN_TRACKS = enum.auto()
     IN_HISTORY = enum.auto()
-    IN_CURRENT = enum.auto()
-    END = enum.auto()
 
 
 class Group:
@@ -306,7 +295,7 @@ if __name__ == '__main__':
             'usage: tlm.py <-t|--tree> infile.tlm | infile.tlm outfile.tlm')
     filename = sys.argv[1]
     if filename in {'-t', '--tree'}:
-        tlm = Tlm(sys.argv[2])
+        tlm = Model(sys.argv[2])
         for path in tlm.paths():
             print(path)
     else:
@@ -314,6 +303,6 @@ if __name__ == '__main__':
         outfile = pathlib.Path(sys.argv[2]).resolve()
         if infile == outfile:
             raise SystemExit('infile and outfile must be different')
-        tlm = Tlm(infile)
+        tlm = Model(infile)
         tlm.save(filename=outfile)
         print('saved', outfile)

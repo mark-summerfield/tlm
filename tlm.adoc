@@ -52,19 +52,11 @@
 	D&elete...
 	Unde&lete
 
-    &History
+    H&istory
 	Clear History
 	&1 _most recently played_ # history
 	    :
 	&9 _9th least recent played_
-	&A ... &Z
-
-    &Bookmarks
-	Add Current Track
-	Remove Current Track
-	&1 _first bookmarked track_
-	    :
-	&9 _9th bookmarked track_
 	&A ... &Z
 
     &Help

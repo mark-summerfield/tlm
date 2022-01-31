@@ -18,7 +18,7 @@ class Error(Exception):
     pass
 
 
-class Tlm:
+class Model:
 
     def __init__(self, filename=None):
         self.clear()
@@ -31,9 +31,7 @@ class Tlm:
         self.tree = [] # list of TreeData: fltk::tree::Tree
         self.track_for_tid = {} # key=tid value=Track: HashMap<usize, Track>
         self.tid = 1
-        self.bookmarks = []
         self.history = collections.deque()
-        self.current_track = None
 
 
     @property
@@ -64,8 +62,6 @@ class Tlm:
                     continue # ignore blank lines
                 if state is _State.IN_TRACKS and line == '\fHISTORY':
                     state = _State.IN_HISTORY
-                elif state is _State.IN_HISTORY and line == '\fCURRENT':
-                    state = _State.IN_CURRENT
                 elif state is _State.WANT_MAGIC:
                     if not line.startswith(MAGIC):
                         raise Error(f'error:{lino}: not a .tlm file')
@@ -82,11 +78,6 @@ class Tlm:
                         self._read_track(treepath, lino, line)
                 elif state is _State.IN_HISTORY:
                     self.history.append(line)
-                elif state is _State.IN_CURRENT:
-                    self.current_track = line
-                    state = _State.END
-                elif state is _State.END:
-                    raise Error(f'error:{lino}: spurious data at the end')
                 else:
                     raise Error(f'error:{lino}: invalid .tlm file')
 
@@ -130,7 +121,7 @@ class Tlm:
                         done.add(path)
                 track = self.track_for_tid[treedata.tid]
                 file.write(f'{track.filename}\t{track.secs:.03f}\n')
-            file.write('\fHISTORY\n\fCURRENT\n')
+            file.write('\fHISTORY\n')
 
 
 @enum.unique
@@ -139,8 +130,6 @@ class _State(enum.Enum):
     WANT_TRACK_HEADER = enum.auto()
     IN_TRACKS = enum.auto()
     IN_HISTORY = enum.auto()
-    IN_CURRENT = enum.auto()
-    END = enum.auto()
 
 
 Track = collections.namedtuple('Track', 'filename secs')
@@ -153,7 +142,7 @@ if __name__ == '__main__':
                          'infile.tlm outfile.tlm')
     filename = sys.argv[1]
     if filename in {'-t', '--tree'}:
-        tlm = Tlm(sys.argv[2])
+        tlm = Model(sys.argv[2])
         for treedata in tlm.tree:
             print(treedata)
         for (tid, track) in tlm.track_for_tid.items():
@@ -163,6 +152,6 @@ if __name__ == '__main__':
         outfile = pathlib.Path(sys.argv[2]).resolve()
         if infile == outfile:
             raise SystemExit('infile and outfile must be different')
-        tlm = Tlm(infile)
+        tlm = Model(infile)
         tlm.save(filename=outfile)
         print('saved', outfile)
