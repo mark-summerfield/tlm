@@ -15,7 +15,7 @@ use fltk::{
     menu::MenuFlag,
     prelude::*,
 };
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 impl Application {
     pub(crate) fn on_file_new(&mut self) {
@@ -45,10 +45,10 @@ impl Application {
     }
 
     pub(crate) fn load_tlm(&mut self, filename: &Path) {
-        match self.tlm.load(&filename) {
+        match self.tlm.load(filename) {
             Ok(_) => {
-                self.update_title(&filename);
-                self.update_recent_files(&filename);
+                self.update_title(filename);
+                self.update_recent_files(filename);
                 self.close_children();
                 // TODO If self.tlm.has_current_treepath() then select
                 // it ready to play
