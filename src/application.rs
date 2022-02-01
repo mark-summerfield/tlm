@@ -104,8 +104,12 @@ impl Application {
         while self.app.wait() {
             if let Some(action) = self.receiver.recv() {
                 match action {
+                    Action::None => (),
                     Action::FileNew => self.on_file_new(),
                     Action::FileOpen => self.on_file_open(),
+                    Action::FileOpenRecent(i) => {
+                        self.on_file_open_recent(i)
+                    }
                     Action::FileSave => self.on_file_save(),
                     Action::FileSaveAs => self.on_file_save_as(),
                     Action::FileConfigure => self.on_file_configure(),

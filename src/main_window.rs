@@ -4,11 +4,12 @@
 use super::CONFIG;
 use crate::fixed::{
     Action, APPNAME, BUTTON_HEIGHT, FILE_NEW_ICON, FILE_OPEN_ICON,
-    FILE_SAVE_ICON, ICON, LIST_IMPORT_ICON, LIST_MOVE_DOWN_ICON,
-    LIST_MOVE_UP_ICON, LIST_NEW_ICON, NEXT_ICON, PAD, PLAY_ICON, PREV_ICON,
-    REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
-    TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON, TRACK_MOVE_UP_ICON,
-    TRACK_NEW_ICON, VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
+    FILE_RECENT_MENU, FILE_SAVE_ICON, ICON, LIST_IMPORT_ICON,
+    LIST_MOVE_DOWN_ICON, LIST_MOVE_UP_ICON, LIST_NEW_ICON, NEXT_ICON, PAD,
+    PLAY_ICON, PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT,
+    TOOLBUTTON_SIZE, TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON,
+    TRACK_MOVE_UP_ICON, TRACK_NEW_ICON, VOLUME_ICON, WINDOW_HEIGHT_MIN,
+    WINDOW_WIDTH_MIN,
 };
 use crate::util;
 use fltk::{
@@ -110,11 +111,11 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::FileOpen,
     );
     menubar.add_emit(
-        "&File/Open &Recent\t",
+        FILE_RECENT_MENU,
         Shortcut::None,
         MenuFlag::Submenu,
         sender,
-        Action::FileOpen,
+        Action::None,
     );
     menubar.add_emit(
         "&File/&Save\t",

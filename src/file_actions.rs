@@ -3,14 +3,19 @@
 
 use super::CONFIG;
 use crate::application::Application;
-use crate::fixed::APPNAME;
+use crate::fixed::{
+    Action, APPNAME, FILE_RECENT_MENU, MAX_RECENT_FILES, MENU_CHARS,
+};
 use crate::options_form;
 use crate::util;
 use fltk::{
     app,
     dialog::{FileDialog, FileDialogType},
+    enums::Shortcut,
+    menu::MenuFlag,
     prelude::*,
 };
+use std::path::{Path, PathBuf};
 
 impl Application {
     pub(crate) fn on_file_new(&mut self) {
@@ -25,31 +30,83 @@ impl Application {
         form.show();
         let filename = form.filename();
         if filename.exists() {
-            match self.tlm.load(&filename) {
-                Ok(_) => {
-                    /* TODO
-                    let filename =
-                        self.tlm.filename.file_stem().to_string_lossy();
-                    self.main_window
-                        .set_title(&format!("{filename} — {APPNAME}"));
-                    */
-                    self.close_children();
-                    // TODO Update titlebar to:  filename.stem() — TLM
-                    // TODO add as config.last_file and add to recent_files
-                    // TODO If self.tlm.has_current_treepath() then select
-                    // it ready to play
-                    app::redraw(); // redraws the world
-                }
-                Err(err) => {
-                    /* TODO
-                    self.main_window.set_title(APPNAME);
-                    */
-                    util::popup_error_message(&format!(
-                        "Failed to open {filename:?}:\n{err}"
-                    ));
-                }
-            };
+            self.load_tlm(&filename);
         }
+    }
+
+    pub(crate) fn on_file_open_recent(&mut self, index: usize) {
+        let filename = {
+            let config = CONFIG.get().read().unwrap();
+            config.recent_files[index].clone()
+        };
+        if filename.exists() {
+            self.load_tlm(&filename);
+        }
+    }
+
+    pub(crate) fn load_tlm(&mut self, filename: &Path) {
+        match self.tlm.load(&filename) {
+            Ok(_) => {
+                self.update_title(&filename);
+                self.update_recent_files(&filename);
+                self.close_children();
+                // TODO If self.tlm.has_current_treepath() then select
+                // it ready to play
+            }
+            Err(err) => {
+                self.clear_title();
+                util::popup_error_message(&format!(
+                    "Failed to open {filename:?}:\n{err}"
+                ));
+            }
+        };
+        app::redraw(); // redraws the world
+    }
+
+    fn update_recent_files(&mut self, filename: &Path) {
+        let filename = filename.to_path_buf();
+        {
+            let mut config = CONFIG.get().write().unwrap();
+            config.last_file = filename.clone();
+            util::maybe_add_to_deque(
+                &mut config.recent_files,
+                filename,
+                MAX_RECENT_FILES,
+            );
+        }
+        self.update_recent_files_menu();
+    }
+
+    pub(crate) fn update_recent_files_menu(&mut self) {
+        if let Some(mut item) = self.menubar.find_item(FILE_RECENT_MENU) {
+            item.clear();
+            let base = FILE_RECENT_MENU.trim_end();
+            let config = CONFIG.get().read().unwrap();
+            for (i, filename) in config.recent_files.iter().enumerate() {
+                let name = filename.to_string_lossy();
+                // TODO FIXME
+                self.menubar.add_emit(
+                    &format!("{base}/&{} {name}", MENU_CHARS[i]),
+                    Shortcut::None,
+                    MenuFlag::Normal,
+                    self.sender,
+                    Action::FileOpenRecent(i),
+                );
+            }
+        }
+    }
+
+    fn clear_title(&mut self) {
+        self.main_window.set_label(APPNAME);
+    }
+
+    fn update_title(&mut self, filename: &Path) {
+        let filename = if let Some(stem) = filename.file_stem() {
+            stem.to_string_lossy()
+        } else {
+            filename.to_string_lossy()
+        };
+        self.main_window.set_label(&format!("{filename} — {APPNAME}"));
     }
 
     fn close_children(&mut self) {

@@ -8,6 +8,7 @@ use fltk::dialog;
 use lofty::{self, Accessor, ItemKey, ItemValue, Probe};
 use std::{
     cmp,
+    collections::VecDeque,
     path::{Path, PathBuf},
     str,
 };
@@ -303,4 +304,24 @@ pub fn canonicalize(track: &Path) -> String {
 pub fn popup_error_message(message: &str) {
     dialog::message_title(&format!("Error — {APPNAME}"));
     dialog::message(x() - 200, y() - 100, message);
+}
+
+pub fn maybe_add_to_deque<T: cmp::PartialEq>(
+    deque: &mut VecDeque<T>,
+    value: T,
+    max_size: usize,
+) -> bool {
+    if !deque.is_empty() && deque[0] == value {
+        return false; // Already in and already first
+    }
+    for i in 1..deque.len() {
+        if deque[i] == value {
+            deque.swap(0, i); // Already in; make it first
+            return true;
+        }
+    }
+    // Wasn't already there, so add as first
+    deque.push_front(value);
+    deque.truncate(max_size);
+    true
 }

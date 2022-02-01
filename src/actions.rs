@@ -1,6 +1,7 @@
 // Copyright © 2021-22 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
+use super::CONFIG;
 use crate::application::Application;
 use crate::fixed::{Action, TICK_TIMEOUT};
 use crate::util;
@@ -8,9 +9,15 @@ use fltk::{app, prelude::*};
 
 impl Application {
     pub(crate) fn on_startup(&mut self) {
-        // TODO
-        // load config.last_file & then load the Tlm's current_track
-        //self.load_track();
+        let filename = {
+            let config = CONFIG.get().read().unwrap();
+            config.last_file.clone()
+        };
+        if filename.exists() {
+            self.load_tlm(&filename);
+        } else {
+            self.update_recent_files_menu();
+        }
     }
 
     pub(crate) fn on_time_update(&mut self) {

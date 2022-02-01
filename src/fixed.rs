@@ -10,6 +10,7 @@ use std::env;
 pub static APPNAME: &str = "TLM";
 pub static VERSION: &str = "1.0.0";
 pub static HELP_HTML: &str = include_str!("../data/help.html");
+pub static FILE_RECENT_MENU: &str = "&File/Open &Recent\t";
 pub const ICON: &str = include_str!("../images/tlm.svg");
 pub const FILE_NEW_ICON: &str = include_str!("../images/document-new.svg");
 pub const FILE_OPEN_ICON: &str =
@@ -40,6 +41,7 @@ pub const NEXT_ICON: &str =
 pub const VOLUME_ICON: &str =
     include_str!("../images/audio-volume-high.svg");
 pub const TIME_ICON: &str = include_str!("../images/time.svg");
+pub const MAX_RECENT_FILES: usize = 9;
 pub const DEF_HISTORY_SIZE: usize = 26;
 pub const MIN_HISTORY_SIZE: usize = 2;
 pub const MAX_HISTORY_SIZE: usize = 35;
@@ -62,9 +64,11 @@ pub static MENU_CHARS: [char; 35] = [
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {
+    None,
     FileConfigure,
     FileNew,
     FileOpen,
+    FileOpenRecent(usize),
     FileQuit,
     FileSave,
     FileSaveAs,

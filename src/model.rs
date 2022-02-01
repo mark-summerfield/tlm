@@ -58,20 +58,7 @@ impl Model {
     }
 
     pub fn add_to_history(&mut self, treepath: TreePath) -> bool {
-        const SIZE: usize = 35;
-        if !self.history.is_empty() && self.history[0] == treepath {
-            return false; // Already in and already first
-        }
-        for i in 1..self.history.len() {
-            if self.history[i] == treepath {
-                self.history.swap(0, i); // Already in; make it first
-                return true;
-            }
-        }
-        // Wasn't already there, so add as first
-        self.history.push_front(treepath);
-        self.history.truncate(SIZE);
-        true
+        util::maybe_add_to_deque(&mut self.history, treepath, 35)
     }
 
     pub fn load(&mut self, filename: &Path) -> Result<()> {
