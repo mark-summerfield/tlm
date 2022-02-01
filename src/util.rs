@@ -2,7 +2,9 @@
 // License: GPLv3
 
 use super::CONFIG;
+use crate::fixed::APPNAME;
 use fltk::app;
+use fltk::dialog;
 use lofty::{self, Accessor, ItemKey, ItemValue, Probe};
 use std::{
     cmp,
@@ -296,4 +298,9 @@ pub fn canonicalize(track: &Path) -> String {
         s = t.to_string();
     }
     s.replace(&['-', '_', '/', '\\'], " ")
+}
+
+pub fn popup_error_message(message: &str) {
+    dialog::message_title(&format!("Error — {APPNAME}"));
+    dialog::message(x() - 200, y() - 100, message);
 }

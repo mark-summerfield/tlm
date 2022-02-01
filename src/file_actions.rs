@@ -25,16 +25,19 @@ impl Application {
         form.show();
         let filename = form.filename();
         if filename.exists() {
-            let reply = self.tlm.load(&filename);
-            if reply.is_err() {
-                // TODO pop up warning dialog message
-            } else {
-                // TODO Update titlebar to:  filename.stem() — TLM
-                // TODO add as config.last_file and add to recent_files
-                // TODO If self.tlm.has_current_treepath() then select it
-                // ready to play
-                app::redraw(); // redraws the world
-            }
+            match self.tlm.load(&filename) {
+                Ok(_) => {
+                    // TODO iterate over all top-level items and close them
+                    // TODO Update titlebar to:  filename.stem() — TLM
+                    // TODO add as config.last_file and add to recent_files
+                    // TODO If self.tlm.has_current_treepath() then select
+                    // it ready to play
+                    app::redraw(); // redraws the world
+                }
+                Err(err) => util::popup_error_message(&format!(
+                    "Failed to open {filename:?}:\n{err}"
+                )),
+            };
         }
     }
 
