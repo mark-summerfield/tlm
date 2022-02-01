@@ -27,17 +27,38 @@ impl Application {
         if filename.exists() {
             match self.tlm.load(&filename) {
                 Ok(_) => {
-                    // TODO iterate over all top-level items and close them
+                    /* TODO
+                    let filename =
+                        self.tlm.filename.file_stem().to_string_lossy();
+                    self.main_window
+                        .set_title(&format!("{filename} — {APPNAME}"));
+                    */
+                    self.close_children();
                     // TODO Update titlebar to:  filename.stem() — TLM
                     // TODO add as config.last_file and add to recent_files
                     // TODO If self.tlm.has_current_treepath() then select
                     // it ready to play
                     app::redraw(); // redraws the world
                 }
-                Err(err) => util::popup_error_message(&format!(
-                    "Failed to open {filename:?}:\n{err}"
-                )),
+                Err(err) => {
+                    /* TODO
+                    self.main_window.set_title(APPNAME);
+                    */
+                    util::popup_error_message(&format!(
+                        "Failed to open {filename:?}:\n{err}"
+                    ));
+                }
             };
+        }
+    }
+
+    fn close_children(&mut self) {
+        let mut opt_item = self.tlm.track_tree.first();
+        while let Some(mut item) = opt_item {
+            if item.depth() == 1 || item.depth() == 2 {
+                item.close();
+            }
+            opt_item = self.tlm.track_tree.next(&item);
         }
     }
 
