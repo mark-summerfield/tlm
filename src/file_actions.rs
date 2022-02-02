@@ -3,13 +3,14 @@
 
 use super::CONFIG;
 use crate::application::Application;
-use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES};
+use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES, MINI_TIMEOUT};
 use crate::options_form;
 use crate::util;
 use fltk::{
     app,
     dialog::{FileDialog, FileDialogType},
     prelude::*,
+    tree::TreeItem,
 };
 use std::path::Path;
 
@@ -77,16 +78,36 @@ impl Application {
     fn select_recent_track(&mut self) {
         if let Some(treepath) = self.tlm.history.front() {
             if let Some(item) = self.tlm.track_tree.find_item(treepath) {
-                let mut opt_parent = item.parent();
-                while let Some(mut parent) = opt_parent {
-                    parent.open();
-                    self.tlm.track_tree.show_item_middle(&parent);
-                    opt_parent = parent.parent();
-                }
-                let _ = self.tlm.track_tree.select(&treepath, false);
-                self.tlm.track_tree.show_item_middle(&item);
+                self.select_tree_item(treepath.clone(), item);
             }
         }
+        else {
+            let mut treepath = String::new();
+            let mut opt_item = self.tlm.track_tree.first();
+            while let Some(mut item) = opt_item {
+                treepath.push_str(&item.label().unwrap_or_default());
+                if item.has_children() {
+                    treepath.push('/');
+                    opt_item = item.next();
+                } else {
+                    self.select_tree_item(treepath, item);
+                    break;
+                }
+            }
+        }
+    }
+
+    fn select_tree_item(&mut self, treepath: String, item: TreeItem) {
+        let mut opt_parent = item.parent();
+        while let Some(mut parent) = opt_parent {
+            parent.open();
+            opt_parent = parent.parent();
+        }
+        let _ = self.tlm.track_tree.select(&treepath, false);
+        let mut tree = self.tlm.track_tree.clone();
+        app::add_timeout3(MINI_TIMEOUT, move |_| {
+            tree.show_item_middle(&item);
+        });
     }
 
     fn update_recent_files(&mut self, filename: &Path) {

@@ -1,7 +1,7 @@
 // Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
-use crate::fixed::Action;
+use crate::fixed::{Action, MINI_TIMEOUT};
 use crate::html_form;
 use crate::main_window;
 use crate::model::Model;
@@ -91,7 +91,7 @@ impl Application {
         if load {
             #[allow(clippy::clone_on_copy)]
             let sender = sender.clone();
-            app::add_timeout3(0.01, move |_| {
+            app::add_timeout3(MINI_TIMEOUT, move |_| {
                 sender.send(Action::OnStartup);
             });
         } else {
