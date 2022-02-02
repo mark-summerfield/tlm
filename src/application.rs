@@ -104,13 +104,10 @@ impl Application {
         while self.app.wait() {
             if let Some(action) = self.receiver.recv() {
                 match action {
-                    Action::None => (),
                     Action::ClearInfo => self.info_view.set_value(""),
                     Action::FileNew => self.on_file_new(),
                     Action::FileOpen => self.on_file_open(),
-                    Action::FileOpenRecent(i) => {
-                        self.on_file_open_recent(i)
-                    }
+                    Action::FileOpenRecent => self.on_file_open_recent(),
                     Action::FileSave => self.on_file_save(),
                     Action::FileSaveAs => self.on_file_save_as(),
                     Action::FileConfigure => self.on_file_configure(),
@@ -138,6 +135,7 @@ impl Application {
                     }
                     Action::TrackReplay => self.on_track_replay(),
                     Action::TrackNext => self.on_track_next(),
+                    Action::TrackPlayAgain => self.on_track_play_again(),
                     Action::TrackLouder => self.on_volume_up(),
                     Action::TrackQuieter => self.on_volume_down(),
                     Action::TrackMoveUp => self.on_track_move_up(),
@@ -148,7 +146,6 @@ impl Application {
                     Action::TrackDelete => self.on_track_delete(),
                     Action::TrackUndelete => self.on_track_undelete(),
                     Action::VolumeUpdate => self.on_volume_update(),
-                    Action::HistoryClear => self.on_history_clear(),
                 }
             }
         }

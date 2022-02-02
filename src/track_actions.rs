@@ -87,6 +87,12 @@ impl Application {
         */
     }
 
+    pub(crate) fn on_track_play_again(&mut self) {
+        dbg!("on_track_play_again");
+        // TODO pop up list of tlm.history tracks for user to
+        // [&Play] [Clear &list] [&Cancel]
+    }
+
     pub(crate) fn on_volume_down(&mut self) {
         self.change_volume(
             (self.volume_slider.value() as f32 - 0.05).max(0.0),

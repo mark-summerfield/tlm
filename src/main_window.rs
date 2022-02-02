@@ -109,15 +109,13 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         sender,
         Action::FileOpen,
     );
-    /* TODO WHEN POSSIBLE (RECENT)
     menubar.add_emit(
-        FILE_RECENT_MENU,
+        "&File/Open &Recent…",
         Shortcut::None,
-        MenuFlag::Submenu,
+        MenuFlag::Normal,
         sender,
-        Action::None,
+        Action::FileOpenRecent,
     );
-    */
     menubar.add_emit(
         "&File/&Save\t",
         Shortcut::Ctrl | 's',
@@ -259,6 +257,13 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::TrackNext,
     );
     menubar.add_emit(
+        "&Track/Play A&gain…\t",
+        Shortcut::Ctrl | 'g',
+        MenuFlag::MenuDivider,
+        sender,
+        Action::TrackPlayAgain,
+    );
+    menubar.add_emit(
         "&Track/&Increase Volume\t",
         Shortcut::Shift | Shortcut::from_key(Key::F8),
         MenuFlag::Normal,
@@ -320,14 +325,6 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         MenuFlag::Normal,
         sender,
         Action::TrackUndelete,
-    );
-    menubar.add_emit(
-        // TODO add &1..&9 &A..&Z below as appropriate
-        "H&istory/Clear\t",
-        Shortcut::None,
-        MenuFlag::MenuDivider,
-        sender,
-        Action::HistoryClear,
     );
     menubar.add_emit(
         "&Help/&Help\t",

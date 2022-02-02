@@ -10,7 +10,6 @@ use std::env;
 pub static APPNAME: &str = "TLM";
 pub static VERSION: &str = "1.0.0";
 pub static HELP_HTML: &str = include_str!("../data/help.html");
-pub static FILE_RECENT_MENU: &str = "&File/Open &Recent\t";
 pub const ICON: &str = include_str!("../images/tlm.svg");
 pub const FILE_NEW_ICON: &str = include_str!("../images/document-new.svg");
 pub const FILE_OPEN_ICON: &str =
@@ -65,12 +64,11 @@ pub static MENU_CHARS: [char; 35] = [
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {
-    None,
     ClearInfo,
     FileConfigure,
     FileNew,
     FileOpen,
-    FileOpenRecent(usize),
+    FileOpenRecent,
     FileQuit,
     FileSave,
     FileSaveAs,
@@ -95,6 +93,7 @@ pub enum Action {
     TrackPlayOrPause,
     TrackReplay,
     TrackNext,
+    TrackPlayAgain,
     TrackLouder,
     TrackQuieter,
     TrackMoveUp,
@@ -105,7 +104,6 @@ pub enum Action {
     TrackDelete,
     TrackUndelete,
     VolumeUpdate,
-    HistoryClear,
 }
 
 pub fn about_html(player: &Soloud) -> String {

@@ -8,7 +8,6 @@ mod config;
 mod file_actions;
 mod fixed;
 mod help_actions;
-mod history_actions;
 mod html_form;
 mod list_actions;
 mod main_window;

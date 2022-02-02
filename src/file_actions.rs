@@ -33,7 +33,11 @@ impl Application {
         }
     }
 
-    pub(crate) fn on_file_open_recent(&mut self, index: usize) {
+    pub(crate) fn on_file_open_recent(&mut self) {
+        dbg!("on_file_open_recent");
+        // TODO pop up dialog of recent files for use to
+        // [&Open] [Clear &List] [&Cancel]
+        /*
         let filename = {
             let config = CONFIG.get().read().unwrap();
             config.recent_files[index].clone()
@@ -41,6 +45,7 @@ impl Application {
         if filename.exists() {
             self.load_tlm(&filename);
         }
+        */
     }
 
     pub(crate) fn load_tlm(&mut self, filename: &Path) {
