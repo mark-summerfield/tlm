@@ -160,25 +160,22 @@ pub fn get_track_data_html(track: &Path) -> String {
                 text.push_str("</font>");
             }
             if !data.album.is_empty() || data.number > 0 {
-                text.push_str("<br>");
+                text.push_str(" • ");
             }
             if !data.album.is_empty() {
                 text.push_str("<font color=green>");
                 text.push_str(&data.artist);
                 text.push_str("</font><br>");
             }
-            text.push_str("<font color=#008B8B>");
+            text.push_str("<font color=#008B8B>\"");
             text.push_str(&track.to_string_lossy());
-            text.push_str("</font>");
+            text.push_str("\"</font>");
             text
         }
-        _ => {
-            format!(
-                "<font color=navy><b>{name}</b></font><br>
-                <font color=#008B8B>{}</font>",
-                track.to_string_lossy()
-            )
-        }
+        _ => format!(
+            "<font color=navy><b>{name}</b></font><br>
+                <font color=#008B8B>{track:?}</font>"
+        ),
     }
 }
 

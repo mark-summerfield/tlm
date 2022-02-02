@@ -14,14 +14,14 @@ use std::{
     str::FromStr,
 };
 
-type TreePath = String;
-type TrackID = i32;
+pub type TreePath = String;
+pub type TrackID = i32;
 type TrackForTID = HashMap<TrackID, Track>;
 
 #[derive(Debug)]
 pub struct Track {
-    filename: PathBuf,
-    secs: f64,
+    pub filename: PathBuf,
+    pub secs: f64,
 }
 
 pub struct Model {

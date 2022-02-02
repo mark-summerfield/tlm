@@ -3,6 +3,7 @@
 
 use super::CONFIG;
 use crate::application::Application;
+use crate::model::TrackID;
 use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES, MINI_TIMEOUT};
 use crate::options_form;
 use crate::util;
@@ -69,10 +70,10 @@ impl Application {
                     "Failed to open <font color=navy>{filename:?}</font>
                     <br><font color=red>{err}</font>"
                 ));
+                self.clear_info_after(INFO_TIMEOUT);
             }
         };
         app::redraw(); // redraws the world
-        self.clear_info_after(INFO_TIMEOUT);
     }
 
     fn select_recent_track(&mut self) {
@@ -84,7 +85,7 @@ impl Application {
         else {
             let mut treepath = String::new();
             let mut opt_item = self.tlm.track_tree.first();
-            while let Some(mut item) = opt_item {
+            while let Some(item) = opt_item {
                 treepath.push_str(&item.label().unwrap_or_default());
                 if item.has_children() {
                     treepath.push('/');
@@ -98,13 +99,17 @@ impl Application {
     }
 
     fn select_tree_item(&mut self, treepath: String, item: TreeItem) {
+        if let Some(tid) = unsafe { &item.user_data::<TrackID>() } {
+            if let Some(track) = self.tlm.track_for_tid.get(&tid) {
+                self.load_track(track.filename.clone());
+            }
+        }
         let mut opt_parent = item.parent();
         while let Some(mut parent) = opt_parent {
             parent.open();
             opt_parent = parent.parent();
         }
         let _ = self.tlm.track_tree.select(&treepath, false);
-        // TODO update self.info_view with track's details
         let mut tree = self.tlm.track_tree.clone();
         app::add_timeout3(MINI_TIMEOUT, move |_| {
             tree.show_item_middle(&item);

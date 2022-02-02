@@ -104,6 +104,7 @@ impl Application {
         while self.app.wait() {
             if let Some(action) = self.receiver.recv() {
                 match action {
+                    Action::AddToHistory => self.on_add_to_history(),
                     Action::ClearInfo => self.info_view.set_value(""),
                     Action::FileNew => self.on_file_new(),
                     Action::FileOpen => self.on_file_open(),

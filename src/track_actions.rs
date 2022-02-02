@@ -7,7 +7,8 @@ use crate::fixed::{
 };
 use crate::util;
 use fltk::{app, image::SvgImage, prelude::*};
-use std::{thread, time::Duration};
+use soloud::prelude::*;
+use std::{path::PathBuf, thread, time::Duration};
 
 impl Application {
     pub(crate) fn on_track_new(&mut self) {
@@ -141,16 +142,12 @@ impl Application {
         println!("on_track_undelete"); // TODO
     }
 
-    pub(crate) fn load_track(&mut self) {
+    pub(crate) fn load_track(&mut self, track: PathBuf) {
         if self.playing {
             self.on_track_play_or_pause(); // PAUSE
             self.player.stop_all();
         }
-        dbg!("load_track");
-        // TODO
-        /*
-        let config = CONFIG.get().read().unwrap();
-        let message = match self.wav.load(&config.track) {
+        let message = match self.wav.load(&track) {
             Ok(_) => {
                 self.handle = self.player.play(&self.wav);
                 self.player.set_pause(self.handle, true);
@@ -163,7 +160,7 @@ impl Application {
                 self.time_slider.set_value(0.0);
                 self.time_label.set_label(&format!(
                     "{}/{}",
-                    util::humanized_time(pos),
+                    util::humanized_time(0.0),
                     util::humanized_time(self.wav.length())
                 ));
                 #[allow(clippy::clone_on_copy)]
@@ -171,16 +168,17 @@ impl Application {
                 app::add_timeout3(TINY_TIMEOUT, move |_| {
                     sender.send(Action::AddToHistory);
                 });
-                util::get_track_data_html(&config.track)
+                util::get_track_data_html(&track)
             }
-            Err(_) => {
-                LOAD_ERROR.replace("FILE", &config.track.to_string_lossy())
-            }
+            Err(_) => format!("Failed to open {track:?}"),
         };
         self.info_view.set_value(&message);
-        */
         self.update_ui();
         app::redraw(); // redraws the world
+    }
+
+    pub(crate) fn on_add_to_history(&mut self) {
+        dbg!("on_add_to_history"); // TODO add currently playing track to tlm history
     }
 
     pub(crate) fn change_volume(&mut self, volume: f32) {
@@ -191,7 +189,7 @@ impl Application {
         app::redraw(); // redraws the world
     }
 
-    pub(crate) fn auto_play_track(&mut self, track: std::path::PathBuf) {
+    pub(crate) fn auto_play_track(&mut self, track: PathBuf) {
         dbg!("auto_play_track", track);
         // TODO
         /*
