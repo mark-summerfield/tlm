@@ -1,4 +1,4 @@
-// Copyright © 2021-22 Mark Summerfield. All rights reserved.
+// Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
 use super::CONFIG;
@@ -15,8 +15,6 @@ impl Application {
         };
         if filename.exists() {
             self.load_tlm(&filename);
-        } else {
-            // self.update_recent_files_menu(); // TODO WHEN POSSIBLE (RECENT)
         }
     }
 
@@ -71,12 +69,5 @@ impl Application {
         } else {
             true // no unsaved changes, so continue
         }
-    }
-
-    fn load_remembered_track(&mut self, track: &str) {
-        dbg!("load_remembered_track"); // TODO
-                                       //let track = track.replace(PATH_SEP, "/");
-                                       //let (_, track) = track.split_at(3);
-                                       //self.auto_play_track(PathBuf::from(track));
     }
 }

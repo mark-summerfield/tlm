@@ -1,4 +1,4 @@
-// Copyright © 2021-22 Mark Summerfield. All rights reserved.
+// Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
 use super::CONFIG;
@@ -60,8 +60,7 @@ impl Application {
                 self.info_view.set_value(&format!(
                     "Opened <font color=navy>{filename:?}</font>"
                 ));
-                // TODO If self.tlm.has_current_treepath() then select
-                // it ready to play
+                self.select_recent_track();
             }
             Err(err) => {
                 self.clear_title();
@@ -75,6 +74,21 @@ impl Application {
         self.clear_info_after(INFO_TIMEOUT);
     }
 
+    fn select_recent_track(&mut self) {
+        if let Some(treepath) = self.tlm.history.front() {
+            if let Some(item) = self.tlm.track_tree.find_item(treepath) {
+                let mut opt_parent = item.parent();
+                while let Some(mut parent) = opt_parent {
+                    parent.open();
+                    self.tlm.track_tree.show_item_middle(&parent);
+                    opt_parent = parent.parent();
+                }
+                let _ = self.tlm.track_tree.select(&treepath, false);
+                self.tlm.track_tree.show_item_middle(&item);
+            }
+        }
+    }
+
     fn update_recent_files(&mut self, filename: &Path) {
         let filename = filename.to_path_buf();
         {
@@ -86,28 +100,7 @@ impl Application {
                 MAX_RECENT_FILES,
             );
         }
-        // self.update_recent_files_menu(); // TODO WHEN POSSIBLE (RECENT)
     }
-
-    /* TODO WHEN POSSIBLE (RECENT)
-    pub(crate) fn update_recent_files_menu(&mut self) {
-        let index = self.menubar.find_index(FILE_RECENT_MENU);
-        dbg!(index);
-        let _ = self.menubar.clear_submenu(index);
-        let base = FILE_RECENT_MENU.trim_end();
-        let config = CONFIG.get().read().unwrap();
-        for (i, filename) in config.recent_files.iter().enumerate() {
-            let name = util::file_stem(&filename);
-            self.menubar.add_emit(
-                &format!("{base}/&{} {name}\t", MENU_CHARS[i]),
-                Shortcut::None,
-                MenuFlag::Normal,
-                self.sender,
-                Action::FileOpenRecent(i),
-            );
-        }
-    }
-    */
 
     fn clear_title(&mut self) {
         self.main_window.set_label(APPNAME);

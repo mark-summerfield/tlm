@@ -1,4 +1,4 @@
-// Copyright © 2021-22 Mark Summerfield. All rights reserved.
+// Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
 use crate::application::Application;
@@ -192,7 +192,7 @@ impl Application {
     }
 
     pub(crate) fn auto_play_track(&mut self, track: std::path::PathBuf) {
-        dbg!("auto_play_track");
+        dbg!("auto_play_track", track);
         // TODO
         /*
         if self.playing {

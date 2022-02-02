@@ -1,4 +1,4 @@
-// Copyright © 2021-22 Mark Summerfield. All rights reserved.
+// Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
 use crate::fixed::Action;
@@ -163,30 +163,25 @@ impl Application {
         dbg!("update_ui");
         // TODO
         /*
-        let (has_track, has_history) = {
-            let config = CONFIG.get().read().unwrap();
-            (
-                config.track.exists(),
-                !config.history.is_empty(),
-            )
-        };
         if has_track {
             self.prev_button.activate();
             self.replay_button.activate();
             self.play_pause_button.activate();
             self.next_button.activate();
+            self.again_button.activate();
             self.time_slider.activate();
         } else {
             self.prev_button.deactivate();
             self.replay_button.deactivate();
             self.play_pause_button.deactivate();
             self.next_button.deactivate();
+            self.again_button.deactivate();
             self.time_slider.deactivate();
         }
         if has_history {
-            self.history_menu_button.activate();
+            self.track_history_button.activate();
         } else {
-            self.history_menu_button.deactivate();
+            self.track_history_button.deactivate();
         }
         */
     }
