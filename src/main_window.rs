@@ -110,6 +110,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         sender,
         Action::FileOpen,
     );
+    /* TODO WHEN POSSIBLE (RECENT)
     menubar.add_emit(
         FILE_RECENT_MENU,
         Shortcut::None,
@@ -117,6 +118,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         sender,
         Action::None,
     );
+    */
     menubar.add_emit(
         "&File/&Save\t",
         Shortcut::Ctrl | 's',

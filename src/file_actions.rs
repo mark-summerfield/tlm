@@ -50,13 +50,17 @@ impl Application {
                 self.update_title(filename);
                 self.update_recent_files(filename);
                 self.close_children();
+                self.info_view.set_value(&format!(
+                    "Opened <font color=navy>{filename:?}</font>"
+                ));
                 // TODO If self.tlm.has_current_treepath() then select
                 // it ready to play
             }
             Err(err) => {
                 self.clear_title();
-                util::popup_error_message(&format!(
-                    "Failed to open {filename:?}:\n{err}"
+                self.info_view.set_value(&format!(
+                    "Failed to open <font color=navy>{filename:?}</font>
+                    <br><font color=red>{err}</font>"
                 ));
             }
         };
@@ -74,38 +78,35 @@ impl Application {
                 MAX_RECENT_FILES,
             );
         }
-        self.update_recent_files_menu();
+        // self.update_recent_files_menu(); // TODO WHEN POSSIBLE (RECENT)
     }
 
+    /* TODO WHEN POSSIBLE (RECENT)
     pub(crate) fn update_recent_files_menu(&mut self) {
-        if let Some(mut item) = self.menubar.find_item(FILE_RECENT_MENU) {
-            item.clear();
-            let base = FILE_RECENT_MENU.trim_end();
-            let config = CONFIG.get().read().unwrap();
-            for (i, filename) in config.recent_files.iter().enumerate() {
-                let name = filename.to_string_lossy();
-                // TODO FIXME
-                self.menubar.add_emit(
-                    &format!("{base}/&{} {name}", MENU_CHARS[i]),
-                    Shortcut::None,
-                    MenuFlag::Normal,
-                    self.sender,
-                    Action::FileOpenRecent(i),
-                );
-            }
+        let index = self.menubar.find_index(FILE_RECENT_MENU);
+        dbg!(index);
+        let _ = self.menubar.clear_submenu(index);
+        let base = FILE_RECENT_MENU.trim_end();
+        let config = CONFIG.get().read().unwrap();
+        for (i, filename) in config.recent_files.iter().enumerate() {
+            let name = util::file_stem(&filename);
+            self.menubar.add_emit(
+                &format!("{base}/&{} {name}\t", MENU_CHARS[i]),
+                Shortcut::None,
+                MenuFlag::Normal,
+                self.sender,
+                Action::FileOpenRecent(i),
+            );
         }
     }
+    */
 
     fn clear_title(&mut self) {
         self.main_window.set_label(APPNAME);
     }
 
     fn update_title(&mut self, filename: &Path) {
-        let filename = if let Some(stem) = filename.file_stem() {
-            stem.to_string_lossy()
-        } else {
-            filename.to_string_lossy()
-        };
+        let filename = util::file_stem(&filename);
         self.main_window.set_label(&format!("{filename} — {APPNAME}"));
     }
 

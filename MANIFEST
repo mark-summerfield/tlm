@@ -1,7 +1,6 @@
 # TODO 
 # - File→Open select last track (i.e., first in history if any;
 #   otherwise first in tree if any)
-# - File→Open Recent
 # - File→Save: first just iterate over the track_tree depth-first & print
 # - play/pause/etc. current (i.e., first in history) track,
 # - autoplay next track
@@ -11,7 +10,9 @@
 # TODO update_ui to activate/deactivate all menu options & toobar
 # buttons depending on the state (has_track, has_history, has_list
 # <since all tracks could be list-less at the top-level>).
-# TODO History→… submenu
+# TODO H&istory submenu or pop up list (in which case make it a
+# Track/&History item rather than a menubar item)
+# TODO &File/Open &Recent submenu or pop up list
 
 src/main.rs
 src/config.rs

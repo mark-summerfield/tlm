@@ -160,7 +160,7 @@ dependencies = [
 [[package]]
 name = "fltk"
 version = "1.2.29"
-source = "git+https://github.com/fltk-rs/fltk-rs#70cc13cf16dfb9b5d27057ca06f85693a6b3863e"
+source = "git+https://github.com/fltk-rs/fltk-rs#3d11f2671b1d1c023ba69990f23ae7ec8bcdee9f"
 dependencies = [
  "bitflags",
  "crossbeam-channel",
@@ -172,7 +172,7 @@ dependencies = [
 [[package]]
 name = "fltk-sys"
 version = "1.2.29"
-source = "git+https://github.com/fltk-rs/fltk-rs#70cc13cf16dfb9b5d27057ca06f85693a6b3863e"
+source = "git+https://github.com/fltk-rs/fltk-rs#3d11f2671b1d1c023ba69990f23ae7ec8bcdee9f"
 dependencies = [
  "cmake",
 ]

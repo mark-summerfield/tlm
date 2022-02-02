@@ -16,7 +16,7 @@ impl Application {
         if filename.exists() {
             self.load_tlm(&filename);
         } else {
-            self.update_recent_files_menu();
+            // self.update_recent_files_menu(); // TODO WHEN POSSIBLE (RECENT)
         }
     }
 

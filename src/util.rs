@@ -325,3 +325,11 @@ pub fn maybe_add_to_deque<T: cmp::PartialEq>(
     deque.truncate(max_size);
     true
 }
+
+pub fn file_stem(filename: &Path) -> String {
+    if let Some(stem) = filename.file_stem() {
+        stem.to_string_lossy().to_string()
+    } else {
+        filename.to_string_lossy().to_string()
+    }
+}
