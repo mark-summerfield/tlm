@@ -3,22 +3,21 @@
 
 use super::CONFIG;
 use crate::application::Application;
-use crate::fixed::{
-    Action, APPNAME, FILE_RECENT_MENU, MAX_RECENT_FILES, MENU_CHARS,
-};
+use crate::fixed::{Action, APPNAME, MAX_RECENT_FILES};
 use crate::options_form;
 use crate::util;
 use fltk::{
     app,
     dialog::{FileDialog, FileDialogType},
-    enums::Shortcut,
-    menu::MenuFlag,
     prelude::*,
 };
 use std::path::Path;
 
 impl Application {
     pub(crate) fn on_file_new(&mut self) {
+        if !self.ok_to_clear() {
+            return;
+        }
         println!("FileNew"); // TODO
     }
 
@@ -45,6 +44,9 @@ impl Application {
     }
 
     pub(crate) fn load_tlm(&mut self, filename: &Path) {
+        if !self.ok_to_clear() {
+            return;
+        }
         match self.tlm.load(filename) {
             Ok(_) => {
                 self.update_title(filename);
@@ -153,6 +155,9 @@ impl Application {
     }
 
     pub(crate) fn on_file_quit(&mut self) {
+        if !self.ok_to_clear() {
+            return;
+        }
         let mut config = CONFIG.get().write().unwrap();
         config.window_x = self.main_window.x();
         config.window_y = self.main_window.y();

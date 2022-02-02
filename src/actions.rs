@@ -3,9 +3,9 @@
 
 use super::CONFIG;
 use crate::application::Application;
-use crate::fixed::{Action, TICK_TIMEOUT};
+use crate::fixed::{Action, APPNAME, TICK_TIMEOUT};
 use crate::util;
-use fltk::{app, prelude::*};
+use fltk::{app, dialog, prelude::*};
 
 impl Application {
     pub(crate) fn on_startup(&mut self) {
@@ -49,10 +49,34 @@ impl Application {
         }
     }
 
+    pub(crate) fn ok_to_clear(&mut self) -> bool {
+        if self.tlm.dirty {
+            dialog::message_title(&format!("Unsaved Changes — {APPNAME}"));
+            match dialog::choice2_default(
+                "Save changes?",
+                "&Save",
+                "&Don't Save",
+                "&Cancel",
+            ) {
+                Some(index) => match index {
+                    0 => {
+                        self.on_file_save();
+                        true // save and continue
+                    }
+                    1 => true,  // don't save and continue
+                    _ => false, // don't save and don't continue
+                },
+                None => false, // don't save and don't continue
+            }
+        } else {
+            true // no unsaved changes, so continue
+        }
+    }
+
     fn load_remembered_track(&mut self, track: &str) {
-        dbg!("load_remembered_track");
-        //let track = track.replace(PATH_SEP, "/");
-        //let (_, track) = track.split_at(3);
-        //self.auto_play_track(PathBuf::from(track));
+        dbg!("load_remembered_track"); // TODO
+                                       //let track = track.replace(PATH_SEP, "/");
+                                       //let (_, track) = track.split_at(3);
+                                       //self.auto_play_track(PathBuf::from(track));
     }
 }

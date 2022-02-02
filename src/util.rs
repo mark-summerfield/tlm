@@ -306,6 +306,14 @@ pub fn popup_error_message(message: &str) {
     dialog::message(x() - 200, y() - 100, message);
 }
 
+pub fn file_stem(filename: &Path) -> String {
+    if let Some(stem) = filename.file_stem() {
+        stem.to_string_lossy().to_string()
+    } else {
+        filename.to_string_lossy().to_string()
+    }
+}
+
 pub fn maybe_add_to_deque<T: cmp::PartialEq>(
     deque: &mut VecDeque<T>,
     value: T,
@@ -316,20 +324,11 @@ pub fn maybe_add_to_deque<T: cmp::PartialEq>(
     }
     for i in 1..deque.len() {
         if deque[i] == value {
-            deque.swap(0, i); // Already in; make it first
-            return true;
+            deque.remove(i); // Remove from middle
+            break;
         }
     }
-    // Wasn't already there, so add as first
-    deque.push_front(value);
+    deque.push_front(value); // Add to front
     deque.truncate(max_size);
     true
-}
-
-pub fn file_stem(filename: &Path) -> String {
-    if let Some(stem) = filename.file_stem() {
-        stem.to_string_lossy().to_string()
-    } else {
-        filename.to_string_lossy().to_string()
-    }
 }

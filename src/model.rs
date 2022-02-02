@@ -26,6 +26,7 @@ pub struct Track {
 
 pub struct Model {
     pub filename: PathBuf,
+    pub dirty: bool,
     pub track_tree: Tree,
     pub track_for_tid: TrackForTID,
     pub history: VecDeque<TreePath>,
@@ -35,6 +36,7 @@ impl Model {
     pub fn new(track_tree: Tree) -> Self {
         Self {
             filename: PathBuf::new(),
+            dirty: false,
             track_tree,
             track_for_tid: TrackForTID::default(),
             history: VecDeque::default(),
@@ -58,7 +60,12 @@ impl Model {
     }
 
     pub fn add_to_history(&mut self, treepath: TreePath) -> bool {
-        util::maybe_add_to_deque(&mut self.history, treepath, 35)
+        let changed =
+            util::maybe_add_to_deque(&mut self.history, treepath, 35);
+        if changed {
+            self.dirty = true;
+        }
+        changed
     }
 
     pub fn load(&mut self, filename: &Path) -> Result<()> {
@@ -92,6 +99,7 @@ impl Model {
     }
 
     fn clear(&mut self) {
+        self.dirty = false;
         self.track_for_tid.clear();
         self.history.clear();
         self.track_tree.clear();
@@ -235,6 +243,7 @@ impl Model {
         gz.write_all("\x0CHISTORY\n".as_bytes())?;
         gz.finish()?;
         */
+        self.dirty = false;
         Ok(())
     }
 }
