@@ -105,6 +105,7 @@ impl Application {
             if let Some(action) = self.receiver.recv() {
                 match action {
                     Action::None => (),
+                    Action::ClearInfo => self.info_view.set_value(""),
                     Action::FileNew => self.on_file_new(),
                     Action::FileOpen => self.on_file_open(),
                     Action::FileOpenRecent(i) => {
@@ -151,6 +152,14 @@ impl Application {
                 }
             }
         }
+    }
+
+    pub fn clear_info_after(&mut self, secs: f64) {
+        #[allow(clippy::clone_on_copy)]
+        let sender = self.sender.clone();
+        app::add_timeout3(secs, move |_| {
+            sender.send(Action::ClearInfo);
+        });
     }
 
     pub fn update_ui(&mut self) {

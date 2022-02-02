@@ -46,8 +46,8 @@ pub const DEF_HISTORY_SIZE: usize = 26;
 pub const MIN_HISTORY_SIZE: usize = 2;
 pub const MAX_HISTORY_SIZE: usize = 35;
 pub const PAD: i32 = 6;
-pub const WINDOW_WIDTH_MIN: i32 = 640;
-pub const WINDOW_HEIGHT_MIN: i32 = 400;
+pub const WINDOW_WIDTH_MIN: i32 = 512;
+pub const WINDOW_HEIGHT_MIN: i32 = 380;
 pub const TOOLBUTTON_SIZE: i32 = 22;
 pub const TOOLBAR_HEIGHT: i32 = ((TOOLBUTTON_SIZE * 3) / 2) + PAD;
 pub const BUTTON_HEIGHT: i32 = 30;
@@ -56,6 +56,7 @@ pub const SCALE_MIN: f32 = 0.5;
 pub const SCALE_MAX: f32 = 3.5;
 pub const TINY_TIMEOUT: f64 = 0.075;
 pub const TICK_TIMEOUT: f64 = 0.1;
+pub const INFO_TIMEOUT: f64 = 10.0;
 pub static MENU_CHARS: [char; 35] = [
     '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
     'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
@@ -65,6 +66,7 @@ pub static MENU_CHARS: [char; 35] = [
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {
     None,
+    ClearInfo,
     FileConfigure,
     FileNew,
     FileOpen,

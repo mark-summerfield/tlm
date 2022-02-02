@@ -4,12 +4,11 @@
 use super::CONFIG;
 use crate::fixed::{
     Action, APPNAME, BUTTON_HEIGHT, FILE_NEW_ICON, FILE_OPEN_ICON,
-    FILE_RECENT_MENU, FILE_SAVE_ICON, ICON, LIST_IMPORT_ICON,
-    LIST_MOVE_DOWN_ICON, LIST_MOVE_UP_ICON, LIST_NEW_ICON, NEXT_ICON, PAD,
-    PLAY_ICON, PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT,
-    TOOLBUTTON_SIZE, TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON,
-    TRACK_MOVE_UP_ICON, TRACK_NEW_ICON, VOLUME_ICON, WINDOW_HEIGHT_MIN,
-    WINDOW_WIDTH_MIN,
+    FILE_SAVE_ICON, ICON, LIST_IMPORT_ICON, LIST_MOVE_DOWN_ICON,
+    LIST_MOVE_UP_ICON, LIST_NEW_ICON, NEXT_ICON, PAD, PLAY_ICON, PREV_ICON,
+    REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
+    TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON, TRACK_MOVE_UP_ICON,
+    TRACK_NEW_ICON, VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
 use crate::util;
 use fltk::{
@@ -60,7 +59,7 @@ pub fn make(sender: Sender<Action>) -> Widgets {
         Flex::default().size_of_parent().with_type(FlexType::Column);
     let menubar = add_menubar(sender, width);
     let toolbar = add_toolbar(sender, width);
-    let (track_tree, info_view) = add_views();
+    let (track_tree, info_view) = add_views(width);
     let (
         time_slider,
         time_label,
@@ -347,11 +346,12 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
     menubar
 }
 
-fn add_views() -> (Tree, HelpView) {
-    let mut row = Flex::default().with_type(FlexType::Row);
+fn add_views(width: i32) -> (Tree, HelpView) {
+    const HEIGHT: i32 = 60;
+    let mut row = Flex::default().with_type(FlexType::Column);
     let mut track_tree = Tree::default();
     track_tree.set_show_root(false);
-    let mut info_view = HelpView::default().with_size(200, 200);
+    let mut info_view = HelpView::default().with_size(width, HEIGHT);
     info_view.set_value(
         "<font color=green>Click <b>List→New</b> to add a folder of tracks
          or <b>Track→New</b> to add an individual track 
@@ -359,7 +359,7 @@ fn add_views() -> (Tree, HelpView) {
     );
     info_view.set_text_font(Font::Helvetica);
     info_view.set_text_size((info_view.text_size() as f64 * 1.3) as i32);
-    row.set_size(&info_view, 200);
+    row.set_size(&info_view, HEIGHT);
     row.end();
     (track_tree, info_view)
 }

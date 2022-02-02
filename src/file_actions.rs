@@ -3,7 +3,7 @@
 
 use super::CONFIG;
 use crate::application::Application;
-use crate::fixed::{Action, APPNAME, MAX_RECENT_FILES};
+use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES};
 use crate::options_form;
 use crate::util;
 use fltk::{
@@ -67,6 +67,7 @@ impl Application {
             }
         };
         app::redraw(); // redraws the world
+        self.clear_info_after(INFO_TIMEOUT);
     }
 
     fn update_recent_files(&mut self, filename: &Path) {
@@ -108,7 +109,7 @@ impl Application {
     }
 
     fn update_title(&mut self, filename: &Path) {
-        let filename = util::file_stem(&filename);
+        let filename = util::file_stem(filename);
         self.main_window.set_label(&format!("{filename} — {APPNAME}"));
     }
 
