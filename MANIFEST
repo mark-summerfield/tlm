@@ -19,7 +19,7 @@ src/config.rs
 src/model.rs
 src/application.rs
 src/actions.rs
-src/file_actions.rs
+src/file_actions.rs # TODO update info_view with selected track's details
 src/list_actions.rs
 src/track_actions.rs
 src/help_actions.rs

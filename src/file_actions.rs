@@ -104,6 +104,7 @@ impl Application {
             opt_parent = parent.parent();
         }
         let _ = self.tlm.track_tree.select(&treepath, false);
+        // TODO update self.info_view with track's details
         let mut tree = self.tlm.track_tree.clone();
         app::add_timeout3(MINI_TIMEOUT, move |_| {
             tree.show_item_middle(&item);
