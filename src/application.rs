@@ -4,7 +4,7 @@
 use crate::fixed::{Action, MINI_TIMEOUT};
 use crate::html_form;
 use crate::main_window;
-use crate::model::Model;
+use crate::model::{Model, TrackID, TreePath};
 use fltk::{
     app,
     app::{channel, App, Receiver, Scheme, Sender},
@@ -17,6 +17,7 @@ use fltk::{
     window::Window,
 };
 use soloud::{audio::Wav, prelude::*, Soloud};
+use std::path::PathBuf;
 
 pub struct Application {
     pub(crate) app: App,
@@ -32,12 +33,13 @@ pub struct Application {
     pub(crate) time_slider: HorFillSlider,
     pub(crate) time_label: Frame,
     pub(crate) helpform: Option<html_form::Form>,
-    // TODO track_list_manager: Tlm,
-    // this stores filename, track_for_tid, history, and current_track
     pub(crate) player: Soloud,
     pub(crate) wav: Wav,
     pub(crate) handle: soloud::Handle,
     pub(crate) playing: bool,
+    pub(crate) current_treepath: TreePath,
+    pub(crate) current_track: PathBuf,
+    pub(crate) current_tid: TrackID,
     pub(crate) tlm: Model,
     pub(crate) sender: Sender<Action>,
     pub(crate) receiver: Receiver<Action>,
@@ -74,6 +76,9 @@ impl Application {
             wav: Wav::default(),
             handle: unsafe { soloud::Handle::from_raw(0) },
             playing: false,
+            current_treepath: TreePath::new(),
+            current_track: PathBuf::new(),
+            current_tid: 0,
             tlm: Model::new(widgets.track_tree),
             sender,
             receiver,
@@ -104,7 +109,6 @@ impl Application {
         while self.app.wait() {
             if let Some(action) = self.receiver.recv() {
                 match action {
-                    Action::AddToHistory => self.on_add_to_history(),
                     Action::ClearInfo => self.info_view.set_value(""),
                     Action::FileNew => self.on_file_new(),
                     Action::FileOpen => self.on_file_open(),
@@ -146,6 +150,9 @@ impl Application {
                     Action::TrackFind => self.on_track_find(),
                     Action::TrackDelete => self.on_track_delete(),
                     Action::TrackUndelete => self.on_track_undelete(),
+                    Action::TreeItemDoubleClicked => {
+                        self.on_tree_item_double_clicked()
+                    }
                     Action::VolumeUpdate => self.on_volume_update(),
                 }
             }

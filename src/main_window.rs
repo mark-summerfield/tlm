@@ -59,7 +59,7 @@ pub fn make(sender: Sender<Action>) -> Widgets {
         Flex::default().size_of_parent().with_type(FlexType::Column);
     let menubar = add_menubar(sender, width);
     let toolbar = add_toolbar(sender, width);
-    let (track_tree, info_view) = add_views(width);
+    let (track_tree, info_view) = add_views(sender, width);
     let (
         time_slider,
         time_label,
@@ -343,11 +343,19 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
     menubar
 }
 
-fn add_views(width: i32) -> (Tree, HelpView) {
-    const HEIGHT: i32 = 60;
+fn add_views(sender: Sender<Action>, width: i32) -> (Tree, HelpView) {
+    const HEIGHT: i32 = 70;
     let mut row = Flex::default().with_type(FlexType::Column);
     let mut track_tree = Tree::default();
     track_tree.set_show_root(false);
+    #[allow(clippy::clone_on_copy)]
+    let sender = sender.clone();
+    track_tree.handle(move |_, event| {
+        if app::event() == Event::Push && app::event_clicks() {
+            sender.send(Action::TreeItemDoubleClicked);
+        }
+        false
+    });
     let mut info_view = HelpView::default().with_size(width, HEIGHT);
     info_view.set_value(
         "<font color=green>Click <b>List→New</b> to add a folder of tracks

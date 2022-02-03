@@ -142,12 +142,12 @@ impl Application {
         println!("on_track_undelete"); // TODO
     }
 
-    pub(crate) fn load_track(&mut self, track: PathBuf) {
+    pub(crate) fn load_track(&mut self) {
         if self.playing {
             self.on_track_play_or_pause(); // PAUSE
             self.player.stop_all();
         }
-        let message = match self.wav.load(&track) {
+        let message = match self.wav.load(&self.current_track) {
             Ok(_) => {
                 self.handle = self.player.play(&self.wav);
                 self.player.set_pause(self.handle, true);
@@ -163,22 +163,14 @@ impl Application {
                     util::humanized_time(0.0),
                     util::humanized_time(self.wav.length())
                 ));
-                #[allow(clippy::clone_on_copy)]
-                let sender = self.sender.clone();
-                app::add_timeout3(TINY_TIMEOUT, move |_| {
-                    sender.send(Action::AddToHistory);
-                });
-                util::get_track_data_html(&track)
+                self.tlm.add_to_history(self.current_treepath.clone());
+                util::get_track_data_html(&self.current_track)
             }
-            Err(_) => format!("Failed to open {track:?}"),
+            Err(_) => format!("Failed to open {:?}", &self.current_track),
         };
         self.info_view.set_value(&message);
         self.update_ui();
         app::redraw(); // redraws the world
-    }
-
-    pub(crate) fn on_add_to_history(&mut self) {
-        dbg!("on_add_to_history"); // TODO add currently playing track to tlm history
     }
 
     pub(crate) fn change_volume(&mut self, volume: f32) {

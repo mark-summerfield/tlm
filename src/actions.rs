@@ -4,8 +4,9 @@
 use super::CONFIG;
 use crate::application::Application;
 use crate::fixed::{Action, APPNAME, TICK_TIMEOUT};
+use crate::model::TrackID;
 use crate::util;
-use fltk::{app, dialog, prelude::*};
+use fltk::{app, dialog, prelude::*, tree::TreeItem};
 
 impl Application {
     pub(crate) fn on_startup(&mut self) {
@@ -47,21 +48,49 @@ impl Application {
         }
     }
 
+    pub(crate) fn on_tree_item_double_clicked(&mut self) {
+        if let Some(item) = self.tlm.track_tree.first_selected_item() {
+            self.maybe_choose_track(item);
+        }
+    }
+
+    pub(crate) fn maybe_choose_track(&mut self, item: TreeItem) {
+        match unsafe { item.user_data::<TrackID>() } {
+            Some(tid) => {
+                if tid == self.current_tid {
+                    return;
+                }
+            }
+            None => return,
+        };
+        let mut treepath = item.label().unwrap_or_default();
+        let mut opt_parent = item.parent();
+        while let Some(mut parent) = opt_parent {
+            let label = parent.label().unwrap_or_default();
+            if label != "ROOT" {
+                treepath.insert(0, '/');
+                treepath.insert_str(0, &label);
+            }
+            opt_parent = parent.parent();
+        }
+        self.select_track_in_tree(treepath, item);
+    }
+
     pub(crate) fn ok_to_clear(&mut self) -> bool {
         if self.tlm.dirty {
             dialog::message_title(&format!("Unsaved Changes — {APPNAME}"));
             match dialog::choice2_default(
                 "Save changes?",
-                "&Save",
                 "&Don't Save",
+                "&Save",
                 "&Cancel",
             ) {
                 Some(index) => match index {
-                    0 => {
+                    0 => true, // don't save and continue
+                    1 => {
                         self.on_file_save();
                         true // save and continue
                     }
-                    1 => true,  // don't save and continue
                     _ => false, // don't save and don't continue
                 },
                 None => false, // don't save and don't continue

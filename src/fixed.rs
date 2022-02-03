@@ -65,7 +65,6 @@ pub static MENU_CHARS: [char; 35] = [
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {
-    AddToHistory,
     ClearInfo,
     FileConfigure,
     FileNew,
@@ -105,6 +104,7 @@ pub enum Action {
     TrackFind,
     TrackDelete,
     TrackUndelete,
+    TreeItemDoubleClicked,
     VolumeUpdate,
 }
 

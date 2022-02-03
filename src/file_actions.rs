@@ -3,8 +3,8 @@
 
 use super::CONFIG;
 use crate::application::Application;
-use crate::model::TrackID;
 use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES, MINI_TIMEOUT};
+use crate::model::TrackID;
 use crate::options_form;
 use crate::util;
 use fltk::{
@@ -79,10 +79,9 @@ impl Application {
     fn select_recent_track(&mut self) {
         if let Some(treepath) = self.tlm.history.front() {
             if let Some(item) = self.tlm.track_tree.find_item(treepath) {
-                self.select_tree_item(treepath.clone(), item);
+                self.select_track_in_tree(treepath.clone(), item);
             }
-        }
-        else {
+        } else {
             let mut treepath = String::new();
             let mut opt_item = self.tlm.track_tree.first();
             while let Some(item) = opt_item {
@@ -91,17 +90,28 @@ impl Application {
                     treepath.push('/');
                     opt_item = item.next();
                 } else {
-                    self.select_tree_item(treepath, item);
+                    self.select_track_in_tree(treepath, item);
                     break;
                 }
             }
         }
     }
 
-    fn select_tree_item(&mut self, treepath: String, item: TreeItem) {
-        if let Some(tid) = unsafe { &item.user_data::<TrackID>() } {
-            if let Some(track) = self.tlm.track_for_tid.get(&tid) {
-                self.load_track(track.filename.clone());
+    pub(crate) fn select_track_in_tree(
+        &mut self,
+        treepath: String,
+        item: TreeItem,
+    ) {
+        if let Some(tid) = unsafe { item.user_data::<TrackID>() } {
+            if let Some(track_item) = self.tlm.track_for_tid.get(&tid) {
+                self.current_tid = tid;
+                if let Some(treepath) = treepath.strip_prefix("ROOT/") {
+                    self.current_treepath = treepath.to_string();
+                } else {
+                    self.current_treepath = treepath.clone();
+                }
+                self.current_track = track_item.filename.clone();
+                self.load_track();
             }
         }
         let mut opt_parent = item.parent();
