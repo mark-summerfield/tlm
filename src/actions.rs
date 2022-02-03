@@ -50,14 +50,15 @@ impl Application {
 
     pub(crate) fn on_tree_item_double_clicked(&mut self) {
         if let Some(item) = self.tlm.track_tree.first_selected_item() {
-            self.maybe_choose_track(item);
+            self.maybe_play_or_replay(item);
         }
     }
 
-    pub(crate) fn maybe_choose_track(&mut self, item: TreeItem) {
+    pub(crate) fn maybe_play_or_replay(&mut self, item: TreeItem) {
         match unsafe { item.user_data::<TrackID>() } {
             Some(tid) => {
                 if tid == self.current_tid {
+                    self.on_track_replay();
                     return;
                 }
             }
@@ -74,6 +75,7 @@ impl Application {
             opt_parent = parent.parent();
         }
         self.select_track_in_tree(treepath, item);
+        self.auto_play_track();
     }
 
     pub(crate) fn ok_to_clear(&mut self) -> bool {

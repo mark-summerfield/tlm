@@ -18,17 +18,7 @@ impl Application {
     pub(crate) fn on_track_previous(&mut self) {
         dbg!("on_track_previous");
         // TODO
-        /*
-        let track = {
-            let config = CONFIG.get().read().unwrap();
-            config.track.clone()
-        };
-        if let Some(track) =
-            util::get_prev_or_next_track(&track, WhichTrack::Previous)
-        {
-            self.auto_play_track(track);
-        }
-        */
+        // self.auto_play_track();
     }
 
     pub(crate) fn on_track_play_or_pause(&mut self) {
@@ -75,17 +65,7 @@ impl Application {
     pub(crate) fn on_track_next(&mut self) {
         dbg!("on_track_next");
         // TODO
-        /*
-        let track = {
-            let config = CONFIG.get().read().unwrap();
-            config.track.clone()
-        };
-        if let Some(track) =
-            util::get_prev_or_next_track(&track, WhichTrack::Next)
-        {
-            self.auto_play_track(track);
-        }
-        */
+        // self.auto_play_track();
     }
 
     pub(crate) fn on_track_play_again(&mut self) {
@@ -181,8 +161,8 @@ impl Application {
         app::redraw(); // redraws the world
     }
 
-    pub(crate) fn auto_play_track(&mut self, track: PathBuf) {
-        dbg!("auto_play_track", track);
+    pub(crate) fn auto_play_track(&mut self) {
+        dbg!("auto_play_track", &self.current_track, &self.current_treepath, self.current_tid);
         // TODO
         /*
         if self.playing {
