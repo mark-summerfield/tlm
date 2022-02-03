@@ -11,14 +11,23 @@ use soloud::prelude::*;
 use std::{path::PathBuf, thread, time::Duration};
 
 impl Application {
+    fn has_track(&self) -> bool {
+        self.current_tid != 0
+            && !self.current_treepath.is_empty()
+            && self.current_track.exists()
+    }
+
     pub(crate) fn on_track_new(&mut self) {
         println!("on_track_new"); // TODO
     }
 
     pub(crate) fn on_track_previous(&mut self) {
-        dbg!("on_track_previous");
-        // TODO
-        // self.auto_play_track();
+        if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
+            if let Some(prev) = item.prev_sibling() {
+                item.deselect();
+                self.maybe_play_or_replay(prev);
+            }
+        }
     }
 
     pub(crate) fn on_track_play_or_pause(&mut self) {
@@ -41,31 +50,22 @@ impl Application {
     }
 
     pub(crate) fn on_track_replay(&mut self) {
-        dbg!("on_track_replay");
-        // TODO
-        /*
-        {
-            let config = CONFIG.get().read().unwrap();
-            if !config.track.exists() {
-                return;
+        if self.has_track() {
+            if self.playing {
+                self.on_track_play_or_pause(); // PAUSE
             }
+            self.seek(0.0);
+            self.on_track_play_or_pause(); // PLAY
         }
-        if self.playing {
-            self.on_track_play_or_pause(); // PAUSE
-        }
-        {
-            let mut config = CONFIG.get().write().unwrap();
-            config.pos = 0.0;
-        }
-        self.seek(0.0);
-        self.on_track_play_or_pause(); // PLAY
-        */
     }
 
     pub(crate) fn on_track_next(&mut self) {
-        dbg!("on_track_next");
-        // TODO
-        // self.auto_play_track();
+        if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
+            if let Some(prev) = item.next_sibling() {
+                item.deselect();
+                self.maybe_play_or_replay(prev);
+            }
+        }
     }
 
     pub(crate) fn on_track_play_again(&mut self) {
@@ -159,23 +159,6 @@ impl Application {
         self.volume_label
             .set_label(&format!("{}%", (volume * 100.0).round()));
         app::redraw(); // redraws the world
-    }
-
-    pub(crate) fn auto_play_track(&mut self) {
-        dbg!("auto_play_track", &self.current_track, &self.current_treepath, self.current_tid);
-        // TODO
-        /*
-        if self.playing {
-            self.on_track_play_or_pause(); // PAUSE
-        }
-        {
-            let mut config = CONFIG.get().write().unwrap();
-            config.track = track;
-            config.pos = 0.0;
-        }
-        self.load_track();
-        self.on_track_play_or_pause(); // PLAY
-        */
     }
 
     pub(crate) fn seek(&mut self, pos: f64) {

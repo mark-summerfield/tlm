@@ -75,7 +75,7 @@ impl Application {
             opt_parent = parent.parent();
         }
         self.select_track_in_tree(treepath, item);
-        self.auto_play_track();
+        self.on_track_replay();
     }
 
     pub(crate) fn ok_to_clear(&mut self) -> bool {

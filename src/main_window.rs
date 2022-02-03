@@ -22,7 +22,7 @@ use fltk::{
     menu::{MenuFlag, SysMenuBar},
     misc::HelpView,
     prelude::*,
-    tree::Tree,
+    tree::{Tree, TreeSelect},
     valuator::HorFillSlider,
     window::Window,
 };
@@ -348,6 +348,7 @@ fn add_views(sender: Sender<Action>, width: i32) -> (Tree, HelpView) {
     let mut row = Flex::default().with_type(FlexType::Column);
     let mut track_tree = Tree::default();
     track_tree.set_show_root(false);
+    track_tree.set_select_mode(TreeSelect::Single);
     #[allow(clippy::clone_on_copy)]
     let sender = sender.clone();
     track_tree.handle(move |_, event| {

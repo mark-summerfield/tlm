@@ -1,10 +1,6 @@
 # TODO 
 # - File→Save: first just iterate over the track_tree depth-first &
 #   print; ditto iterate over history & print
-# - play/pause/etc. current (i.e., first in history) track,
-# - autoplay next track
-# - play prev
-# - play next
 # ...
 # TODO update_ui to activate/deactivate all menu options & toobar
 # buttons depending on the state (has_track, has_history, has_list
