@@ -351,7 +351,7 @@ fn add_views(sender: Sender<Action>, width: i32) -> (Tree, HelpView) {
     track_tree.set_select_mode(TreeSelect::Single);
     #[allow(clippy::clone_on_copy)]
     let sender = sender.clone();
-    track_tree.handle(move |_, event| {
+    track_tree.handle(move |_, _| {
         if app::event() == Event::Push && app::event_clicks() {
             sender.send(Action::TreeItemDoubleClicked);
         }

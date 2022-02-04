@@ -208,43 +208,53 @@ impl Model {
         full_treepath
     }
 
-    pub fn save(&mut self, filename: &Path) -> Result<()> {
-        dbg!("save", filename);
-        /*
-        if !filename.to_string_lossy().is_empty() {
-            self.filename = filename.to_path_buf();
-        }
-        let mut done = HashSet::<String>::new();
+    pub fn save(&mut self) -> Result<()> {
+        assert!(!self.filename.as_os_str().is_empty());
         let file = File::create(&self.filename)?;
         let mut gz = GzEncoder::new(file, Compression::best());
         gz.write_all(b"\x0CTLM\t100\n\x0CTRACKS\n")?;
-        for treeitem in &self.tree {
-            let treepath: Vec<&str> =
-                treeitem.treepath.split('/').collect();
-            for (i, subpath) in treepath.iter().enumerate() {
-                let indent = INDENT.to_string().repeat(i + 1);
-                let subpath = format!("{indent}{subpath}\n");
-                if !done.contains(&subpath) {
-                    gz.write_all(subpath.as_bytes())?;
-                    done.insert(subpath);
-                }
+        let mut opt_item = self.track_tree.first();
+        while let Some(item) = opt_item {
+            opt_item = item.next();
+            if item.depth() == 0 {
+                continue; // skip "ROOT"
             }
-            if let Some(track) = self.track_for_tid.get(&treeitem.tid) {
+            let tid = unsafe { item.user_data::<TrackID>() };
+            if let Some(tid) = tid {
+                if let Some(track) = self.track_for_tid.get(&tid) {
+                    gz.write_all(
+                        format!(
+                            "{}\t{:.3}\n",
+                            track.filename.display(),
+                            track.secs
+                        )
+                        .as_bytes(),
+                    )?;
+                }
+            } else {
+                let indent =
+                    INDENT.to_string().repeat(item.depth() as usize);
                 gz.write_all(
                     format!(
-                        "{}\t{:.3}\n",
-                        track.filename.display(),
-                        track.secs
+                        "{indent}{}\n",
+                        item.label().unwrap_or_default()
                     )
                     .as_bytes(),
                 )?;
             }
         }
         gz.write_all("\x0CHISTORY\n".as_bytes())?;
+        for treepath in &self.history {
+            gz.write_all(format!("{treepath}\n").as_bytes())?;
+        }
         gz.finish()?;
-        */
         self.dirty = false;
         Ok(())
+    }
+
+    pub fn save_as(&mut self, filename: &Path) -> Result<()> {
+        self.filename = filename.to_path_buf();
+        self.save()
     }
 }
 

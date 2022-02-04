@@ -78,8 +78,9 @@ impl Application {
 
     fn select_recent_track(&mut self) {
         if let Some(treepath) = self.tlm.history.front() {
-            if let Some(item) = self.tlm.track_tree.find_item(treepath) {
-                self.select_track_in_tree(treepath.clone(), item);
+            let treepath = treepath.clone();
+            if let Some(item) = self.tlm.track_tree.find_item(&treepath) {
+                self.select_track_in_tree(treepath, item);
             }
         } else {
             let mut treepath = String::new();
@@ -159,11 +160,14 @@ impl Application {
     }
 
     pub(crate) fn on_file_save(&mut self) {
-        println!("FileSave"); // TODO
+        if let Err(err) = self.tlm.save() {
+            util::popup_error_message(&format!("Failed to save: {err}"));
+        }
     }
 
     pub(crate) fn on_file_save_as(&mut self) {
-        println!("FileSaveAs"); // TODO
+        println!("FileSaveAs"); // TODO pop up native file dialog
+                                //self.tlm.save_as();
     }
 
     pub(crate) fn on_file_configure(&mut self) {

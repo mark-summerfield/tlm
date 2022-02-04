@@ -8,7 +8,7 @@ use crate::fixed::{
 use crate::util;
 use fltk::{app, image::SvgImage, prelude::*};
 use soloud::prelude::*;
-use std::{path::PathBuf, thread, time::Duration};
+use std::{thread, time::Duration};
 
 impl Application {
     fn has_track(&self) -> bool {

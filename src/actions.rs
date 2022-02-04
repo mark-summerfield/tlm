@@ -66,13 +66,13 @@ impl Application {
         };
         let mut treepath = item.label().unwrap_or_default();
         let mut opt_parent = item.parent();
-        while let Some(mut parent) = opt_parent {
-            let label = parent.label().unwrap_or_default();
-            if label != "ROOT" {
+        while let Some(parent) = opt_parent {
+            opt_parent = parent.parent();
+            if parent.depth() > 0 {
+                let label = parent.label().unwrap_or_default();
                 treepath.insert(0, '/');
                 treepath.insert_str(0, &label);
             }
-            opt_parent = parent.parent();
         }
         self.select_track_in_tree(treepath, item);
         self.on_track_replay();

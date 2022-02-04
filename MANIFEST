@@ -1,12 +1,12 @@
 # TODO 
-# - File→Save: first just iterate over the track_tree depth-first &
-#   print; ditto iterate over history & print
-# ...
+# TODO Add a History toolbutton menu (like AMP) for quick access to
+# history; still need a Track/History dialog with
+# [Play] [Clear List] [Cancel]
 # TODO update_ui to activate/deactivate all menu options & toobar
 # buttons depending on the state (has_track, has_history, has_list
 # <since all tracks could be list-less at the top-level>).
-# TODO Track/History pop up list
-# TODO &File/Open &Recent pop up list
+# TODO &File/Open &Recent dialog with [Open] [Clear List] [Cancel]
+# TODO config & options_form: [ ] Auto Save on Quit
 
 src/main.rs
 src/config.rs
