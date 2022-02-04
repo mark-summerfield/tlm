@@ -52,13 +52,6 @@
 	D&elete...
 	Unde&lete
 
-    H&istory
-	Clear History
-	&1 _most recently played_ # history
-	    :
-	&9 _9th least recent played_
-	&A ... &Z
-
     &Help
 	&Help	    F1
 	&About
@@ -77,34 +70,3 @@ Could use other Fn keys for common operations?
 	[&Playlist] _________________________ #.m3u, .pls, .xspf, etc.
     ( ) Create &Empty List
 		[&OK] [&Cancel]
-    
-== UI
-
-    -------------------------------------------------------------
-    TLM — _playlists.tlm if any_                              |X|
-    -------------------------------------------------------------
-    &File &List &Track &Bookmarks &Help # main menu
-    -------------------------------------------------------------
-    _main toolbar_
-    -------------------------------------------------------------
-    _Treeview_                                       | current
-    Track #1 ### tracks can be top-level tool        | track
-    List                                             | info
-	List ### lists can be nested to any depth    | HtmlView 
-	    Track #1                                 |
-	    Track #2                                 |
-		:                                    |
-	    Track #n                                 |
-    Track #2                                         :
-    List
-	Track #1
-	Track #2
-	    :
-	Track #n
-    Search Results ### this list only appears if there's a successful search
-	Track #1
-    -------------------------------------------------------------
-    [<<] [@] [>] [>>] [*******   ][3'24"/5'9"] [********** ][95%]
-    -------------------------------------------------------------
-   
-    back replay play/pause next  position  volume
