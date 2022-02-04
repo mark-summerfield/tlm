@@ -101,7 +101,7 @@ fn make_spinners() -> Spinners {
     let config = CONFIG.get().read().unwrap();
     let history_size_spinner = make_row(
         "&History Size",
-        26.0, // config.history_size as f64, // TODO
+        config.history_size as f64,
         &format!("The maximum number of tracks to keep in the history menu (default {DEF_HISTORY_SIZE})", ),
         MIN_HISTORY_SIZE as f64,
         MAX_HISTORY_SIZE as f64,
@@ -180,8 +180,7 @@ fn add_event_handlers(
                 config.window_scale = scale;
                 app::set_screen_scale(0, scale);
             }
-            // TODO
-            // config.history_size = history_size_spinner.value() as usize;
+            config.history_size = history_size_spinner.value() as usize;
             form.hide();
         }
     });

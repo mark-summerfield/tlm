@@ -1,6 +1,7 @@
 // Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
+use crate::fixed::MAX_HISTORY_SIZE;
 use crate::util;
 use anyhow::{bail, Result};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
@@ -43,25 +44,12 @@ impl Model {
         }
     }
 
-    pub fn has_current_treepath(&self) -> bool {
-        if let Some(treepath) = self.history.front() {
-            !treepath.is_empty()
-        } else {
-            false
-        }
-    }
-
-    pub fn current_treepath(&self) -> TreePath {
-        if let Some(treepath) = self.history.front() {
-            treepath.to_string()
-        } else {
-            TreePath::new()
-        }
-    }
-
     pub fn add_to_history(&mut self, treepath: TreePath) -> bool {
-        let changed =
-            util::maybe_add_to_deque(&mut self.history, treepath, 35);
+        let changed = util::maybe_add_to_deque(
+            &mut self.history,
+            treepath,
+            MAX_HISTORY_SIZE,
+        );
         if changed {
             self.dirty = true;
         }

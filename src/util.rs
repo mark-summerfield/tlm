@@ -69,17 +69,12 @@ pub fn get_tlm_dir() -> PathBuf {
     PathBuf::from(".")
 }
 
-pub fn get_track_dir() -> PathBuf {
-    dbg!("get_track_dir");
-    // TODO GET FROM tlm Model
-    /*
-    let config = CONFIG.get().read().unwrap();
-    if config.track.exists() {
-        if let Some(path) = config.track.parent() {
+pub fn get_track_dir(track: &Path) -> PathBuf {
+    if track.exists() {
+        if let Some(path) = track.parent() {
             return path.to_path_buf();
         }
     }
-    */
     if let Some(path) = dirs::audio_dir() {
         return path;
     }
@@ -271,64 +266,6 @@ fn get_year_from_date(date: &str) -> i32 {
     } else {
         0
     }
-}
-
-pub enum WhichTrack {
-    Previous,
-    Next,
-}
-
-pub fn get_prev_or_next_track(
-    track: &Path,
-    which: WhichTrack,
-) -> Option<PathBuf> {
-    let tracks = get_sorted_tracks(track);
-    if let Ok(index) = tracks.binary_search(&track.to_path_buf()) {
-        match which {
-            WhichTrack::Previous => {
-                if index > 0 {
-                    return Some(tracks[index - 1].clone());
-                }
-            }
-            WhichTrack::Next => {
-                if index + 1 < tracks.len() {
-                    return Some(tracks[index + 1].clone());
-                }
-            }
-        }
-    }
-    None
-}
-
-fn get_sorted_tracks(track: &Path) -> Vec<PathBuf> {
-    let mut tracks = vec![];
-    let suffixes = vec!["flac", "mogg", "mp3", "oga", "ogg", "wav"];
-    if let Some(dir) = track.parent() {
-        if let Ok(walker) = dir.read_dir() {
-            #[allow(clippy::manual_flatten)]
-            for entry in walker {
-                if let Ok(entry) = entry {
-                    if let Ok(kind) = entry.file_type() {
-                        if !kind.is_file() {
-                            continue;
-                        }
-                    }
-                    let path = entry.path();
-                    if let Some(extension) = path.extension() {
-                        let extension = extension.to_string_lossy();
-                        for suffix in &suffixes {
-                            if *suffix == extension {
-                                tracks.push(path);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            tracks.sort();
-        }
-    }
-    tracks
 }
 
 // Returns a name suitable as the last component of a tree path

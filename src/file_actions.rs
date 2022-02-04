@@ -172,15 +172,11 @@ impl Application {
 
     pub(crate) fn on_file_configure(&mut self) {
         dbg!("on_file_configure");
-        // TODO
-        /*
         let old_size = {
             let config = CONFIG.get().read().unwrap();
             config.history_size
         };
-        */
         let form = options_form::Form::default();
-        /*
         let ok = *form.ok.borrow();
         if ok {
             let new_size = {
@@ -188,10 +184,9 @@ impl Application {
                 config.history_size
             };
             if old_size != new_size {
-                self.populate_history_menu_button();
+                // self.populate_history_menu_button(); // TODO
             }
         }
-        */
     }
 
     pub(crate) fn on_file_quit(&mut self) {

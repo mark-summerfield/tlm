@@ -2,7 +2,8 @@
 // License: GPLv3
 
 use crate::fixed::{
-    APPNAME, SCALE_MAX, SCALE_MIN, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
+    APPNAME, DEF_HISTORY_SIZE, MAX_HISTORY_SIZE, MIN_HISTORY_SIZE,
+    SCALE_MAX, SCALE_MIN, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
 use crate::util;
 use fltk::{app, dialog};
@@ -21,6 +22,7 @@ pub struct Config {
     pub volume: f64,
     pub last_file: PathBuf,
     pub recent_files: RecentFiles,
+    pub history_size: usize,
     pub filename: PathBuf,
 }
 
@@ -54,7 +56,8 @@ impl Config {
                 .set(SCALE_KEY, app::screen_scale(0).to_string());
             ini.with_section(Some(GENERAL_SECTION))
                 .set(VOLUME_KEY, self.volume.to_string())
-                .set(LAST_FILE_KEY, self.last_file.to_string_lossy());
+                .set(LAST_FILE_KEY, self.last_file.to_string_lossy())
+                .set(HISTORY_SIZE_KEY, self.history_size.to_string());
             self.save_recent_files(&mut ini);
             match ini.write_to_file(&self.filename) {
                 Ok(_) => {}
@@ -93,6 +96,7 @@ impl Default for Config {
             volume: 0.5,
             last_file: PathBuf::new(),
             recent_files: RecentFiles::new(),
+            history_size: DEF_HISTORY_SIZE,
             filename: PathBuf::new(),
         }
     }
@@ -171,6 +175,14 @@ fn read_general_properties(
             }
         }
     }
+    if let Some(value) = properties.get(HISTORY_SIZE_KEY) {
+        config.history_size = util::get_num(
+            value,
+            MIN_HISTORY_SIZE,
+            MAX_HISTORY_SIZE,
+            config.history_size,
+        )
+    }
 }
 
 static WINDOW_SECTION: &str = "Window";
@@ -183,3 +195,4 @@ static GENERAL_SECTION: &str = "General";
 static VOLUME_KEY: &str = "volume";
 static LAST_FILE_KEY: &str = "lastfile";
 static RECENT_FILE_KEY: &str = "recentfile";
+static HISTORY_SIZE_KEY: &str = "historysize";
