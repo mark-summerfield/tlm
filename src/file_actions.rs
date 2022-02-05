@@ -3,7 +3,7 @@
 
 use super::CONFIG;
 use crate::application::Application;
-use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES, MINI_TIMEOUT};
+use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES, TINY_TIMEOUT};
 use crate::model::TrackID;
 use crate::options_form;
 use crate::util;
@@ -122,7 +122,7 @@ impl Application {
         }
         let _ = self.tlm.track_tree.select(&treepath, false);
         let mut tree = self.tlm.track_tree.clone();
-        app::add_timeout3(MINI_TIMEOUT, move |_| {
+        app::add_timeout3(TINY_TIMEOUT, move |_| {
             tree.show_item_middle(&item);
         });
     }
