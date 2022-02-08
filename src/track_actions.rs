@@ -3,7 +3,7 @@
 
 use crate::application::Application;
 use crate::fixed::{
-    Action, PAUSE_ICON, PLAY_ICON, TINY_TIMEOUT, TOOLBUTTON_SIZE,
+    Action, PATH_SEP, PAUSE_ICON, PLAY_ICON, TINY_TIMEOUT, TOOLBUTTON_SIZE,
 };
 use crate::util;
 use fltk::{app, image::SvgImage, prelude::*};
@@ -68,10 +68,32 @@ impl Application {
         }
     }
 
-    pub(crate) fn on_track_play_again(&mut self) {
-        dbg!("on_track_play_again");
-        // TODO pop up list of tlm.history tracks for user to
-        // [&Play] [Clear &list] [&Cancel]
+    pub(crate) fn on_play_history_track(&mut self) {
+        let index = self.history_menu_button.value();
+        if index > -1 {
+            if let Some(treepath) = self.history_menu_button.text(index) {
+                let treepath = treepath[3..].replace(PATH_SEP, "/");
+                if let Some(mut item) =
+                    self.tlm.track_tree.first_selected_item()
+                {
+                    item.deselect();
+                }
+                if let Some(item) = self.tlm.track_tree.find_item(&treepath)
+                {
+                    self.maybe_play_or_replay(item);
+                }
+            }
+        }
+    }
+
+    pub(crate) fn on_track_history(&mut self) {
+        println!("on_track_history");
+        // TODO pop up a dialog that shows the history deque along with
+        // [&Play] [Clear &List] [&Cancel] buttons.
+    }
+
+    pub(crate) fn on_track_find(&mut self) {
+        println!("on_track_find"); // TODO
     }
 
     pub(crate) fn on_volume_down(&mut self) {
@@ -110,10 +132,6 @@ impl Application {
         println!("on_track_copy_to_list"); // TODO
     }
 
-    pub(crate) fn on_track_find(&mut self) {
-        println!("on_track_find"); // TODO
-    }
-
     pub(crate) fn on_track_delete(&mut self) {
         println!("on_track_delete"); // TODO
     }
@@ -144,6 +162,7 @@ impl Application {
                     util::humanized_time(self.wav.length())
                 ));
                 self.tlm.add_to_history(self.current_treepath.clone());
+                self.populate_history_menu_button();
                 util::get_track_data_html(&self.current_track)
             }
             Err(_) => format!("Failed to open {:?}", &self.current_track),

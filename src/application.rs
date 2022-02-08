@@ -1,7 +1,8 @@
 // Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
-use crate::fixed::{Action, TINY_TIMEOUT};
+use super::CONFIG;
+use crate::fixed::{Action, MENU_CHARS, PATH_SEP, TINY_TIMEOUT};
 use crate::html_form;
 use crate::main_window;
 use crate::model::{Model, TrackID, TreePath};
@@ -9,8 +10,9 @@ use fltk::{
     app,
     app::{channel, App, Receiver, Scheme, Sender},
     button::Button,
+    enums::Shortcut,
     frame::Frame,
-    menu::SysMenuBar,
+    menu::{MenuButton, MenuFlag, SysMenuBar},
     misc::HelpView,
     prelude::*,
     valuator::HorFillSlider,
@@ -27,6 +29,7 @@ pub struct Application {
     pub(crate) replay_button: Button,
     pub(crate) play_pause_button: Button,
     pub(crate) next_button: Button,
+    pub(crate) history_menu_button: MenuButton,
     pub(crate) info_view: HelpView,
     pub(crate) volume_slider: HorFillSlider,
     pub(crate) volume_label: Frame,
@@ -66,6 +69,7 @@ impl Application {
             replay_button: widgets.replay_button,
             play_pause_button: widgets.play_pause_button,
             next_button: widgets.next_button,
+            history_menu_button: widgets.history_menu_button,
             info_view: widgets.info_view,
             volume_slider: widgets.volume_slider,
             volume_label: widgets.volume_label,
@@ -131,6 +135,9 @@ impl Application {
                     Action::HelpAbout => self.on_help_about(),
                     Action::HelpHelp => self.on_help_help(),
                     Action::OnStartup => self.on_startup(),
+                    Action::PlayHistoryTrack => {
+                        self.on_play_history_track()
+                    }
                     Action::Tick => self.on_tick(),
                     Action::TimeUpdate => self.on_time_update(),
                     Action::TrackNew => self.on_track_new(),
@@ -140,13 +147,13 @@ impl Application {
                     }
                     Action::TrackReplay => self.on_track_replay(),
                     Action::TrackNext => self.on_track_next(),
-                    Action::TrackPlayAgain => self.on_track_play_again(),
                     Action::TrackLouder => self.on_volume_up(),
                     Action::TrackQuieter => self.on_volume_down(),
                     Action::TrackMoveUp => self.on_track_move_up(),
                     Action::TrackMoveDown => self.on_track_move_down(),
                     Action::TrackMoveToList => self.on_track_move_to_list(),
                     Action::TrackCopyToList => self.on_track_copy_to_list(),
+                    Action::TrackHistory => self.on_track_history(),
                     Action::TrackFind => self.on_track_find(),
                     Action::TrackDelete => self.on_track_delete(),
                     Action::TrackUndelete => self.on_track_undelete(),
@@ -176,14 +183,14 @@ impl Application {
             self.replay_button.activate();
             self.play_pause_button.activate();
             self.next_button.activate();
-            self.again_button.activate();
+            self.history_menu_button.activate();
             self.time_slider.activate();
         } else {
             self.prev_button.deactivate();
             self.replay_button.deactivate();
             self.play_pause_button.deactivate();
             self.next_button.deactivate();
-            self.again_button.deactivate();
+            self.history_menu_button.deactivate();
             self.time_slider.deactivate();
         }
         if has_history {
@@ -192,5 +199,31 @@ impl Application {
             self.track_history_button.deactivate();
         }
         */
+    }
+
+    pub(crate) fn populate_history_menu_button(&mut self) {
+        self.history_menu_button.clear();
+        let size = {
+            let config = CONFIG.get().read().unwrap();
+            config.history_size
+        };
+        let base = if (10..=26).contains(&size) { 9 } else { 0 };
+        for (i, treepath) in self.tlm.history.iter().enumerate() {
+            if i == size {
+                break;
+            }
+            let name = format!(
+                "&{} {}",
+                MENU_CHARS[base + i],
+                treepath.replace(&['\\', '/'][..], PATH_SEP)
+            );
+            self.history_menu_button.add_emit(
+                &name,
+                Shortcut::None,
+                MenuFlag::Normal,
+                self.sender,
+                Action::PlayHistoryTrack,
+            );
+        }
     }
 }

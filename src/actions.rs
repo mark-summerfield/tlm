@@ -16,6 +16,7 @@ impl Application {
         };
         if filename.exists() {
             self.load_tlm(&filename);
+            self.populate_history_menu_button();
         }
     }
 

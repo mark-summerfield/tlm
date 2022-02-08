@@ -4,11 +4,12 @@
 use super::CONFIG;
 use crate::fixed::{
     Action, APPNAME, BUTTON_HEIGHT, FILE_NEW_ICON, FILE_OPEN_ICON,
-    FILE_SAVE_ICON, ICON, LIST_IMPORT_ICON, LIST_MOVE_DOWN_ICON,
-    LIST_MOVE_UP_ICON, LIST_NEW_ICON, NEXT_ICON, PAD, PLAY_ICON, PREV_ICON,
-    REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
-    TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON, TRACK_MOVE_UP_ICON,
-    TRACK_NEW_ICON, VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
+    FILE_SAVE_ICON, HISTORY_ICON, ICON, LIST_IMPORT_ICON,
+    LIST_MOVE_DOWN_ICON, LIST_MOVE_UP_ICON, LIST_NEW_ICON, NEXT_ICON, PAD,
+    PLAY_ICON, PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT,
+    TOOLBUTTON_SIZE, TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON,
+    TRACK_MOVE_UP_ICON, TRACK_NEW_ICON, VOLUME_ICON, WINDOW_HEIGHT_MIN,
+    WINDOW_WIDTH_MIN,
 };
 use crate::util;
 use fltk::{
@@ -19,7 +20,7 @@ use fltk::{
     frame::Frame,
     group::{Flex, FlexType},
     image::SvgImage,
-    menu::{MenuFlag, SysMenuBar},
+    menu::{MenuButton, MenuFlag, SysMenuBar},
     misc::HelpView,
     prelude::*,
     tree::{Tree, TreeSelect},
@@ -34,6 +35,7 @@ pub struct Widgets {
     pub replay_button: Button,
     pub play_pause_button: Button,
     pub next_button: Button,
+    pub history_menu_button: MenuButton,
     pub track_tree: Tree,
     pub info_view: HelpView,
     pub volume_slider: HorFillSlider,
@@ -58,7 +60,7 @@ pub fn make(sender: Sender<Action>) -> Widgets {
     let mut vbox =
         Flex::default().size_of_parent().with_type(FlexType::Column);
     let menubar = add_menubar(sender, width);
-    let toolbar = add_toolbar(sender, width);
+    let (history_menu_button, toolbar) = add_toolbar(sender, width);
     let (track_tree, info_view) = add_views(sender, width);
     let (
         time_slider,
@@ -83,6 +85,7 @@ pub fn make(sender: Sender<Action>) -> Widgets {
         replay_button,
         play_pause_button,
         next_button,
+        history_menu_button,
         track_tree,
         info_view,
         volume_slider,
@@ -252,16 +255,23 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
     menubar.add_emit(
         "&Track/Play Ne&xt\t",
         Shortcut::from_key(Key::F7),
-        MenuFlag::Normal,
+        MenuFlag::MenuDivider,
         sender,
         Action::TrackNext,
     );
     menubar.add_emit(
-        "&Track/Play A&gain…\t",
-        Shortcut::Ctrl | 'g',
+        "&Track/&History…\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::TrackHistory,
+    );
+    menubar.add_emit(
+        "&Track/&Find…\t",
+        Shortcut::Ctrl | 'f',
         MenuFlag::MenuDivider,
         sender,
-        Action::TrackPlayAgain,
+        Action::TrackFind,
     );
     menubar.add_emit(
         "&Track/&Increase Volume\t",
@@ -304,13 +314,6 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         MenuFlag::MenuDivider,
         sender,
         Action::TrackCopyToList,
-    );
-    menubar.add_emit(
-        "&Track/&Find…\t",
-        Shortcut::Ctrl | 'f',
-        MenuFlag::MenuDivider,
-        sender,
-        Action::TrackFind,
     );
     menubar.add_emit(
         "&Track/D&elete…\t",
@@ -452,6 +455,24 @@ fn add_toolbutton(
     button
 }
 
+fn add_menubutton(
+    tooltip: &str,
+    icon: &str,
+    button_box: &mut Flex,
+) -> MenuButton {
+    let width = TOOLBUTTON_SIZE + PAD + 8;
+    let mut button = MenuButton::default();
+    button.set_size(width, TOOLBUTTON_SIZE + PAD);
+    button.visible_focus(false);
+    button.set_label_size(0);
+    button.set_tooltip(tooltip);
+    let mut icon = SvgImage::from_data(icon).unwrap();
+    icon.scale(TOOLBUTTON_SIZE, TOOLBUTTON_SIZE, true, true);
+    button.set_image(Some(icon));
+    button_box.set_size(&button, width);
+    button
+}
+
 fn add_sliders(
     row: &mut Flex,
 ) -> (HorFillSlider, Frame, HorFillSlider, Frame) {
@@ -492,7 +513,7 @@ fn add_slider_row(
     (icon_label, slider, label)
 }
 
-fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
+fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
     let mut row = Flex::default()
         .with_size(width, TOOLBAR_HEIGHT)
         .with_type(FlexType::Row);
@@ -568,6 +589,11 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
         TRACK_MOVE_DOWN_ICON,
         &mut row,
     );
+    let history_menu_button = add_menubutton(
+        "History…",
+        HISTORY_ICON,
+        &mut row,
+    );
     add_toolbutton(
         sender,
         "Find Track…",
@@ -576,7 +602,7 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> Flex {
         &mut row,
     );
     row.end();
-    row
+    (history_menu_button, row)
 }
 
 fn add_separator(row: &mut Flex) {

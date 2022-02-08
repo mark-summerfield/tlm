@@ -171,7 +171,6 @@ impl Application {
     }
 
     pub(crate) fn on_file_configure(&mut self) {
-        dbg!("on_file_configure");
         let old_size = {
             let config = CONFIG.get().read().unwrap();
             config.history_size
@@ -184,7 +183,7 @@ impl Application {
                 config.history_size
             };
             if old_size != new_size {
-                // self.populate_history_menu_button(); // TODO
+                self.populate_history_menu_button();
             }
         }
     }

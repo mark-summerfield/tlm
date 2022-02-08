@@ -28,6 +28,7 @@ pub const TRACK_MOVE_UP_ICON: &str =
 pub const TRACK_MOVE_DOWN_ICON: &str =
     include_str!("../images/track-move-down.svg");
 pub const TRACK_FIND_ICON: &str = include_str!("../images/track-find.svg");
+pub const HISTORY_ICON: &str = include_str!("../images/history.svg");
 pub const PREV_ICON: &str =
     include_str!("../images/media-seek-backward.svg");
 pub const REPLAY_ICON: &str = include_str!("../images/replay.svg");
@@ -40,6 +41,7 @@ pub const NEXT_ICON: &str =
 pub const VOLUME_ICON: &str =
     include_str!("../images/audio-volume-high.svg");
 pub const TIME_ICON: &str = include_str!("../images/time.svg");
+pub const PATH_SEP: &str = "→";
 pub const MAX_RECENT_FILES: usize = 9;
 pub const DEF_HISTORY_SIZE: usize = 26;
 pub const MIN_HISTORY_SIZE: usize = 2;
@@ -85,6 +87,7 @@ pub enum Action {
     ListImport,
     ListDelete,
     ListUndelete,
+    PlayHistoryTrack,
     OnStartup,
     Tick,
     TimeUpdate,
@@ -93,13 +96,13 @@ pub enum Action {
     TrackPlayOrPause,
     TrackReplay,
     TrackNext,
-    TrackPlayAgain,
     TrackLouder,
     TrackQuieter,
     TrackMoveUp,
     TrackMoveDown,
     TrackMoveToList,
     TrackCopyToList,
+    TrackHistory,
     TrackFind,
     TrackDelete,
     TrackUndelete,
