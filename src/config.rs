@@ -23,6 +23,7 @@ pub struct Config {
     pub last_file: PathBuf,
     pub recent_files: RecentFiles,
     pub history_size: usize,
+    pub auto_save: bool,
     pub filename: PathBuf,
 }
 
@@ -57,7 +58,8 @@ impl Config {
             ini.with_section(Some(GENERAL_SECTION))
                 .set(VOLUME_KEY, self.volume.to_string())
                 .set(LAST_FILE_KEY, self.last_file.to_string_lossy())
-                .set(HISTORY_SIZE_KEY, self.history_size.to_string());
+                .set(HISTORY_SIZE_KEY, self.history_size.to_string())
+                .set(AUTO_SAVE_KEY, self.auto_save.to_string());
             self.save_recent_files(&mut ini);
             match ini.write_to_file(&self.filename) {
                 Ok(_) => {}
@@ -97,6 +99,7 @@ impl Default for Config {
             last_file: PathBuf::new(),
             recent_files: RecentFiles::new(),
             history_size: DEF_HISTORY_SIZE,
+            auto_save: true,
             filename: PathBuf::new(),
         }
     }
@@ -183,6 +186,11 @@ fn read_general_properties(
             config.history_size,
         )
     }
+    config.auto_save = if let Some(value) = properties.get(AUTO_SAVE_KEY) {
+        util::get_bool(value)
+    } else {
+        true
+    };
 }
 
 static WINDOW_SECTION: &str = "Window";
@@ -196,3 +204,4 @@ static VOLUME_KEY: &str = "volume";
 static LAST_FILE_KEY: &str = "lastfile";
 static RECENT_FILE_KEY: &str = "recentfile";
 static HISTORY_SIZE_KEY: &str = "historysize";
+static AUTO_SAVE_KEY: &str = "autosave";

@@ -9,7 +9,7 @@ use crate::fixed::{
 use crate::util;
 use fltk::{
     app,
-    button::Button,
+    button::{Button, CheckButton},
     enums::{Align, FrameType},
     frame::Frame,
     group::Flex,
@@ -34,7 +34,7 @@ impl Form {
         vbox.set_margin(PAD);
         vbox.set_pad(PAD);
         make_config_row();
-        let mut spinners = make_spinners();
+        let mut widgets = make_widgets();
         let (button_row, mut buttons) = make_buttons();
         vbox.set_size(&button_row, BUTTON_HEIGHT);
         vbox.end();
@@ -42,11 +42,11 @@ impl Form {
         form.make_modal(true);
         add_event_handlers(
             &mut form,
-            &spinners,
+            &widgets,
             &mut buttons,
             Rc::clone(&ok),
         );
-        spinners.history_size_spinner.take_focus().unwrap();
+        widgets.history_size_spinner.take_focus().unwrap();
         form.show();
         while form.shown() {
             app::wait();
@@ -61,8 +61,9 @@ impl Drop for Form {
     }
 }
 
-struct Spinners {
+struct Widgets {
     pub history_size_spinner: Spinner,
+    pub auto_save_checkbox: CheckButton,
     pub scale_spinner: Spinner,
 }
 
@@ -97,7 +98,7 @@ fn make_config_row() {
     row.end();
 }
 
-fn make_spinners() -> Spinners {
+fn make_widgets() -> Widgets {
     let config = CONFIG.get().read().unwrap();
     let history_size_spinner = make_row(
         "&History Size",
@@ -107,6 +108,14 @@ fn make_spinners() -> Spinners {
         MAX_HISTORY_SIZE as f64,
         1.0,
     );
+    let mut row = Flex::default().row();
+    row.set_pad(PAD);
+    Frame::default().with_size(PAD, PAD);
+    let mut auto_save_checkbox = CheckButton::default()
+        .with_label("&Auto Save")
+        .with_align(Align::Inside | Align::Left);
+    auto_save_checkbox.set_checked(config.auto_save);
+    row.end();
     let scale_spinner = make_row(
         "&Scale",
         config.window_scale as f64,
@@ -115,7 +124,7 @@ fn make_spinners() -> Spinners {
         SCALE_MAX as f64,
         0.1,
     );
-    Spinners { history_size_spinner, scale_spinner }
+    Widgets { history_size_spinner, auto_save_checkbox, scale_spinner }
 }
 
 fn make_row(
@@ -164,13 +173,14 @@ fn make_buttons() -> (Flex, Buttons) {
 
 fn add_event_handlers(
     form: &mut Window,
-    spinners: &Spinners,
+    widgets: &Widgets,
     buttons: &mut Buttons,
     ok: Rc<RefCell<bool>>,
 ) {
     buttons.ok_button.set_callback({
-        let history_size_spinner = spinners.history_size_spinner.clone();
-        let scale_spinner = spinners.scale_spinner.clone();
+        let auto_save_checkbox = widgets.auto_save_checkbox.clone();
+        let history_size_spinner = widgets.history_size_spinner.clone();
+        let scale_spinner = widgets.scale_spinner.clone();
         let mut form = form.clone();
         move |_| {
             *ok.borrow_mut() = true;
@@ -181,6 +191,7 @@ fn add_event_handlers(
                 app::set_screen_scale(0, scale);
             }
             config.history_size = history_size_spinner.value() as usize;
+            config.auto_save = auto_save_checkbox.is_checked();
             form.hide();
         }
     });

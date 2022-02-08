@@ -48,6 +48,14 @@ pub fn isone32(n: f32) -> bool {
     (1.0..=(1.0 + f32::EPSILON)).contains(&n)
 }
 
+pub fn get_bool(s: &str) -> bool {
+    if s == "1" {
+        return true;
+    }
+    let s = s.to_uppercase();
+    s == "T" || s == "TRUE" || s == "Y" || s == "YES"
+}
+
 pub fn get_tlm_dir() -> PathBuf {
     let config = CONFIG.get().read().unwrap();
     if config.last_file.exists() {

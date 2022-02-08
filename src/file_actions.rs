@@ -189,16 +189,23 @@ impl Application {
     }
 
     pub(crate) fn on_file_quit(&mut self) {
-        if !self.ok_to_clear() {
-            return;
+        let auto_save = {
+            let mut config = CONFIG.get().write().unwrap();
+            config.window_x = self.main_window.x();
+            config.window_y = self.main_window.y();
+            config.window_width = self.main_window.width();
+            config.window_height = self.main_window.height();
+            config.volume = self.volume_slider.value();
+            config.save();
+            config.auto_save
+        };
+        if self.tlm.dirty {
+            if auto_save {
+                self.on_file_save();
+            } else if !self.ok_to_clear() {
+                return;
+            }
         }
-        let mut config = CONFIG.get().write().unwrap();
-        config.window_x = self.main_window.x();
-        config.window_y = self.main_window.y();
-        config.window_width = self.main_window.width();
-        config.window_height = self.main_window.height();
-        config.volume = self.volume_slider.value();
-        config.save();
         self.app.quit();
     }
 }
