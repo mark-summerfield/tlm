@@ -120,7 +120,7 @@ pub fn about_html(player: &Soloud) -> String {
     format!(
         "<p><center><font size=6 color=navy><b>{APPNAME}</b> v{VERSION}
 </font></center></p>
-<p><center><font color=navy size=5>An application to manage playlists and play tracks.</font></center></p>
+<p><center><font color=navy size=5>Track List Manager manages playlists and play tracks.</font></center></p>
 <p><center><font size=4>
 <a href=\"https://github.com/mark-summerfield/tlm\">https://github.com/mark-summerfield/tlm</a>
 </font></center></p>

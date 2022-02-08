@@ -11,7 +11,7 @@ impl Application {
             "About",
             &about_html(&self.player),
             true,
-            540,
+            600,
             300,
             false,
         );

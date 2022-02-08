@@ -260,18 +260,18 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::TrackNext,
     );
     menubar.add_emit(
-        "&Track/&History…\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::TrackHistory,
-    );
-    menubar.add_emit(
         "&Track/&Find…\t",
         Shortcut::Ctrl | 'f',
-        MenuFlag::MenuDivider,
+        MenuFlag::Normal,
         sender,
         Action::TrackFind,
+    );
+    menubar.add_emit(
+        "&Track/&History…\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::TrackHistory,
     );
     menubar.add_emit(
         "&Track/&Increase Volume\t",
@@ -589,16 +589,16 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
         TRACK_MOVE_DOWN_ICON,
         &mut row,
     );
-    let history_menu_button = add_menubutton(
-        "History…",
-        HISTORY_ICON,
-        &mut row,
-    );
     add_toolbutton(
         sender,
         "Find Track…",
         Action::TrackFind,
         TRACK_FIND_ICON,
+        &mut row,
+    );
+    let history_menu_button = add_menubutton(
+        "History…",
+        HISTORY_ICON,
         &mut row,
     );
     row.end();
