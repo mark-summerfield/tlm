@@ -98,7 +98,8 @@ impl Application {
         let form = list_form::Form::new("History", "&Play", &list[..]);
         let reply = *form.reply.borrow();
         dbg!("on_track_history", reply);
-        // TODO handle each Reply case
+        // TODO handle each Reply case: for Clear use truncate(1) to always
+        // leave one (if there is one)
     }
 
     pub(crate) fn on_track_find(&mut self) {

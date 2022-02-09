@@ -49,7 +49,8 @@ impl Application {
             list_form::Form::new("Open Recent", "&Open", &list[..]);
         let reply = *form.reply.borrow();
         dbg!("on_file_open_recent", reply);
-        // TODO handle each Reply case
+        // TODO handle each Reply case: for Clear use truncate(1) to always
+        // leave one (if there is one)
     }
 
     pub(crate) fn load_tlm(&mut self, filename: &Path) {
