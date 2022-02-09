@@ -25,7 +25,7 @@ impl Application {
 
     pub(crate) fn on_file_open(&mut self) {
         let mut form = FileDialog::new(FileDialogType::BrowseFile);
-        form.set_title(&format!("Open TLM File — {APPNAME}"));
+        form.set_title(&format!("Open File — {APPNAME}"));
         let _ = form.set_directory(&util::get_tlm_dir()); // Ignore error
         form.set_filter("TLM Files\t*.tlm");
         form.show();
@@ -167,7 +167,7 @@ impl Application {
 
     pub(crate) fn on_file_save_as(&mut self) {
         let mut form = FileDialog::new(FileDialogType::BrowseSaveFile);
-        form.set_title(&format!("Save TLM File As — {APPNAME}"));
+        form.set_title(&format!("Save File As — {APPNAME}"));
         let path = match self.tlm.filename.parent() {
             Some(path) => path.to_path_buf(),
             _ => util::get_tlm_dir(),
@@ -177,14 +177,16 @@ impl Application {
         form.set_option(FileDialogOptions::SaveAsConfirm);
         form.show();
         let filename = form.filename();
-        match self.tlm.save_as(&filename) {
-            Ok(()) => {
-                self.update_title(&filename);
-                self.update_recent_files(&filename);
+        if !util::filename_is_empty(&filename) {
+            match self.tlm.save_as(&filename) {
+                Ok(()) => {
+                    self.update_title(&filename);
+                    self.update_recent_files(&filename);
+                }
+                Err(err) => util::popup_error_message(&format!(
+                    "Failed to save as: {err}"
+                )),
             }
-            Err(err) => util::popup_error_message(&format!(
-                "Failed to save as: {err}"
-            )),
         }
     }
 

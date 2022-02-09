@@ -304,6 +304,10 @@ pub fn file_stem(filename: &Path) -> String {
     }
 }
 
+pub fn filename_is_empty(filename: &Path) -> bool {
+    filename.to_string_lossy().to_string().is_empty()
+}
+
 pub fn maybe_add_to_deque<T: cmp::PartialEq>(
     deque: &mut VecDeque<T>,
     value: T,
