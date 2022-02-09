@@ -1,5 +1,6 @@
-# TODO &File/Open &Recent dialog with [Open] [Clear List] [Cancel]
-# TODO Track/History dialog with [Play] [Clear List] [Cancel]
+# Clear List actually reduces the list to just the first item (if any)
+# TODO &File/Open &Recent dialog with [&Open] [Clear &List] [&Cancel]
+# TODO Track/History dialog with [&Play] [Clear &List] [C&ancel]
 # TODO List menu
 # TODO Track menu
 # TODO &File/&New
