@@ -49,17 +49,7 @@ impl Application {
             list_form::Form::new("Open Recent", "&Open", &list[..]);
         let reply = *form.reply.borrow();
         dbg!("on_file_open_recent", reply);
-        // TODO pop up dialog of recent files for use to
-        // [&Open] [Clear &List] [&Cancel]
-        /*
-        let filename = {
-            let config = CONFIG.get().read().unwrap();
-            config.recent_files[index].clone()
-        };
-        if filename.exists() {
-            self.load_tlm(&filename);
-        }
-        */
+        // TODO handle each Reply case
     }
 
     pub(crate) fn load_tlm(&mut self, filename: &Path) {

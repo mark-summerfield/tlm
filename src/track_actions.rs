@@ -5,6 +5,7 @@ use crate::application::Application;
 use crate::fixed::{
     Action, PATH_SEP, PAUSE_ICON, PLAY_ICON, TINY_TIMEOUT, TOOLBUTTON_SIZE,
 };
+use crate::list_form;
 use crate::util;
 use fltk::{app, image::SvgImage, prelude::*};
 use soloud::prelude::*;
@@ -87,9 +88,17 @@ impl Application {
     }
 
     pub(crate) fn on_track_history(&mut self) {
-        println!("on_track_history");
-        // TODO pop up a dialog that shows the history deque along with
-        // [&Play] [Clear &List] [&Cancel] buttons.
+        let list = {
+            let mut list = vec![];
+            for treepath in &self.tlm.history {
+                list.push(treepath.clone());
+            }
+            list
+        };
+        let form = list_form::Form::new("History", "&Play", &list[..]);
+        let reply = *form.reply.borrow();
+        dbg!("on_track_history", reply);
+        // TODO handle each Reply case
     }
 
     pub(crate) fn on_track_find(&mut self) {
