@@ -5,56 +5,57 @@
 == Menus
 
     &File
-	&New...    ^N # (file new) new database .tlm
-	&Open...   ^O # (file open)
-	Open &Recent → &1 ... &9
-	&Save...   ^S
-	Save &As...
+	- &New...    ^N # (file new) new database .tlm
+	+ &Open...   ^O # (file open)
+	- Open &Recent → &1 ... &9
+	+ &Save...   ^S
+	+ Save &As...
 	-------------
-	&Configure...
+	+ &Configure...
 	-------------
-	&Quit      ^Q
+	+ &Quit      ^Q
 
     &List
-	&New...	    # list (enter one line of text dialog)
-	&Rename...
+	- &New...	    # list (enter one line of text dialog)
+	- &Rename...
 	-------------
-	Move &Up
-	Move &Down
-	Move &To... # move to another list or to top-level
+	- Move &Up
+	- Move &Down
+	- Move &To... # move to another list or to top-level
 	-------------
-	&Merge... # merge two lists
-	&Copy
+	- &Merge... # merge two lists
+	- &Copy
 	-------------
-	E&xport... # to .m3u, .pls, .xspf, etc.
-	&Import... # from .m3u, .pls, .xspf, etc. (like List→New)
+	- E&xport... # to .m3u, .pls, .xspf, etc.
+	- &Import... # from .m3u, .pls, .xspf, etc. (like List→New)
 	-------------
-	D&elete...
-	Unde&lete
+	- D&elete...
+	- Unde&lete
 
     &Track
-	&New...		  # (file open)
+	- &New...		  # (file open)
 	-------------
-	Play Pre&vious	  F4
-	&Play/&Pause      F5
-	&Replay		  F6
-	Play Nex&t	  F7
-	&Increase Volume  Shift+F8
-	Decre&ase Volume  F8
+	+ Play Pre&vious	  F4
+	+ &Play/&Pause      F5
+	+ &Replay		  F6
+	+ Play Nex&t	  F7
+	+ &Increase Volume  Shift+F8
+	+ Decre&ase Volume  F8
 	-------------
-	Move &Up
-	Move &Down
-	&Move to List # move to another list or to top-level
-	&Copy to List # add to another list (same track in multi list is fine)
+	- Move &Up
+	- Move &Down
+	- &Move to List # move to another list or to top-level
+	- &Copy to List # add to another list (same track in multi list is fine)
 	-------------
-	&Find...   ^F # on success adds/replaces Search Results/Found in tree
+	- &Find...   ^F # on success adds/replaces Search Results/Found in tree
+	- &History...   # pop up history dialog with [&Play] [Clear &List] [&Cancel] buttons
 	-------------
-	D&elete...
-	Unde&lete
+	- D&elete...
+	- Unde&lete
 
     &Help
-	&Help	    F1
-	&About
+	+ &Help	    F1
+	+ &About
 
 Could use other Fn keys for common operations?
 

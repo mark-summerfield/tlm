@@ -1,9 +1,8 @@
-# TODO File/Save As
+# TODO &File/Open &Recent dialog with [Open] [Clear List] [Cancel]
+# TODO Track/History dialog with [Play] [Clear List] [Cancel]
 # TODO List menu
 # TODO Track menu
-# TODO File/New
-# TODO Track/History dialog with [Play] [Clear List] [Cancel]
-# TODO &File/Open &Recent dialog with [Open] [Clear List] [Cancel]
+# TODO &File/&New
 # TODO update_ui to activate/deactivate all menu options & toobar
 # buttons depending on the state (has_track, has_history, has_list
 # <since all tracks could be list-less at the top-level>).

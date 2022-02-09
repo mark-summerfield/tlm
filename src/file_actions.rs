@@ -9,7 +9,7 @@ use crate::options_form;
 use crate::util;
 use fltk::{
     app,
-    dialog::{FileDialog, FileDialogType},
+    dialog::{FileDialog, FileDialogOptions, FileDialogType},
     prelude::*,
     tree::TreeItem,
 };
@@ -166,8 +166,26 @@ impl Application {
     }
 
     pub(crate) fn on_file_save_as(&mut self) {
-        println!("FileSaveAs"); // TODO pop up native file dialog
-                                //self.tlm.save_as();
+        let mut form = FileDialog::new(FileDialogType::BrowseSaveFile);
+        form.set_title(&format!("Save TLM File As — {APPNAME}"));
+        let path = match self.tlm.filename.parent() {
+            Some(path) => path.to_path_buf(),
+            _ => util::get_tlm_dir(),
+        };
+        let _ = form.set_directory(&path); // Ignore error
+        form.set_filter("TLM Files\t*.tlm");
+        form.set_option(FileDialogOptions::SaveAsConfirm);
+        form.show();
+        let filename = form.filename();
+        match self.tlm.save_as(&filename) {
+            Ok(()) => {
+                self.update_title(&filename);
+                self.update_recent_files(&filename);
+            }
+            Err(err) => util::popup_error_message(&format!(
+                "Failed to save as: {err}"
+            )),
+        }
     }
 
     pub(crate) fn on_file_configure(&mut self) {

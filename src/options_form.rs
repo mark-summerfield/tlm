@@ -111,7 +111,7 @@ fn make_widgets() -> Widgets {
     let mut row = Flex::default().row();
     row.set_pad(PAD);
     Frame::default().with_size(PAD, PAD);
-    let mut auto_save_checkbox = CheckButton::default()
+    let auto_save_checkbox = CheckButton::default()
         .with_label("&Auto Save")
         .with_align(Align::Inside | Align::Left);
     auto_save_checkbox.set_checked(config.auto_save);
