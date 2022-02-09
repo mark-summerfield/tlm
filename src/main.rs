@@ -10,6 +10,7 @@ mod fixed;
 mod help_actions;
 mod html_form;
 mod list_actions;
+mod list_form;
 mod main_window;
 mod model;
 mod options_form;

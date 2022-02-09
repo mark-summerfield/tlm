@@ -4,6 +4,7 @@
 use super::CONFIG;
 use crate::application::Application;
 use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES, TINY_TIMEOUT};
+use crate::list_form;
 use crate::model::TrackID;
 use crate::options_form;
 use crate::util;
@@ -36,7 +37,18 @@ impl Application {
     }
 
     pub(crate) fn on_file_open_recent(&mut self) {
-        dbg!("on_file_open_recent");
+        let list = {
+            let mut list = vec![];
+            let config = CONFIG.get().read().unwrap();
+            for filename in &config.recent_files {
+                list.push(filename.to_string_lossy().to_string());
+            }
+            list
+        };
+        let form =
+            list_form::Form::new("Open Recent", "&Open", &list[..]);
+        let reply = *form.reply.borrow();
+        dbg!("on_file_open_recent", reply);
         // TODO pop up dialog of recent files for use to
         // [&Open] [Clear &List] [&Cancel]
         /*

@@ -1,5 +1,4 @@
-# Clear List actually reduces the list to just the first item (if any)
-# TODO &File/Open &Recent dialog with [&Open] [Clear &List] [&Cancel]
+# TODO on_file_open_recent()
 # TODO Track/History dialog with [&Play] [Clear &List] [C&ancel]
 # TODO List menu
 # TODO Track menu
@@ -21,6 +20,7 @@ src/help_actions.rs
 src/main_window.rs
 src/html_form.rs
 src/options_form.rs
+src/list_form.rs
 src/fixed.rs # VERSION
 src/util.rs
 

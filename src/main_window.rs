@@ -596,11 +596,8 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
         TRACK_FIND_ICON,
         &mut row,
     );
-    let history_menu_button = add_menubutton(
-        "History…",
-        HISTORY_ICON,
-        &mut row,
-    );
+    let history_menu_button =
+        add_menubutton("History…", HISTORY_ICON, &mut row);
     row.end();
     (history_menu_button, row)
 }
