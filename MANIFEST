@@ -2,10 +2,10 @@
 # TODO on_track_history()
 # TODO List menu
 # TODO Track menu
-# TODO &File/&New
-# TODO update_ui to activate/deactivate all menu options & toobar
-# buttons depending on the state (has_track, has_history, has_list
-# <since all tracks could be list-less at the top-level>).
+# TODO Add update_ui() calls wherever appropriate & implement
+# update_ui() to activate/deactivate all menu options & toobar buttons
+# depending on the state (has_track, has_history, has_list <since all
+# tracks could be list-less at the top-level>).
 # TODO data/help.html
 
 src/main.rs
