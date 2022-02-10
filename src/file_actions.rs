@@ -176,7 +176,7 @@ impl Application {
     }
 
     fn update_title(&mut self, filename: &Path) {
-        let filename = util::file_stem(&filename);
+        let filename = util::file_stem(filename);
         self.main_window.set_label(&format!("{filename} — {APPNAME}"));
     }
 
