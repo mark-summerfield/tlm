@@ -5,7 +5,7 @@ use crate::fixed::{
     APPNAME, DEF_HISTORY_SIZE, MAX_HISTORY_SIZE, MIN_HISTORY_SIZE,
     SCALE_MAX, SCALE_MIN, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
-use crate::util;
+use crate::util::{self, PathBufExt};
 use fltk::{app, dialog};
 use ini::Ini;
 use std::{collections::VecDeque, env, path::PathBuf};
@@ -45,7 +45,7 @@ impl Config {
     }
 
     pub fn save(&self) {
-        if self.filename.to_string_lossy() == "" {
+        if self.filename.is_empty() {
             self.warning("failed to save configuration: no filename");
         } else {
             let mut ini = Ini::new();

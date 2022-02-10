@@ -7,21 +7,32 @@ use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES, TINY_TIMEOUT};
 use crate::list_form;
 use crate::model::TrackID;
 use crate::options_form;
-use crate::util;
+use crate::util::{self, PathBufExt};
 use fltk::{
     app,
     dialog::{FileDialog, FileDialogOptions, FileDialogType},
     prelude::*,
     tree::TreeItem,
 };
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 impl Application {
     pub(crate) fn on_file_new(&mut self) {
         if !self.ok_to_clear() {
             return;
         }
-        println!("FileNew"); // TODO
+        self.tlm.clear();
+        self.tlm.filename = PathBuf::new();
+        self.clear_title();
+        self.info_view.set_value(
+            "<font color=green>Add folders of tracks with <b>List→New</b>
+            or individually with <b>Track→New</b>.</font>");
+        if self.playing {
+            self.on_track_play_or_pause(); // PAUSE
+        }
+        self.time_slider.set_value(0.0);
+        self.time_label.set_label("0″/0″");
+        self.update_ui();
     }
 
     pub(crate) fn on_file_open(&mut self) {
@@ -45,8 +56,7 @@ impl Application {
             }
             list
         };
-        let form =
-            list_form::Form::new("Open Recent", "&Open", &list[..]);
+        let form = list_form::Form::new("Open Recent", "&Open", &list[..]);
         let reply = *form.reply.borrow();
         dbg!("on_file_open_recent", reply);
         // TODO handle each Reply case: for Clear use truncate(1) to always
@@ -76,6 +86,7 @@ impl Application {
                 self.clear_info_after(INFO_TIMEOUT);
             }
         };
+        self.update_ui();
         app::redraw(); // redraws the world
     }
 
@@ -148,7 +159,7 @@ impl Application {
     }
 
     fn update_title(&mut self, filename: &Path) {
-        let filename = util::file_stem(filename);
+        let filename = util::file_stem(&filename);
         self.main_window.set_label(&format!("{filename} — {APPNAME}"));
     }
 
@@ -163,7 +174,9 @@ impl Application {
     }
 
     pub(crate) fn on_file_save(&mut self) {
-        if let Err(err) = self.tlm.save() {
+        if self.tlm.filename.is_empty() {
+            self.on_file_save_as();
+        } else if let Err(err) = self.tlm.save() {
             util::popup_error_message(&format!("Failed to save: {err}"));
         }
     }
@@ -180,7 +193,7 @@ impl Application {
         form.set_option(FileDialogOptions::SaveAsConfirm);
         form.show();
         let filename = form.filename();
-        if !util::filename_is_empty(&filename) {
+        if !filename.is_empty() {
             match self.tlm.save_as(&filename) {
                 Ok(()) => {
                     self.update_title(&filename);

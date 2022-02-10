@@ -296,18 +296,6 @@ pub fn popup_error_message(message: &str) {
     dialog::message(x() - 200, y() - 100, message);
 }
 
-pub fn file_stem(filename: &Path) -> String {
-    if let Some(stem) = filename.file_stem() {
-        stem.to_string_lossy().to_string()
-    } else {
-        filename.to_string_lossy().to_string()
-    }
-}
-
-pub fn filename_is_empty(filename: &Path) -> bool {
-    filename.to_string_lossy().to_string().is_empty()
-}
-
 pub fn maybe_add_to_deque<T: cmp::PartialEq>(
     deque: &mut VecDeque<T>,
     value: T,
@@ -325,4 +313,22 @@ pub fn maybe_add_to_deque<T: cmp::PartialEq>(
     deque.push_front(value); // Add to front
     deque.truncate(max_size);
     true
+}
+
+pub trait PathBufExt {
+    fn is_empty(&self) -> bool;
+}
+
+impl PathBufExt for PathBuf {
+    fn is_empty(&self) -> bool {
+        self.as_os_str().is_empty()
+    }
+}
+
+pub fn file_stem(filename: &Path) -> String {
+    if let Some(stem) = filename.file_stem() {
+        stem.to_string_lossy().to_string()
+    } else {
+        filename.to_string_lossy().to_string()
+    }
 }

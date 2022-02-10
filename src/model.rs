@@ -86,7 +86,7 @@ impl Model {
         Ok(buffer[0] == 0x1F && buffer[1] == 0x8B)
     }
 
-    fn clear(&mut self) {
+    pub fn clear(&mut self) {
         self.dirty = false;
         self.track_for_tid.clear();
         self.history.clear();
