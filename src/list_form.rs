@@ -103,7 +103,9 @@ fn add_event_handlers(
         let mut form = form.clone();
         let browser = widgets.browser.clone();
         move |_| {
-            *reply_a.borrow_mut() = Reply::Action(browser.value() as usize);
+            // Browser uses 1-based indexing
+            let index = (browser.value() as usize) - 1;
+            *reply_a.borrow_mut() = Reply::Action(index);
             form.hide();
         }
     });

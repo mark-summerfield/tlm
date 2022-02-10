@@ -93,6 +93,11 @@ impl Model {
         self.track_tree.clear();
     }
 
+    pub fn shrink_history(&mut self) {
+        self.history.truncate(1);
+        self.dirty = true;
+    }
+
     fn parse(&mut self, text: String) -> Result<()> {
         let mut tid = 1;
         let mut treepath: Vec<TreePath> = vec![];

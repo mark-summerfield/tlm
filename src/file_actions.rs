@@ -4,7 +4,7 @@
 use super::CONFIG;
 use crate::application::Application;
 use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES, TINY_TIMEOUT};
-use crate::list_form;
+use crate::list_form::{self, Reply};
 use crate::model::TrackID;
 use crate::options_form;
 use crate::util::{self, PathBufExt};
@@ -26,7 +26,8 @@ impl Application {
         self.clear_title();
         self.info_view.set_value(
             "<font color=green>Add folders of tracks with <b>List→New</b>
-            or individually with <b>Track→New</b>.</font>");
+            or individually with <b>Track→New</b>.</font>",
+        );
         if self.playing {
             self.on_track_play_or_pause(); // PAUSE
         }
@@ -58,9 +59,25 @@ impl Application {
         };
         let form = list_form::Form::new("Open Recent", "&Open", &list[..]);
         let reply = *form.reply.borrow();
-        dbg!("on_file_open_recent", reply);
-        // TODO handle each Reply case: for Clear use truncate(1) to always
-        // leave one (if there is one)
+        match reply {
+            Reply::Action(index) => {
+                let filename = {
+                    let config = CONFIG.get().read().unwrap();
+                    match config.recent_files.get(index) {
+                        Some(filename) => filename.clone(),
+                        _ => PathBuf::new(),
+                    }
+                };
+                if filename.exists() {
+                    self.load_tlm(&filename);
+                }
+            }
+            Reply::Clear => {
+                let mut config = CONFIG.get().write().unwrap();
+                config.recent_files.truncate(1);
+            }
+            Reply::Cancel => (),
+        }
     }
 
     pub(crate) fn load_tlm(&mut self, filename: &Path) {

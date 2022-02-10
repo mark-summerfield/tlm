@@ -5,7 +5,7 @@ use crate::application::Application;
 use crate::fixed::{
     Action, PATH_SEP, PAUSE_ICON, PLAY_ICON, TINY_TIMEOUT, TOOLBUTTON_SIZE,
 };
-use crate::list_form;
+use crate::list_form::{self, Reply};
 use crate::util;
 use fltk::{app, image::SvgImage, prelude::*};
 use soloud::prelude::*;
@@ -71,6 +71,10 @@ impl Application {
 
     pub(crate) fn on_play_history_track(&mut self) {
         let index = self.history_menu_button.value();
+        self.play_history_track(index);
+    }
+
+    fn play_history_track(&mut self, index: i32) {
         if index > -1 {
             if let Some(treepath) = self.history_menu_button.text(index) {
                 let treepath = treepath[3..].replace(PATH_SEP, "/");
@@ -97,9 +101,14 @@ impl Application {
         };
         let form = list_form::Form::new("History", "&Play", &list[..]);
         let reply = *form.reply.borrow();
-        dbg!("on_track_history", reply);
-        // TODO handle each Reply case: for Clear use truncate(1) to always
-        // leave one (if there is one)
+        match reply {
+            Reply::Action(index) => self.play_history_track(index as i32),
+            Reply::Clear => {
+                self.tlm.shrink_history();
+                self.populate_history_menu_button();
+            }
+            Reply::Cancel => (),
+        }
     }
 
     pub(crate) fn on_track_find(&mut self) {
