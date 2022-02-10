@@ -4,17 +4,6 @@
 
 == Menus
 
-    &File
-	- &New...    ^N # (file new) new database .tlm
-	+ &Open...   ^O # (file open)
-	- Open &Recent → &1 ... &9
-	+ &Save...   ^S
-	+ Save &As...
-	-------------
-	+ &Configure...
-	-------------
-	+ &Quit      ^Q
-
     &List
 	- &New...	    # list (enter one line of text dialog)
 	- &Rename...

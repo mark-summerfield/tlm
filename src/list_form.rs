@@ -75,9 +75,12 @@ fn make_widgets(action: &str, list: &[String]) -> (Flex, Widgets) {
     for item in list {
         browser.add(item);
     }
-    if list.is_empty() {
+    if list.len() > 1 {
+        browser.select(2);
+    } else if !list.is_empty() {
         browser.select(1);
     }
+    browser.top_line(1);
     row.end();
     let mut row = Flex::default().size_of_parent().row();
     row.set_pad(PAD);
@@ -86,9 +89,10 @@ fn make_widgets(action: &str, list: &[String]) -> (Flex, Widgets) {
     let clear_button = Button::default().with_label("Clear &List");
     let cancel_button = Button::default().with_label("&Cancel");
     Frame::default(); // pad right of buttons
-    row.set_size(&action_button, BUTTON_WIDTH);
-    row.set_size(&clear_button, BUTTON_WIDTH);
-    row.set_size(&cancel_button, BUTTON_WIDTH);
+    let width = BUTTON_WIDTH + PAD;
+    row.set_size(&action_button, width);
+    row.set_size(&clear_button, width);
+    row.set_size(&cancel_button, width);
     row.end();
     (row, Widgets { browser, action_button, clear_button, cancel_button })
 }

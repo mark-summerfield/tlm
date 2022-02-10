@@ -1,3 +1,4 @@
+tlm.adoc # notes
 # TODO List menu
 # TODO Track menu
 # TODO Add update_ui() calls wherever appropriate & implement
@@ -30,8 +31,6 @@ st.sh
 
 deploy.sh
 deploy.bat
-
-tlm.adoc # notes
 
 # These are for prototyping and experimentation
 ../test_tlm/src/model.rs # This is the rust port of tlmr.py
