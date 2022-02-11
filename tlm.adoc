@@ -22,20 +22,21 @@ Track List Manager manages playlists and plays tracks.
     &Track
 	- &New...		  # (file open)
 	-------------
-	+ Play Pre&vious	  F4
+	+ Play Pre&vious    F4
 	+ &Play/&Pause      F5
-	+ &Replay		  F6
-	+ Play Nex&t	  F7
-	+ &Increase Volume  Shift+F8
+	+ &Replay	    F6
+	+ Play Nex&t	    F7
+	-------------
+	- &Find...    ^F # on success adds/replaces Search Results/Found in tree
+	+ &History... ^G 
+	-------------
 	+ Decre&ase Volume  F8
+	+ &Increase Volume  F9
 	-------------
 	- Move &Up
 	- Move &Down
 	- &Move to List # move to another list or to top-level
 	- &Copy to List # add to another list (same track in multi list is fine)
-	-------------
-	- &Find...   ^F # on success adds/replaces Search Results/Found in tree
-	- &History...   # pop up history dialog with [&Play] [Clear &List] [&Cancel] buttons
 	-------------
 	- D&elete...
 	- Unde&lete
