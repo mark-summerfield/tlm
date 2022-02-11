@@ -27,7 +27,6 @@ pub const LIST_MOVE_DOWN_ICON: &str =
 pub const LIST_DEMOTE_ICON: &str =
     include_str!("../images/list-demote.svg");
 pub const LIST_IMPORT_ICON: &str = include_str!("../images/import.svg");
-pub const TRACK_ICON: &str = include_str!("../images/track.svg");
 pub const TRACK_NEW_ICON: &str = include_str!("../images/track-new.svg");
 pub const TRACK_MOVE_UP_ICON: &str =
     include_str!("../images/track-move-up.svg");
@@ -46,6 +45,17 @@ pub const NEXT_ICON: &str =
     include_str!("../images/media-seek-forward.svg");
 pub const VOLUME_ICON: &str =
     include_str!("../images/audio-volume-high.svg");
+pub const C1_ICON: &str = include_str!("../images/c1.svg");
+pub const C2_ICON: &str = include_str!("../images/c2.svg");
+pub const C3_ICON: &str = include_str!("../images/c3.svg");
+pub const C4_ICON: &str = include_str!("../images/c4.svg");
+pub const C5_ICON: &str = include_str!("../images/c5.svg");
+pub const C6_ICON: &str = include_str!("../images/c6.svg");
+pub const C7_ICON: &str = include_str!("../images/c7.svg");
+pub const C8_ICON: &str = include_str!("../images/c8.svg");
+pub const C9_ICON: &str = include_str!("../images/c9.svg");
+pub const C10_ICON: &str = include_str!("../images/c10.svg");
+pub const C11_ICON: &str = include_str!("../images/c11.svg");
 pub const TIME_ICON: &str = include_str!("../images/time.svg");
 pub const PATH_SEP: &str = "→";
 pub const MAX_RECENT_FILES: usize = 9;

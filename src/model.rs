@@ -1,7 +1,10 @@
 // Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
-use crate::fixed::{MAX_HISTORY_SIZE, TRACK_ICON, TREE_ICON_SIZE};
+use crate::fixed::{
+    C10_ICON, C11_ICON, C1_ICON, C2_ICON, C3_ICON, C4_ICON, C5_ICON,
+    C6_ICON, C7_ICON, C8_ICON, C9_ICON, MAX_HISTORY_SIZE, TREE_ICON_SIZE,
+};
 use crate::util;
 use anyhow::{bail, Result};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
@@ -31,20 +34,16 @@ pub struct Model {
     pub track_tree: Tree,
     pub track_for_tid: TrackForTID,
     pub history: VecDeque<TreePath>,
-    pub track_icon: SvgImage,
 }
 
 impl Model {
     pub fn new(track_tree: Tree) -> Self {
-        let mut track_icon = SvgImage::from_data(TRACK_ICON).unwrap();
-        track_icon.scale(TREE_ICON_SIZE, TREE_ICON_SIZE, true, true);
         Self {
             filename: PathBuf::new(),
             dirty: false,
             track_tree,
             track_for_tid: TrackForTID::default(),
             history: VecDeque::default(),
-            track_icon,
         }
     }
 
@@ -178,9 +177,10 @@ impl Model {
                 seen,
             );
             if let Some(mut item) = self.track_tree.add(&treepath) {
-                item.set_label_fgcolor(color_for_secs(secs));
+                item.set_label_fgcolor(Color::from_hex(0x000075));
                 item.set_user_data(tid);
-                item.set_user_icon(Some(self.track_icon.clone()));
+                let icon = image_for_secs(secs);
+                item.set_user_icon(Some(icon));
             }
             Ok(tid + 1)
         } else {
@@ -258,6 +258,35 @@ impl Model {
     }
 }
 
+fn image_for_secs(secs: f64) -> SvgImage {
+    let icon = if secs < 300.0 {
+        C1_ICON
+    } else if secs < 600.0 {
+        C2_ICON
+    } else if secs < 900.0 {
+        C3_ICON
+    } else if secs < 1200.0 {
+        C4_ICON
+    } else if secs < 1500.0 {
+        C5_ICON
+    } else if secs < 1800.0 {
+        C6_ICON
+    } else if secs < 2100.0 {
+        C7_ICON
+    } else if secs < 2400.0 {
+        C8_ICON
+    } else if secs < 2700.0 {
+        C9_ICON
+    } else if secs < 3000.0 {
+        C10_ICON
+    } else {
+        C11_ICON
+    };
+    let mut icon = SvgImage::from_data(icon).unwrap();
+    icon.scale(TREE_ICON_SIZE, TREE_ICON_SIZE, true, true);
+    icon
+}
+
 const INDENT: char = '\x0B';
 const TAB: char = '\x09';
 
@@ -267,14 +296,4 @@ enum State {
     WantTrackHeader,
     InTracks,
     InHistory,
-}
-
-fn color_for_secs(secs: f64) -> Color {
-    if secs < 300.0 {
-        Color::from_hex(0x6767FF)
-    } else if secs < 600.0 {
-        Color::from_hex(0x0000E0)
-    } else {
-        Color::from_hex(0x000080)
-    }
 }
