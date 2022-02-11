@@ -16,12 +16,18 @@ pub const FILE_OPEN_ICON: &str =
     include_str!("../images/document-open.svg");
 pub const FILE_SAVE_ICON: &str =
     include_str!("../images/document-save.svg");
+pub const LIST_ICON: &str = include_str!("../images/list.svg");
 pub const LIST_NEW_ICON: &str = include_str!("../images/list-new.svg");
+pub const LIST_PROMOTE_ICON: &str =
+    include_str!("../images/list-promote.svg");
 pub const LIST_MOVE_UP_ICON: &str =
     include_str!("../images/list-move-up.svg");
 pub const LIST_MOVE_DOWN_ICON: &str =
     include_str!("../images/list-move-down.svg");
+pub const LIST_DEMOTE_ICON: &str =
+    include_str!("../images/list-demote.svg");
 pub const LIST_IMPORT_ICON: &str = include_str!("../images/import.svg");
+pub const TRACK_ICON: &str = include_str!("../images/track.svg");
 pub const TRACK_NEW_ICON: &str = include_str!("../images/track-new.svg");
 pub const TRACK_MOVE_UP_ICON: &str =
     include_str!("../images/track-move-up.svg");
@@ -43,16 +49,16 @@ pub const VOLUME_ICON: &str =
 pub const TIME_ICON: &str = include_str!("../images/time.svg");
 pub const PATH_SEP: &str = "→";
 pub const MAX_RECENT_FILES: usize = 9;
-pub const DEF_HISTORY_SIZE: usize = 26;
 pub const MIN_HISTORY_SIZE: usize = 2;
 pub const MAX_HISTORY_SIZE: usize = 35;
 pub const PAD: i32 = 6;
-pub const WINDOW_WIDTH_MIN: i32 = 512;
+pub const WINDOW_WIDTH_MIN: i32 = 590;
 pub const WINDOW_HEIGHT_MIN: i32 = 380;
 pub const TOOLBUTTON_SIZE: i32 = 22;
 pub const TOOLBAR_HEIGHT: i32 = ((TOOLBUTTON_SIZE * 3) / 2) + PAD;
 pub const BUTTON_HEIGHT: i32 = 30;
 pub const BUTTON_WIDTH: i32 = 70;
+pub const TREE_ICON_SIZE: i32 = 16;
 pub const SCALE_MIN: f32 = 0.5;
 pub const SCALE_MAX: f32 = 3.5;
 pub const TINY_TIMEOUT: f64 = 0.1;
@@ -78,11 +84,10 @@ pub enum Action {
     HelpHelp,
     ListNew,
     ListRename,
+    ListPromote,
     ListMoveUp,
     ListMoveDown,
-    ListMoveTo,
-    ListMerge,
-    ListCopy,
+    ListDemote,
     ListExport,
     ListImport,
     ListDelete,
@@ -120,7 +125,7 @@ pub fn about_html(player: &Soloud) -> String {
     format!(
         "<p><center><font size=6 color=navy><b>{APPNAME}</b> v{VERSION}
 </font></center></p>
-<p><center><font color=navy size=5>Track List Manager manages playlists and play tracks.</font></center></p>
+<p><center><font color=navy size=5>Track List Manager manages playlists and plays tracks.</font></center></p>
 <p><center><font size=4>
 <a href=\"https://github.com/mark-summerfield/tlm\">https://github.com/mark-summerfield/tlm</a>
 </font></center></p>

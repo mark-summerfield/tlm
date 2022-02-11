@@ -4,11 +4,12 @@
 use super::CONFIG;
 use crate::fixed::{
     Action, APPNAME, BUTTON_HEIGHT, FILE_NEW_ICON, FILE_OPEN_ICON,
-    FILE_SAVE_ICON, HISTORY_ICON, ICON, LIST_IMPORT_ICON,
-    LIST_MOVE_DOWN_ICON, LIST_MOVE_UP_ICON, LIST_NEW_ICON, NEXT_ICON, PAD,
-    PLAY_ICON, PREV_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT,
-    TOOLBUTTON_SIZE, TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON,
-    TRACK_MOVE_UP_ICON, TRACK_NEW_ICON, VOLUME_ICON, WINDOW_HEIGHT_MIN,
+    FILE_SAVE_ICON, HISTORY_ICON, ICON, LIST_DEMOTE_ICON, LIST_ICON,
+    LIST_IMPORT_ICON, LIST_MOVE_DOWN_ICON, LIST_MOVE_UP_ICON,
+    LIST_NEW_ICON, LIST_PROMOTE_ICON, NEXT_ICON, PAD, PLAY_ICON, PREV_ICON,
+    REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
+    TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON, TRACK_MOVE_UP_ICON,
+    TRACK_NEW_ICON, TREE_ICON_SIZE, VOLUME_ICON, WINDOW_HEIGHT_MIN,
     WINDOW_WIDTH_MIN,
 };
 use crate::util;
@@ -162,6 +163,13 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::ListRename,
     );
     menubar.add_emit(
+        "&List/&Promote\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::ListPromote,
+    );
+    menubar.add_emit(
         "&List/Move &Up\t",
         Shortcut::None,
         MenuFlag::Normal,
@@ -176,25 +184,11 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::ListMoveDown,
     );
     menubar.add_emit(
-        "&List/Move &To…\t",
+        "&List/De&mote\t",
         Shortcut::None,
         MenuFlag::MenuDivider,
         sender,
-        Action::ListMoveTo,
-    );
-    menubar.add_emit(
-        "&List/&Merge…\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::ListMerge,
-    );
-    menubar.add_emit(
-        "&List/&Copy\t",
-        Shortcut::None,
-        MenuFlag::MenuDivider,
-        sender,
-        Action::ListCopy,
+        Action::ListDemote,
     );
     menubar.add_emit(
         "&List/E&xport…\t",
@@ -268,24 +262,24 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
     );
     menubar.add_emit(
         "&Track/&History…\t",
-        Shortcut::None,
+        Shortcut::Ctrl | 'g',
         MenuFlag::MenuDivider,
         sender,
         Action::TrackHistory,
     );
     menubar.add_emit(
-        "&Track/&Increase Volume\t",
-        Shortcut::Shift | Shortcut::from_key(Key::F8),
-        MenuFlag::Normal,
-        sender,
-        Action::TrackLouder,
-    );
-    menubar.add_emit(
         "&Track/Decre&ase Volume\t",
         Shortcut::from_key(Key::F8),
-        MenuFlag::MenuDivider,
+        MenuFlag::Normal,
         sender,
         Action::TrackQuieter,
+    );
+    menubar.add_emit(
+        "&Track/&Increase Volume\t",
+        Shortcut::from_key(Key::F9),
+        MenuFlag::MenuDivider,
+        sender,
+        Action::TrackLouder,
     );
     menubar.add_emit(
         "&Track/Move &Up\t",
@@ -349,9 +343,12 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
 fn add_views(sender: Sender<Action>, width: i32) -> (Tree, HelpView) {
     const HEIGHT: i32 = 70;
     let mut row = Flex::default().with_type(FlexType::Column);
+    let mut icon = SvgImage::from_data(LIST_ICON).unwrap();
+    icon.scale(TREE_ICON_SIZE, TREE_ICON_SIZE, true, true);
     let mut track_tree = Tree::default();
     track_tree.set_show_root(false);
     track_tree.set_select_mode(TreeSelect::Single);
+    track_tree.set_user_icon(Some(icon));
     #[allow(clippy::clone_on_copy)]
     let sender = sender.clone();
     track_tree.handle(move |_, _| {
@@ -548,6 +545,13 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
     );
     add_toolbutton(
         sender,
+        "Promote List",
+        Action::ListPromote,
+        LIST_PROMOTE_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
         "Move List Up",
         Action::ListMoveUp,
         LIST_MOVE_UP_ICON,
@@ -558,6 +562,13 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
         "Move List Down",
         Action::ListMoveDown,
         LIST_MOVE_DOWN_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "Demote List",
+        Action::ListDemote,
+        LIST_DEMOTE_ICON,
         &mut row,
     );
     add_toolbutton(

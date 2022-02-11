@@ -3,8 +3,8 @@
 
 use super::CONFIG;
 use crate::fixed::{
-    APPNAME, BUTTON_HEIGHT, BUTTON_WIDTH, DEF_HISTORY_SIZE, ICON,
-    MAX_HISTORY_SIZE, MIN_HISTORY_SIZE, PAD, SCALE_MAX, SCALE_MIN,
+    APPNAME, BUTTON_HEIGHT, BUTTON_WIDTH, ICON, MAX_HISTORY_SIZE,
+    MIN_HISTORY_SIZE, PAD, SCALE_MAX, SCALE_MIN,
 };
 use crate::util;
 use fltk::{
@@ -103,7 +103,7 @@ fn make_widgets() -> Widgets {
     let history_size_spinner = make_row(
         "&History Size",
         config.history_size as f64,
-        &format!("The maximum number of tracks to keep in the history menu (default {DEF_HISTORY_SIZE})", ),
+        &format!("The maximum number of tracks to keep in the history menu (default {MAX_HISTORY_SIZE})", ),
         MIN_HISTORY_SIZE as f64,
         MAX_HISTORY_SIZE as f64,
         1.0,

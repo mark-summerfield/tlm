@@ -2,8 +2,8 @@
 // License: GPLv3
 
 use crate::fixed::{
-    APPNAME, DEF_HISTORY_SIZE, MAX_HISTORY_SIZE, MIN_HISTORY_SIZE,
-    SCALE_MAX, SCALE_MIN, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
+    APPNAME, MAX_HISTORY_SIZE, MIN_HISTORY_SIZE, SCALE_MAX, SCALE_MIN,
+    WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
 use crate::util::{self, PathBufExt};
 use fltk::{app, dialog};
@@ -98,7 +98,7 @@ impl Default for Config {
             volume: 0.5,
             last_file: PathBuf::new(),
             recent_files: RecentFiles::new(),
-            history_size: DEF_HISTORY_SIZE,
+            history_size: MAX_HISTORY_SIZE,
             auto_save: true,
             filename: PathBuf::new(),
         }

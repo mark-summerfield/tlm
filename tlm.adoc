@@ -1,6 +1,6 @@
 = TLM
 
-“Track List Manager” — an application to manage playlists and play tracks.
+Track List Manager manages playlists and plays tracks.
 
 == Menus
 
@@ -8,12 +8,10 @@
 	- &New...	    # list (enter one line of text dialog)
 	- &Rename...
 	-------------
+	- &Promote
 	- Move &Up
 	- Move &Down
-	- Move &To... # move to another list or to top-level
-	-------------
-	- &Merge... # merge two lists
-	- &Copy
+	- De&mote
 	-------------
 	- E&xport... # to .m3u, .pls, .xspf, etc.
 	- &Import... # from .m3u, .pls, .xspf, etc. (like List→New)

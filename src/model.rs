@@ -1,11 +1,11 @@
 // Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
-use crate::fixed::MAX_HISTORY_SIZE;
+use crate::fixed::{MAX_HISTORY_SIZE, TRACK_ICON, TREE_ICON_SIZE};
 use crate::util;
 use anyhow::{bail, Result};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
-use fltk::tree::Tree;
+use fltk::{image::SvgImage, prelude::ImageExt, tree::Tree};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::{
     fs::File,
@@ -31,16 +31,20 @@ pub struct Model {
     pub track_tree: Tree,
     pub track_for_tid: TrackForTID,
     pub history: VecDeque<TreePath>,
+    pub track_icon: SvgImage,
 }
 
 impl Model {
     pub fn new(track_tree: Tree) -> Self {
+        let mut track_icon = SvgImage::from_data(TRACK_ICON).unwrap();
+        track_icon.scale(TREE_ICON_SIZE, TREE_ICON_SIZE, true, true);
         Self {
             filename: PathBuf::new(),
             dirty: false,
             track_tree,
             track_for_tid: TrackForTID::default(),
             history: VecDeque::default(),
+            track_icon,
         }
     }
 
@@ -173,8 +177,10 @@ impl Model {
                 &filename,
                 seen,
             );
-            let item = self.track_tree.add(&treepath);
-            item.unwrap().set_user_data(tid);
+            if let Some(mut item) = self.track_tree.add(&treepath) {
+                item.set_user_data(tid);
+                item.set_user_icon(Some(self.track_icon.clone()));
+            }
             Ok(tid + 1)
         } else {
             bail!("error:{lino}: failed to read track {line}");

@@ -1,6 +1,6 @@
 # TLM
 
-“Track List Manager” — an application to manage playlists and play tracks.
+Track List Manager manages playlists and plays tracks.
 
 Tested on Linux and Windows.
 

@@ -1,10 +1,14 @@
 tlm.adoc # notes
+# TODO show times
 # TODO List menu
 # TODO Track menu
 # TODO Add update_ui() calls wherever appropriate & implement
 # update_ui() to activate/deactivate all menu options & toobar buttons
 # depending on the state (has_track, has_history, has_list <since all
 # tracks could be list-less at the top-level>).
+# TODO list_form:
+# - add &Delete button and Reply::Delete(index) # don't allow Delete(1)
+# - add update_ui() to (de)activate action & delete & clear buttons)
 # TODO data/help.html
 
 src/main.rs
