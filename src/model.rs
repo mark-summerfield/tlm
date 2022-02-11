@@ -271,9 +271,9 @@ enum State {
 
 fn color_for_secs(secs: f64) -> Color {
     if secs < 300.0 {
-        Color::from_hex(0x008080)
+        Color::from_hex(0x6767FF)
     } else if secs < 600.0 {
-        Color::from_hex(0x008000)
+        Color::from_hex(0x0000E0)
     } else {
         Color::from_hex(0x000080)
     }
