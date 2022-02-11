@@ -258,26 +258,8 @@ impl Model {
 fn image_for_secs(secs: f64) -> SvgImage {
     let index = if secs < 300.0 {
         0
-    } else if secs < 600.0 {
-        1
-    } else if secs < 900.0 {
-        2
-    } else if secs < 1200.0 {
-        3
-    } else if secs < 1500.0 {
-        4
-    } else if secs < 1800.0 {
-        5
-    } else if secs < 2100.0 {
-        6
-    } else if secs < 2400.0 {
-        7
-    } else if secs < 2700.0 {
-        8
-    } else if secs < 3000.0 {
-        9
     } else {
-        10
+        (secs / 300.0).round().min(10.0) as usize
     };
     let icons = TIME_ICONS.get().read().unwrap();
     icons[index].clone()
