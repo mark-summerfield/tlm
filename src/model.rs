@@ -5,7 +5,7 @@ use crate::fixed::{MAX_HISTORY_SIZE, TRACK_ICON, TREE_ICON_SIZE};
 use crate::util;
 use anyhow::{bail, Result};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
-use fltk::{image::SvgImage, prelude::ImageExt, tree::Tree};
+use fltk::{enums::Color, image::SvgImage, prelude::ImageExt, tree::Tree};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::{
     fs::File,
@@ -178,6 +178,7 @@ impl Model {
                 seen,
             );
             if let Some(mut item) = self.track_tree.add(&treepath) {
+                item.set_label_fgcolor(color_for_secs(secs));
                 item.set_user_data(tid);
                 item.set_user_icon(Some(self.track_icon.clone()));
             }
@@ -266,4 +267,14 @@ enum State {
     WantTrackHeader,
     InTracks,
     InHistory,
+}
+
+fn color_for_secs(secs: f64) -> Color {
+    if secs < 300.0 {
+        Color::from_hex(0x008080)
+    } else if secs < 600.0 {
+        Color::from_hex(0x008000)
+    } else {
+        Color::from_hex(0x000080)
+    }
 }
