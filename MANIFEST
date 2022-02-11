@@ -1,5 +1,4 @@
 tlm.adoc # notes
-# TODO see model.rs
 # TODO List menu
 # TODO Track menu
 # TODO Add update_ui() calls wherever appropriate & implement
@@ -13,8 +12,7 @@ tlm.adoc # notes
 
 src/main.rs
 src/config.rs
-src/model.rs # TODO make image_for_secs() use a HashMap<str, Image>
-	     # that's populated either on first use or at startup
+src/model.rs
 src/application.rs
 src/actions.rs
 src/file_actions.rs

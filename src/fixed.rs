@@ -3,9 +3,10 @@
 
 use crate::util::capitalize_first;
 use chrono::prelude::*;
-use fltk::app;
+use fltk::{app, image::SvgImage, prelude::ImageExt};
 use soloud::Soloud;
 use std::env;
+use std::sync;
 
 pub static APPNAME: &str = "TLM";
 pub static VERSION: &str = "1.0.0";
@@ -79,6 +80,24 @@ pub static MENU_CHARS: [char; 35] = [
     'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
     'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 ];
+
+pub static TIME_ICONS: state::Storage<sync::RwLock<Vec<SvgImage>>> =
+    state::Storage::new();
+
+pub fn initialize_time_icons() {
+    let mut icons = vec![];
+    for name in [
+        C1_ICON, C2_ICON, C3_ICON, C4_ICON, C5_ICON, C6_ICON, C7_ICON,
+        C8_ICON, C9_ICON, C10_ICON, C11_ICON,
+    ]
+    .iter()
+    {
+        let mut icon = SvgImage::from_data(name).unwrap();
+        icon.scale(TREE_ICON_SIZE, TREE_ICON_SIZE, true, true);
+        icons.push(icon);
+    }
+    TIME_ICONS.set(sync::RwLock::new(icons));
+}
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {

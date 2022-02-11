@@ -18,6 +18,7 @@ mod track_actions;
 mod util;
 
 use crate::application::Application;
+use crate::fixed::initialize_time_icons;
 use config::Config;
 use state::Storage;
 use std::{panic, sync};
@@ -30,6 +31,7 @@ fn main() {
         util::popup_error_message(&err.to_string());
     }));
     CONFIG.set(sync::RwLock::new(Config::new()));
+    initialize_time_icons();
     let mut app = Application::new();
     app.run();
 }

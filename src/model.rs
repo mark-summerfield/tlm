@@ -1,14 +1,11 @@
 // Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
-use crate::fixed::{
-    C10_ICON, C11_ICON, C1_ICON, C2_ICON, C3_ICON, C4_ICON, C5_ICON,
-    C6_ICON, C7_ICON, C8_ICON, C9_ICON, MAX_HISTORY_SIZE, TREE_ICON_SIZE,
-};
+use crate::fixed::{MAX_HISTORY_SIZE, TIME_ICONS};
 use crate::util;
 use anyhow::{bail, Result};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
-use fltk::{enums::Color, image::SvgImage, prelude::ImageExt, tree::Tree};
+use fltk::{enums::Color, image::SvgImage, tree::Tree};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::{
     fs::File,
@@ -259,32 +256,31 @@ impl Model {
 }
 
 fn image_for_secs(secs: f64) -> SvgImage {
-    let icon = if secs < 300.0 {
-        C1_ICON
+    let index = if secs < 300.0 {
+        0
     } else if secs < 600.0 {
-        C2_ICON
+        1
     } else if secs < 900.0 {
-        C3_ICON
+        2
     } else if secs < 1200.0 {
-        C4_ICON
+        3
     } else if secs < 1500.0 {
-        C5_ICON
+        4
     } else if secs < 1800.0 {
-        C6_ICON
+        5
     } else if secs < 2100.0 {
-        C7_ICON
+        6
     } else if secs < 2400.0 {
-        C8_ICON
+        7
     } else if secs < 2700.0 {
-        C9_ICON
+        8
     } else if secs < 3000.0 {
-        C10_ICON
+        9
     } else {
-        C11_ICON
+        10
     };
-    let mut icon = SvgImage::from_data(icon).unwrap();
-    icon.scale(TREE_ICON_SIZE, TREE_ICON_SIZE, true, true);
-    icon
+    let icons = TIME_ICONS.get().read().unwrap();
+    icons[index].clone()
 }
 
 const INDENT: char = '\x0B';
