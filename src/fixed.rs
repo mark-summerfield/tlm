@@ -46,17 +46,6 @@ pub const NEXT_ICON: &str =
     include_str!("../images/media-seek-forward.svg");
 pub const VOLUME_ICON: &str =
     include_str!("../images/audio-volume-high.svg");
-pub const C1_ICON: &str = include_str!("../images/c1.svg");
-pub const C2_ICON: &str = include_str!("../images/c2.svg");
-pub const C3_ICON: &str = include_str!("../images/c3.svg");
-pub const C4_ICON: &str = include_str!("../images/c4.svg");
-pub const C5_ICON: &str = include_str!("../images/c5.svg");
-pub const C6_ICON: &str = include_str!("../images/c6.svg");
-pub const C7_ICON: &str = include_str!("../images/c7.svg");
-pub const C8_ICON: &str = include_str!("../images/c8.svg");
-pub const C9_ICON: &str = include_str!("../images/c9.svg");
-pub const C10_ICON: &str = include_str!("../images/c10.svg");
-pub const C11_ICON: &str = include_str!("../images/c11.svg");
 pub const TIME_ICON: &str = include_str!("../images/time.svg");
 pub const PATH_SEP: &str = "→";
 pub const MAX_RECENT_FILES: usize = 9;
@@ -85,6 +74,17 @@ pub static TIME_ICONS: state::Storage<sync::RwLock<Vec<SvgImage>>> =
     state::Storage::new();
 
 pub fn initialize_time_icons() {
+    const C1_ICON: &str = include_str!("../images/c1.svg");
+    const C2_ICON: &str = include_str!("../images/c2.svg");
+    const C3_ICON: &str = include_str!("../images/c3.svg");
+    const C4_ICON: &str = include_str!("../images/c4.svg");
+    const C5_ICON: &str = include_str!("../images/c5.svg");
+    const C6_ICON: &str = include_str!("../images/c6.svg");
+    const C7_ICON: &str = include_str!("../images/c7.svg");
+    const C8_ICON: &str = include_str!("../images/c8.svg");
+    const C9_ICON: &str = include_str!("../images/c9.svg");
+    const C10_ICON: &str = include_str!("../images/c10.svg");
+    const C11_ICON: &str = include_str!("../images/c11.svg");
     let mut icons = vec![];
     for name in [
         C1_ICON, C2_ICON, C3_ICON, C4_ICON, C5_ICON, C6_ICON, C7_ICON,
