@@ -1,7 +1,5 @@
 = TLM
 
-Track List Manager manages playlists and plays tracks.
-
 == Menus
 
     &List
@@ -41,18 +39,11 @@ Track List Manager manages playlists and plays tracks.
 	- D&elete...
 	- Unde&lete
 
-    &Help
-	+ &Help	    F1
-	+ &About
+== New List
 
-Could use other Fn keys for common operations?
-
-== Major Dialogs
-
-=== New List
-
-    &Name  [List #1   ] # based of folder name but editable
-    &Parent List [   <Top-level> v] # the default; user can add on the fly
+    &Name  [List #1   ] # based off folder name but editable
+			# not allowed to be "Search Results"
+    &Parent List [   <Top-level> v]
     (*) &Add tracks from folder
 	[&Folder] ___________________________
     ( ) &Import tracks from playlist
