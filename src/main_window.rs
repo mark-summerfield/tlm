@@ -233,18 +233,18 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::TrackPrevious,
     );
     menubar.add_emit(
-        "&Track/&Play or Pause\t",
+        "&Track/&Replay\t",
         Shortcut::from_key(Key::F5),
         MenuFlag::Normal,
         sender,
-        Action::TrackPlayOrPause,
+        Action::TrackReplay,
     );
     menubar.add_emit(
-        "&Track/&Replay\t",
+        "&Track/&Play or Pause\t",
         Shortcut::from_key(Key::F6),
         MenuFlag::Normal,
         sender,
-        Action::TrackReplay,
+        Action::TrackPlayOrPause,
     );
     menubar.add_emit(
         "&Track/Play Ne&xt\t",
@@ -389,28 +389,28 @@ fn add_player_toolbar(
         .with_type(FlexType::Row);
     let prev_button = add_toolbutton(
         sender,
-        "Previous track",
+        "Previous track • F4",
         Action::TrackPrevious,
         PREV_ICON,
         &mut row,
     );
     let replay_button = add_toolbutton(
         sender,
-        "Replay the current track",
+        "Replay the current track • F5",
         Action::TrackReplay,
         REPLAY_ICON,
         &mut row,
     );
     let play_pause_button = add_toolbutton(
         sender,
-        "Play or Pause the current track",
+        "Play or Pause the current track • F6",
         Action::TrackPlayOrPause,
         PLAY_ICON,
         &mut row,
     );
     let next_button = add_toolbutton(
         sender,
-        "Next track",
+        "Next track • F7",
         Action::TrackNext,
         NEXT_ICON,
         &mut row,
@@ -477,7 +477,7 @@ fn add_sliders(
         add_slider_row(TIME_ICON, "0″/0″");
     let (volume_icon_label, volume_slider, volume_label) = add_volume_row();
     row.set_size(&time_icon_label, TOOLBUTTON_SIZE);
-    row.set_size(&time_label, 80);
+    row.set_size(&time_label, 100);
     row.set_size(&volume_label, 50);
     row.set_size(&volume_icon_label, TOOLBUTTON_SIZE);
     (time_slider, time_label, volume_slider, volume_label)
@@ -488,6 +488,7 @@ fn add_volume_row() -> (Frame, HorFillSlider, Frame) {
         add_slider_row(VOLUME_ICON, "0%");
     volume_slider.set_range(0.0, 1.0);
     volume_slider.set_step(1.0, 10); // 1/10
+    volume_slider.set_tooltip("Decrease • F8 | Increase • F9");
     (icon_label, volume_slider, volume_label)
 }
 

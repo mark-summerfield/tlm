@@ -256,7 +256,7 @@ impl Model {
 }
 
 fn image_for_secs(secs: f64) -> SvgImage {
-    let index = if secs < 300.0 {
+    let index = if secs < 150.0 {
         0
     } else {
         (secs / 300.0).round().min(10.0) as usize
