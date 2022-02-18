@@ -19,7 +19,7 @@ use fltk::{
     button::Button,
     enums::{Event, Font, FrameType, Key, Shortcut},
     frame::Frame,
-    group::{Flex, FlexType},
+    group::Flex,
     image::SvgImage,
     menu::{MenuButton, MenuFlag, SysMenuBar},
     misc::HelpView,
@@ -58,8 +58,7 @@ pub fn make(sender: Sender<Action>) -> Widgets {
         app::screen_size().1 as i32,
     );
     main_window.make_resizable(true);
-    let mut vbox =
-        Flex::default().size_of_parent().with_type(FlexType::Column);
+    let mut vbox = Flex::default().column().size_of_parent();
     let menubar = add_menubar(sender, width);
     let (history_menu_button, toolbar) = add_toolbar(sender, width);
     let (track_tree, info_view) = add_views(sender, width);
@@ -342,7 +341,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
 
 fn add_views(sender: Sender<Action>, width: i32) -> (Tree, HelpView) {
     const HEIGHT: i32 = 70;
-    let mut row = Flex::default().with_type(FlexType::Column);
+    let mut row = Flex::default().column();
     let mut icon = SvgImage::from_data(LIST_ICON).unwrap();
     icon.scale(TREE_ICON_SIZE, TREE_ICON_SIZE, true, true);
     let mut track_tree = Tree::default();
@@ -384,9 +383,7 @@ fn add_player_toolbar(
     Button,
     Flex,
 ) {
-    let mut row = Flex::default()
-        .with_size(width, TOOLBAR_HEIGHT)
-        .with_type(FlexType::Row);
+    let mut row = Flex::default().row().with_size(width, TOOLBAR_HEIGHT);
     let prev_button = add_toolbutton(
         sender,
         "Previous track • F4",
@@ -512,9 +509,7 @@ fn add_slider_row(
 }
 
 fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
-    let mut row = Flex::default()
-        .with_size(width, TOOLBAR_HEIGHT)
-        .with_type(FlexType::Row);
+    let mut row = Flex::default().row().with_size(width, TOOLBAR_HEIGHT);
     add_toolbutton(
         sender,
         "New TLM file…",
