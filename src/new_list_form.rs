@@ -114,7 +114,7 @@ fn make_widgets() -> Widgets {
     let mut row = Flex::default().row();
     let mut parent_list_combo =
         Choice::default().with_label("&Parent List");
-    parent_list_combo.add_choice("«Top-Level»");
+    parent_list_combo.add_choice("<Top-Level>");
     // TODO add other top-level lists
     let folder_label = Frame::default(); // TODO
     let playlist_label = Frame::default(); // TODO

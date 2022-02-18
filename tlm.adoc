@@ -12,8 +12,8 @@
 
     &Name  [List #1   ] # based off folder or playlist name if Add or
 			# Import chosen, but editable - not allowed to
-			# be "«Search Results»" or "«Top Level»"
-			# or anything starting and ending with chevrons
+			# be "<Search Results>" or "<Top Level>"
+			# or anything starting with < and ending with >
 
 		[&OK] [&Cancel]
 
