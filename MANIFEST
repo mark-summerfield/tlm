@@ -20,6 +20,7 @@ src/list_actions.rs
 src/track_actions.rs
 src/help_actions.rs
 src/main_window.rs
+src/new_list_form.rs
 src/html_form.rs
 src/options_form.rs
 src/list_form.rs

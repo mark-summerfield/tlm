@@ -13,6 +13,7 @@ mod list_actions;
 mod list_form;
 mod main_window;
 mod model;
+mod new_list_form;
 mod options_form;
 mod track_actions;
 mod util;
