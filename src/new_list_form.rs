@@ -69,7 +69,7 @@ impl Default for Form {
             &mut buttons,
             Rc::clone(&result),
         );
-        //widgets.history_size_spinner.take_focus().unwrap();
+        widgets.parent_list_combo.take_focus().unwrap();
         form.show();
         while form.shown() {
             app::wait();
@@ -115,7 +115,10 @@ fn make_widgets() -> Widgets {
     column.set_pad(PAD);
     let mut row1 = Flex::default().row();
     row1.set_pad(PAD);
-    let parent_list_button = Button::default().with_label("&Parent List");
+    let mut parent_list_button =
+        Button::default().with_label("&Parent List");
+    parent_list_button.set_frame(FrameType::NoBox);
+    parent_list_button.visible_focus(false);
     // TODO add handler to make it give focus to parent_list_combo
     let mut parent_list_combo = Choice::default();
     parent_list_combo.add_choice("<Top-Level>");
@@ -147,7 +150,9 @@ fn make_widgets() -> Widgets {
     row3.end();
     let mut row4 = Flex::default().row();
     row4.set_pad(PAD);
-    let name_button = Button::default().with_label("&Name");
+    let mut name_button = Button::default().with_label("&Name");
+    name_button.set_frame(FrameType::NoBox);
+    name_button.visible_focus(false);
     // TODO add handler to make it give focus to name_input
     let name_input = Input::default();
     row4.set_size(&name_button, left_width);
