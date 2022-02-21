@@ -9,7 +9,7 @@ use crate::fixed::{
 use crate::util;
 use fltk::{
     app,
-    button::{Button, CheckButton},
+    button::{Button, CheckButton, RadioRoundButton},
     enums::{Align, FrameType},
     frame::Frame,
     group::Flex,
@@ -24,6 +24,7 @@ use std::{cell::RefCell, path::PathBuf, rc::Rc};
 
 // if folder_or_playlist is a folder then read tracks from the folder;
 // if folder_or_playlist is a file then read tracks from the playlist file
+#[derive(Clone, Debug)]
 pub struct NewListResult {
     pub ok: bool, // false means user canceled; true means create new list
     pub name: Option<String>, // None means use stem of folder_or_playlist
@@ -49,8 +50,8 @@ pub struct Form {
     pub result: Rc<RefCell<NewListResult>>,
 }
 
-impl Form {
-    pub fn default() -> Self {
+impl Default for Form {
+    fn default() -> Self {
         let result = Rc::from(RefCell::from(NewListResult::default()));
         let mut form = make_form();
         let mut vbox = Flex::default().size_of_parent().column();
@@ -85,8 +86,7 @@ impl Drop for Form {
 
 struct Widgets {
     pub parent_list_combo: Choice,
-    pub folder_label: Frame,
-    pub playlist_label: Frame,
+    pub folder_or_playlist_label: Frame,
     pub include_subdirs_checkbox: CheckButton,
     pub name_input: Input,
 }
@@ -109,25 +109,57 @@ fn make_form() -> Window {
 }
 
 fn make_widgets() -> Widgets {
+    let left_width = (WIDTH / 5).max(BUTTON_WIDTH * 2);
+    let right_width = (WIDTH / 4).max(BUTTON_WIDTH * 2);
     let mut column = Flex::default().column();
     column.set_pad(PAD);
-    let mut row = Flex::default().row();
-    let mut parent_list_combo =
-        Choice::default().with_label("&Parent List");
+    let mut row1 = Flex::default().row();
+    row1.set_pad(PAD);
+    let parent_list_button = Button::default().with_label("&Parent List");
+    // TODO add handler to make it give focus to parent_list_combo
+    let mut parent_list_combo = Choice::default();
     parent_list_combo.add_choice("<Top-Level>");
+    parent_list_combo.set_value(0);
     // TODO add other top-level lists
-    let folder_label = Frame::default(); // TODO
-    let playlist_label = Frame::default(); // TODO
-    let mut include_subdirs_checkbox = CheckButton::default(); // TODO
+    row1.set_size(&parent_list_button, left_width);
+    row1.end();
+    let mut row2 = Flex::default().row();
+    row2.set_pad(PAD);
+    // TODO these aren't showing as radio buttons!
+    let folder_radio =
+        RadioRoundButton::default().with_label("&Add tracks from folder");
+    let playlist_radio = RadioRoundButton::default()
+        .with_label("&Import tracks from playist");
+    let mut empty_radio =
+        RadioRoundButton::default().with_label("Create &Empty list");
+    empty_radio.toggle(true);
+    row2.end();
+    let mut row3 = Flex::default().row();
+    row3.set_pad(PAD);
+    let choose_button = Button::default().with_label("C&hoose…");
+    let mut folder_or_playlist_label = Frame::default(); // TODO
+    folder_or_playlist_label.set_frame(FrameType::DownFrame);
+    let mut include_subdirs_checkbox =
+        CheckButton::default().with_label("Include &Subfolders"); // TODO
     include_subdirs_checkbox.set_checked(true);
+    row3.set_size(&choose_button, left_width);
+    row3.set_size(&include_subdirs_checkbox, right_width);
+    row3.end();
+    let mut row4 = Flex::default().row();
+    row4.set_pad(PAD);
+    let name_button = Button::default().with_label("&Name");
+    // TODO add handler to make it give focus to name_input
     let name_input = Input::default();
-    row.end();
-    //Frame::default().with_size(PAD, PAD);
+    row4.set_size(&name_button, left_width);
+    row4.end();
     column.end();
+    column.set_size(&row1, BUTTON_HEIGHT);
+    column.set_size(&row2, BUTTON_HEIGHT);
+    column.set_size(&row3, BUTTON_HEIGHT);
+    column.set_size(&row4, BUTTON_HEIGHT);
     Widgets {
         parent_list_combo,
-        folder_label,
-        playlist_label,
+        folder_or_playlist_label,
         include_subdirs_checkbox,
         name_input,
     }
@@ -169,5 +201,5 @@ fn add_event_handlers(
     });
 }
 
-const WIDTH: i32 = 340;
-const HEIGHT: i32 = 150;
+const WIDTH: i32 = 640;
+const HEIGHT: i32 = PAD + ((BUTTON_HEIGHT + PAD) * 5);

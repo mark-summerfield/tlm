@@ -2,10 +2,13 @@
 // License: GPLv3
 
 use crate::application::Application;
+use crate::new_list_form::{self, NewListResult};
 
 impl Application {
     pub(crate) fn on_list_new(&mut self) {
-        println!("on_list_new"); // TODO
+        let form = new_list_form::Form::default();
+        let reply = &*form.result.borrow();
+        println!("on_list_new: {:?}", reply); // TODO
     }
 
     pub(crate) fn on_list_rename(&mut self) {
