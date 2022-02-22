@@ -208,7 +208,6 @@ fn make_widgets(
 }
 
 fn update_ui(widgets: &mut UiWidgets) {
-    dbg!("update_ui", widgets.browser.size(), widgets.browser.selected(1));
     if widgets.browser.size() == 0 {
         widgets.select_button.deactivate();
     } else {
