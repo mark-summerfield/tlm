@@ -23,7 +23,7 @@ src/main_window.rs
 src/new_list_form.rs
 src/html_form.rs
 src/options_form.rs
-src/list_form.rs
+src/list_form.rs # TODO enable/disable OK (e.g., if Empty and no name disable)
 src/fixed.rs # VERSION
 src/util.rs
 
