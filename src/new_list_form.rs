@@ -222,11 +222,10 @@ fn add_event_handlers(
         move |_| {
             if folder_radio.is_toggled() {
                 folder_or_playlist_label
-                    .set_label(&get_tracks_folder(current_track.clone()));
+                    .set_label(&tracks_folder(current_track.clone()));
             } else if playlist_radio.is_toggled() {
-                folder_or_playlist_label.set_label(&get_playlist_filename(
-                    current_track.clone(),
-                ));
+                folder_or_playlist_label
+                    .set_label(&playlist_filename(current_track.clone()));
             }
             app::redraw(); // redraws the world
         }
@@ -263,9 +262,9 @@ fn add_event_handlers(
     });
 }
 
-fn get_tracks_folder(current_track: PathBuf) -> String {
+fn tracks_folder(current_track: PathBuf) -> String {
     let mut form = FileDialog::new(FileDialogType::BrowseDir);
-    form.set_title(&format!("Read Folder — {APPNAME}"));
+    form.set_title(&format!("Choose Folder — {APPNAME}"));
     let _ = form.set_directory(&util::get_track_dir(&current_track));
     form.show();
     let folder = form.filename();
@@ -276,9 +275,9 @@ fn get_tracks_folder(current_track: PathBuf) -> String {
     }
 }
 
-fn get_playlist_filename(current_track: PathBuf) -> String {
+fn playlist_filename(current_track: PathBuf) -> String {
     let mut form = FileDialog::new(FileDialogType::BrowseFile);
-    form.set_title(&format!("Read Playlist — {APPNAME}"));
+    form.set_title(&format!("Choose Playlist — {APPNAME}"));
     let _ = form.set_directory(&util::get_track_dir(&current_track));
     form.set_filter("Playlists\t*.{m3u,pls,xspf}");
     form.show();

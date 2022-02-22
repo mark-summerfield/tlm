@@ -57,10 +57,15 @@ impl Application {
             }
             list
         };
-        let form = list_form::Form::new("Open Recent", "&Open", &list[..]);
+        let form = list_form::Form::new(
+            "Open Recent",
+            "&Open",
+            "&Delete",
+            &list[..],
+        );
         let reply = *form.reply.borrow();
         match reply {
-            Reply::Action(index) => {
+            Reply::Select(index) => {
                 let filename = {
                     let config = CONFIG.get().read().unwrap();
                     match config.recent_files.get(index) {
@@ -72,6 +77,9 @@ impl Application {
                     self.load_tlm(&filename);
                 }
             }
+            Reply::Delete(index) => {
+                dbg!("recent file delete", index);
+            } // TODO
             Reply::Clear => {
                 let mut config = CONFIG.get().write().unwrap();
                 config.recent_files.truncate(1);

@@ -99,10 +99,14 @@ impl Application {
             }
             list
         };
-        let form = list_form::Form::new("History", "&Play", &list[..]);
+        let form =
+            list_form::Form::new("History", "&Play", "&Delete", &list[..]);
         let reply = *form.reply.borrow();
         match reply {
-            Reply::Action(index) => self.play_history_track(index as i32),
+            Reply::Select(index) => self.play_history_track(index as i32),
+            Reply::Delete(index) => {
+                dbg!("history delete", index);
+            } // TODO
             Reply::Clear => {
                 self.tlm.shrink_history();
                 self.populate_history_menu_button();
