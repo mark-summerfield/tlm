@@ -3,6 +3,7 @@
 
 use crate::application::Application;
 use crate::new_list_form;
+use std::path::Path;
 
 impl Application {
     pub(crate) fn on_list_new(&mut self) {
@@ -23,16 +24,54 @@ impl Application {
             let parent_list = &*form.parent_list.borrow();
             let folder_or_playlist = &*form.folder_or_playlist.borrow();
             let include_subdirs = *form.include_subdirs.borrow();
-            dbg!(
-                "on_list_new: OK",
-                name,
-                parent_list,
-                folder_or_playlist,
-                include_subdirs
-            ); // TODO
-        } else {
-            dbg!("on_list_new: Cancel"); // TODO DELETE
+            if !folder_or_playlist.exists() {
+                self.new_empty_list(parent_list, name);
+            } else if folder_or_playlist.is_file() {
+                self.new_list_from_playlist(
+                    parent_list,
+                    name,
+                    folder_or_playlist,
+                );
+            } else if folder_or_playlist.is_dir() {
+                self.new_list_from_folder(
+                    parent_list,
+                    name,
+                    folder_or_playlist,
+                    include_subdirs,
+                );
+            }
         }
+    }
+
+    fn new_empty_list(&mut self, parent_list: &str, name: &str) {
+        dbg!("new_empty_list", parent_list, name); // TODO
+    }
+
+    fn new_list_from_playlist(
+        &mut self,
+        parent_list: &str,
+        name: &str,
+        playlist: &Path,
+    ) {
+        // if name is empty use playlist dirname
+        dbg!("new_list_from_playlist", parent_list, name, playlist); // TODO
+    }
+
+    fn new_list_from_folder(
+        &mut self,
+        parent_list: &str,
+        name: &str,
+        folder: &Path,
+        include_subdirs: bool,
+    ) {
+        // if name is empty use folder name
+        dbg!(
+            "new_list_from_folder",
+            parent_list,
+            name,
+            folder,
+            include_subdirs
+        ); // TODO
     }
 
     pub(crate) fn on_list_rename(&mut self) {

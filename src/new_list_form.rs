@@ -22,11 +22,6 @@ use std::{
     rc::Rc,
 };
 
-// if folder_or_playlist is a folder then read tracks from the folder;
-// if folder_or_playlist is a file then read tracks from the playlist file
-// empty name means use stem of folder_or_playlist
-// empty parent_list means top-level
-// empty folder_or_playlist means empty list
 pub struct Form {
     form: Window,
     pub ok: Rc<RefCell<bool>>,
@@ -238,13 +233,25 @@ fn add_event_handlers(
     });
     buttons.ok_button.set_callback({
         let mut form = form.clone();
-        let mut name = name.clone();
+        let name = name.clone();
+        let parent_list = parent_list.clone();
+        let folder_or_playlist = folder_or_playlist.clone();
+        let include_subdirs = include_subdirs.clone();
         let name_input = widgets.name_input.clone();
+        let parent_list_combo = widgets.parent_list_combo.clone();
+        let folder_or_playlist_label =
+            widgets.folder_or_playlist_label.clone();
+        let include_subdirs_checkbox =
+            widgets.include_subdirs_checkbox.clone();
         move |_| {
-            // TODO
             *ok.borrow_mut() = true;
-            dbg!(&name_input.label());
-            *name.borrow_mut() = name_input.label();
+            *name.borrow_mut() = name_input.value();
+            *parent_list.borrow_mut() =
+                parent_list_combo.choice().unwrap_or_default();
+            *folder_or_playlist.borrow_mut() =
+                PathBuf::from(folder_or_playlist_label.label());
+            *include_subdirs.borrow_mut() =
+                include_subdirs_checkbox.is_checked();
             form.hide();
         }
     });

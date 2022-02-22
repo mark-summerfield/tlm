@@ -16,7 +16,7 @@ src/model.rs
 src/application.rs
 src/actions.rs
 src/file_actions.rs
-src/list_actions.rs
+src/list_actions.rs # TODO on_list_new()
 src/track_actions.rs
 src/help_actions.rs
 src/main_window.rs
