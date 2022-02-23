@@ -17,19 +17,18 @@ pub enum Reply {
     Cancel,
 }
 
-pub struct UiWidgets {
-    browser: HoldBrowser,
-    select_button: Button,
-    delete_button: Button,
-    delete_all_button: Button,
+#[derive(Clone)]
+struct Widgets {
+    pub browser: HoldBrowser,
+    pub select_button: Button,
+    pub delete_button: Button,
+    pub delete_all_button: Button,
+    pub cancel_button: Button,
 }
 
 pub struct Form {
     form: Window,
-    browser: HoldBrowser,
-    select_button: Button,
-    delete_button: Button,
-    delete_all_button: Button,
+    widgets: Widgets,
     pub reply: Rc<RefCell<Reply>>,
 }
 
@@ -52,22 +51,10 @@ impl Form {
         form.make_modal(true);
         widgets.browser.take_focus().unwrap();
         form.show();
-        let mut app = Self {
-            form: form.clone(),
-            browser: widgets.browser.clone(),
-            select_button: widgets.select_button.clone(),
-            delete_button: widgets.delete_button.clone(),
-            delete_all_button: widgets.delete_all_button.clone(),
-            reply,
-        };
+        let mut app =
+            Self { form: form.clone(), widgets: widgets.clone(), reply };
         app.add_event_handlers(&mut widgets.cancel_button);
-        let mut ui_widgets = UiWidgets {
-            browser: widgets.browser,
-            select_button: widgets.select_button,
-            delete_button: widgets.delete_button,
-            delete_all_button: widgets.delete_all_button,
-        };
-        update_ui(&mut ui_widgets);
+        update_ui(&mut widgets);
         while form.shown() {
             app::wait();
         }
@@ -76,17 +63,8 @@ impl Form {
 
     fn add_event_handlers(&mut self, cancel_button: &mut Button) {
         let reply = Rc::clone(&self.reply);
-        self.browser.handle({
-            let browser = self.browser.clone();
-            let select_button = self.select_button.clone();
-            let delete_button = self.delete_button.clone();
-            let delete_all_button = self.delete_all_button.clone();
-            let mut widgets = UiWidgets {
-                browser,
-                select_button,
-                delete_button,
-                delete_all_button,
-            };
+        self.widgets.browser.handle({
+            let mut widgets = self.widgets.clone();
             move |browser, _| {
                 if browser.has_focus()
                     && !app::event_inside_widget(&browser.scrollbar())
@@ -96,10 +74,10 @@ impl Form {
                 false
             }
         });
-        self.select_button.set_callback({
+        self.widgets.select_button.set_callback({
             let reply_a = Rc::clone(&reply);
             let mut form = self.form.clone();
-            let browser = self.browser.clone();
+            let browser = self.widgets.browser.clone();
             move |_| {
                 // Browser uses 1-based indexing
                 let index = (browser.value() as usize) - 1;
@@ -107,10 +85,10 @@ impl Form {
                 form.hide();
             }
         });
-        self.delete_button.set_callback({
+        self.widgets.delete_button.set_callback({
             let reply_b = Rc::clone(&reply);
             let mut form = self.form.clone();
-            let browser = self.browser.clone();
+            let browser = self.widgets.browser.clone();
             move |_| {
                 // Browser uses 1-based indexing
                 let index = (browser.value() as usize) - 1;
@@ -118,7 +96,7 @@ impl Form {
                 form.hide();
             }
         });
-        self.delete_all_button.set_callback({
+        self.widgets.delete_all_button.set_callback({
             let reply_c = Rc::clone(&reply);
             let mut form = self.form.clone();
             move |_| {
@@ -141,14 +119,6 @@ impl Drop for Form {
     fn drop(&mut self) {
         app::delete_widget(self.form.clone());
     }
-}
-
-struct Widgets {
-    pub browser: HoldBrowser,
-    pub select_button: Button,
-    pub delete_button: Button,
-    pub delete_all_button: Button,
-    pub cancel_button: Button,
 }
 
 fn make_form(title: &str) -> Window {
@@ -207,7 +177,7 @@ fn make_widgets(
     )
 }
 
-fn update_ui(widgets: &mut UiWidgets) {
+fn update_ui(widgets: &mut Widgets) {
     if widgets.browser.size() == 0 {
         widgets.select_button.deactivate();
     } else {
