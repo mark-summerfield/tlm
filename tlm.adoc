@@ -1,22 +1,5 @@
 = TLM
 
-== New List
-
-    &Parent List [   <Top-level> v] # top-level + top-level lists only
-				    # user can always move after
-    (*) &Add tracks from folder
-	[&Folder] ___________________________ [X] &Include Subfolders
-    ( ) &Import tracks from playlist
-	[&Playlist] _________________________ #.m3u, .pls, .xspf, etc.
-    ( ) Create &Empty List
-
-    &Name  [List #1   ] # based off folder or playlist name if Add or
-			# Import chosen, but editable - not allowed to
-			# be "<Search Results>" or "<Top Level>"
-			# or anything starting with < and ending with >
-
-		[&OK] [&Cancel]
-
 == Menus
 
     &List

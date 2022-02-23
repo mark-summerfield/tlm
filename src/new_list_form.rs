@@ -7,7 +7,7 @@ use fltk::{
     app,
     button::{Button, CheckButton, RadioRoundButton},
     dialog::{FileDialog, FileDialogType},
-    enums::FrameType,
+    enums::{CallbackTrigger, FrameType},
     frame::Frame,
     group::Flex,
     image::SvgImage,
@@ -60,6 +60,12 @@ impl Form {
             Rc::clone(&include_subdirs),
         );
         widgets.parent_list_combo.take_focus().unwrap();
+        update_ui(
+            &widgets.empty_radio,
+            &widgets.folder_or_playlist_label,
+            &widgets.name_input,
+            &mut buttons.ok_button,
+        );
         form.show();
         while form.shown() {
             app::wait();
@@ -86,6 +92,7 @@ struct Widgets {
     pub parent_list_combo: Choice,
     pub folder_radio: RadioRoundButton,
     pub playlist_radio: RadioRoundButton,
+    pub empty_radio: RadioRoundButton,
     pub choose_button: Button,
     pub folder_or_playlist_label: Frame,
     pub include_subdirs_checkbox: CheckButton,
@@ -135,7 +142,8 @@ fn make_widgets(top_levels: &[String]) -> Widgets {
     folder_radio.toggle(true);
     let playlist_radio = RadioRoundButton::default()
         .with_label("&Import tracks from playist");
-    RadioRoundButton::default().with_label("Create &Empty list");
+    let empty_radio =
+        RadioRoundButton::default().with_label("Create &Empty list");
     row2.end();
     let mut row3 = Flex::default().row();
     row3.set_pad(PAD);
@@ -156,7 +164,9 @@ fn make_widgets(top_levels: &[String]) -> Widgets {
     let mut name_button = Button::default().with_label("&Name");
     name_button.set_frame(FrameType::NoBox);
     name_button.visible_focus(false);
-    let name_input = Input::default();
+    let mut name_input = Input::default();
+    name_input
+        .set_trigger(CallbackTrigger::Changed | CallbackTrigger::EnterKey);
     row5.set_size(&name_button, width);
     row5.end();
     column.end();
@@ -170,6 +180,7 @@ fn make_widgets(top_levels: &[String]) -> Widgets {
         parent_list_combo,
         folder_radio,
         playlist_radio,
+        empty_radio,
         choose_button,
         folder_or_playlist_label,
         include_subdirs_checkbox,
@@ -216,10 +227,13 @@ fn add_event_handlers(
         }
     });
     widgets.choose_button.set_callback({
+        let empty_radio = widgets.empty_radio.clone();
         let folder_radio = widgets.folder_radio.clone();
         let playlist_radio = widgets.playlist_radio.clone();
         let mut folder_or_playlist_label =
             widgets.folder_or_playlist_label.clone();
+        let name_input = widgets.name_input.clone();
+        let mut ok_button = buttons.ok_button.clone();
         move |_| {
             if folder_radio.is_toggled() {
                 folder_or_playlist_label
@@ -228,7 +242,45 @@ fn add_event_handlers(
                 folder_or_playlist_label
                     .set_label(&playlist_filename(current_track.clone()));
             }
-            app::redraw(); // redraws the world
+            update_ui(
+                &empty_radio,
+                &folder_or_playlist_label,
+                &name_input,
+                &mut ok_button,
+            );
+        }
+    });
+    let callback = {
+        let empty_radio = widgets.empty_radio.clone();
+        let folder_or_playlist_label =
+            widgets.folder_or_playlist_label.clone();
+        let name_input = widgets.name_input.clone();
+        let mut ok_button = buttons.ok_button.clone();
+        move |_: &mut RadioRoundButton| {
+            update_ui(
+                &empty_radio,
+                &folder_or_playlist_label,
+                &name_input,
+                &mut ok_button,
+            );
+        }
+    };
+    widgets.folder_radio.set_callback(callback.clone());
+    widgets.playlist_radio.set_callback(callback.clone());
+    widgets.empty_radio.set_callback(callback);
+    widgets.name_input.set_callback({
+        let empty_radio = widgets.empty_radio.clone();
+        let folder_or_playlist_label =
+            widgets.folder_or_playlist_label.clone();
+        let name_input = widgets.name_input.clone();
+        let mut ok_button = buttons.ok_button.clone();
+        move |_| {
+            update_ui(
+                &empty_radio,
+                &folder_or_playlist_label,
+                &name_input,
+                &mut ok_button,
+            );
         }
     });
     buttons.ok_button.set_callback({
@@ -257,6 +309,23 @@ fn add_event_handlers(
             form.hide();
         }
     });
+}
+
+fn update_ui(
+    empty_radio: &RadioRoundButton,
+    folder_or_playlist_label: &Frame,
+    name_input: &Input,
+    ok_button: &mut Button,
+) {
+    if (empty_radio.is_toggled() && !name_input.value().is_empty())
+        || (!empty_radio.is_toggled()
+            && !folder_or_playlist_label.label().is_empty())
+    {
+        ok_button.activate();
+    } else {
+        ok_button.deactivate();
+    }
+    app::redraw(); // redraws the world
 }
 
 fn tracks_folder(current_track: PathBuf) -> String {
