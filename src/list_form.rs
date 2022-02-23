@@ -13,7 +13,7 @@ use std::rc::Rc;
 pub enum Reply {
     Select(usize), // index
     Delete(usize), // index
-    Clear,
+    DeleteAll,
     Cancel,
 }
 
@@ -21,7 +21,7 @@ pub struct UiWidgets {
     browser: HoldBrowser,
     select_button: Button,
     delete_button: Button,
-    clear_button: Button,
+    delete_all_button: Button,
 }
 
 pub struct Form {
@@ -29,7 +29,7 @@ pub struct Form {
     browser: HoldBrowser,
     select_button: Button,
     delete_button: Button,
-    clear_button: Button,
+    delete_all_button: Button,
     pub reply: Rc<RefCell<Reply>>,
 }
 
@@ -57,7 +57,7 @@ impl Form {
             browser: widgets.browser.clone(),
             select_button: widgets.select_button.clone(),
             delete_button: widgets.delete_button.clone(),
-            clear_button: widgets.clear_button.clone(),
+            delete_all_button: widgets.delete_all_button.clone(),
             reply,
         };
         app.add_event_handlers(&mut widgets.cancel_button);
@@ -65,7 +65,7 @@ impl Form {
             browser: widgets.browser,
             select_button: widgets.select_button,
             delete_button: widgets.delete_button,
-            clear_button: widgets.clear_button,
+            delete_all_button: widgets.delete_all_button,
         };
         update_ui(&mut ui_widgets);
         while form.shown() {
@@ -80,12 +80,12 @@ impl Form {
             let browser = self.browser.clone();
             let select_button = self.select_button.clone();
             let delete_button = self.delete_button.clone();
-            let clear_button = self.clear_button.clone();
+            let delete_all_button = self.delete_all_button.clone();
             let mut widgets = UiWidgets {
                 browser,
                 select_button,
                 delete_button,
-                clear_button,
+                delete_all_button,
             };
             move |browser, _| {
                 if browser.has_focus()
@@ -118,11 +118,11 @@ impl Form {
                 form.hide();
             }
         });
-        self.clear_button.set_callback({
+        self.delete_all_button.set_callback({
             let reply_c = Rc::clone(&reply);
             let mut form = self.form.clone();
             move |_| {
-                *reply_c.borrow_mut() = Reply::Clear;
+                *reply_c.borrow_mut() = Reply::DeleteAll;
                 form.hide();
             }
         });
@@ -147,7 +147,7 @@ struct Widgets {
     pub browser: HoldBrowser,
     pub select_button: Button,
     pub delete_button: Button,
-    pub clear_button: Button,
+    pub delete_all_button: Button,
     pub cancel_button: Button,
 }
 
@@ -186,13 +186,13 @@ fn make_widgets(
     Frame::default(); // pad left of buttons
     let select_button = Button::default().with_label(select);
     let delete_button = Button::default().with_label(delete);
-    let clear_button = Button::default().with_label("Clear &List");
+    let delete_all_button = Button::default().with_label("Delete &All");
     let cancel_button = Button::default().with_label("&Cancel");
     Frame::default(); // pad right of buttons
     let width = BUTTON_WIDTH + PAD;
     row.set_size(&select_button, width);
     row.set_size(&delete_button, width);
-    row.set_size(&clear_button, width);
+    row.set_size(&delete_all_button, width);
     row.set_size(&cancel_button, width);
     row.end();
     (
@@ -201,7 +201,7 @@ fn make_widgets(
             browser,
             select_button,
             delete_button,
-            clear_button,
+            delete_all_button,
             cancel_button,
         },
     )
@@ -217,10 +217,10 @@ fn update_ui(widgets: &mut UiWidgets) {
     let disable = widgets.browser.size() < 2 || widgets.browser.selected(1);
     if disable {
         widgets.delete_button.deactivate();
-        widgets.clear_button.deactivate();
+        widgets.delete_all_button.deactivate();
     } else {
         widgets.delete_button.activate();
-        widgets.clear_button.activate();
+        widgets.delete_all_button.activate();
     }
     app::redraw(); // redraws the world
 }

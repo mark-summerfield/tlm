@@ -80,7 +80,7 @@ impl Application {
             Reply::Delete(index) => {
                 dbg!("recent file delete", index);
             } // TODO
-            Reply::Clear => {
+            Reply::DeleteAll => {
                 let mut config = CONFIG.get().write().unwrap();
                 config.recent_files.truncate(1);
             }

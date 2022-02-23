@@ -107,7 +107,7 @@ impl Application {
             Reply::Delete(index) => {
                 dbg!("history delete", index);
             } // TODO
-            Reply::Clear => {
+            Reply::DeleteAll => {
                 self.tlm.shrink_history();
                 self.populate_history_menu_button();
             }
