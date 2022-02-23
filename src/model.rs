@@ -8,6 +8,7 @@ use flate2::{read::GzDecoder, write::GzEncoder, Compression};
 use fltk::{enums::Color, image::SvgImage, tree::Tree};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::{
+    collections::vec_deque::Iter,
     fs::File,
     io::prelude::*,
     io::BufReader,
@@ -27,20 +28,20 @@ pub struct Track {
 
 pub struct Model {
     pub filename: PathBuf,
-    pub dirty: bool,
     pub track_tree: Tree,
     pub track_for_tid: TrackForTID,
-    pub history: VecDeque<TreePath>,
+    history: VecDeque<TreePath>,
+    dirty: bool,
 }
 
 impl Model {
     pub fn new(track_tree: Tree) -> Self {
         Self {
             filename: PathBuf::new(),
-            dirty: false,
             track_tree,
             track_for_tid: TrackForTID::default(),
             history: VecDeque::default(),
+            dirty: false,
         }
     }
 
@@ -93,9 +94,26 @@ impl Model {
         self.track_tree.clear();
     }
 
-    pub fn shrink_history(&mut self) {
+    pub fn history_delete_item(&mut self, index: usize) {
+        self.history.remove(index);
+        self.dirty = true;
+    }
+
+    pub fn history_shrink(&mut self) {
         self.history.truncate(1);
         self.dirty = true;
+    }
+
+    pub fn history_iter(&self) -> Iter<TreePath> {
+        self.history.iter()
+    }
+
+    pub fn history_front(&self) -> Option<&TreePath> {
+        self.history.front()
+    }
+
+    pub fn is_dirty(&self) -> bool {
+        self.dirty
     }
 
     fn parse(&mut self, text: String) -> Result<()> {

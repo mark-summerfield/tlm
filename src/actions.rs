@@ -80,7 +80,7 @@ impl Application {
     }
 
     pub(crate) fn ok_to_clear(&mut self) -> bool {
-        if self.tlm.dirty {
+        if self.tlm.is_dirty() {
             dialog::message_title(&format!("Unsaved Changes — {APPNAME}"));
             match dialog::choice2_default(
                 "Save changes?",

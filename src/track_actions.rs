@@ -94,7 +94,7 @@ impl Application {
     pub(crate) fn on_track_history(&mut self) {
         let list = {
             let mut list = vec![];
-            for treepath in &self.tlm.history {
+            for treepath in self.tlm.history_iter() {
                 list.push(treepath.clone());
             }
             list
@@ -105,10 +105,13 @@ impl Application {
         match reply {
             Reply::Select(index) => self.play_history_track(index as i32),
             Reply::Delete(index) => {
-                dbg!("history delete", index);
-            } // TODO
+                if index > 0 {
+                    self.tlm.history_delete_item(index);
+                    self.populate_history_menu_button();
+                }
+            }
             Reply::DeleteAll => {
-                self.tlm.shrink_history();
+                self.tlm.history_shrink();
                 self.populate_history_menu_button();
             }
             Reply::Cancel => (),

@@ -15,7 +15,7 @@ src/config.rs
 src/model.rs
 src/application.rs
 src/actions.rs
-src/file_actions.rs # TODO (1) delete
+src/file_actions.rs
 src/list_actions.rs # TODO (4) on_list_new()
 src/track_actions.rs # TODO (2) delete
 src/help_actions.rs

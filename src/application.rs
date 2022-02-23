@@ -207,7 +207,7 @@ impl Application {
             config.history_size
         };
         let base = if (10..=26).contains(&size) { 9 } else { 0 };
-        for (i, treepath) in self.tlm.history.iter().enumerate() {
+        for (i, treepath) in self.tlm.history_iter().enumerate() {
             if i == size {
                 break;
             }

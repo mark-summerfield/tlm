@@ -78,8 +78,11 @@ impl Application {
                 }
             }
             Reply::Delete(index) => {
-                dbg!("recent file delete", index);
-            } // TODO
+                if index > 0 {
+                    let mut config = CONFIG.get().write().unwrap();
+                    config.recent_files.remove(index);
+                }
+            }
             Reply::DeleteAll => {
                 let mut config = CONFIG.get().write().unwrap();
                 config.recent_files.truncate(1);
@@ -116,7 +119,7 @@ impl Application {
     }
 
     fn select_recent_track(&mut self) {
-        if let Some(treepath) = self.tlm.history.front() {
+        if let Some(treepath) = self.tlm.history_front() {
             let treepath = treepath.clone();
             if let Some(item) = self.tlm.track_tree.find_item(&treepath) {
                 self.select_track_in_tree(treepath, item);
@@ -260,7 +263,7 @@ impl Application {
             config.save();
             config.auto_save
         };
-        if self.tlm.dirty {
+        if self.tlm.is_dirty() {
             if auto_save {
                 self.on_file_save();
             } else if !self.ok_to_clear() {
