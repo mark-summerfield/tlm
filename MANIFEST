@@ -17,7 +17,7 @@ src/application.rs
 src/actions.rs
 src/file_actions.rs
 src/list_actions.rs # TODO (4) on_list_new()
-src/track_actions.rs # TODO (2) delete
+src/track_actions.rs
 src/help_actions.rs
 src/main_window.rs
 src/new_list_form.rs # TODO (3) enable/disable OK (e.g., if Empty and no

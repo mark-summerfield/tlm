@@ -123,7 +123,7 @@ fn make_widgets(top_levels: &[String]) -> Widgets {
     let mut parent_list_combo = Choice::default();
     parent_list_combo.add_choice("<Top-Level>");
     for top_level in top_levels {
-        parent_list_combo.add_choice(&top_level);
+        parent_list_combo.add_choice(top_level);
     }
     parent_list_combo.set_value(0);
     row1.set_size(&parent_list_button, width);
@@ -191,6 +191,7 @@ fn make_buttons() -> (Flex, Buttons) {
     (row, Buttons { ok_button, cancel_button })
 }
 
+#[allow(clippy::too_many_arguments)]
 fn add_event_handlers(
     form: &mut Window,
     widgets: &mut Widgets,
@@ -232,10 +233,6 @@ fn add_event_handlers(
     });
     buttons.ok_button.set_callback({
         let mut form = form.clone();
-        let name = name.clone();
-        let parent_list = parent_list.clone();
-        let folder_or_playlist = folder_or_playlist.clone();
-        let include_subdirs = include_subdirs.clone();
         let name_input = widgets.name_input.clone();
         let parent_list_combo = widgets.parent_list_combo.clone();
         let folder_or_playlist_label =
