@@ -122,11 +122,7 @@ impl Model {
             format!("{parent}/{name}")
         };
         self.dirty = true;
-        if let Some(item) = self.track_tree.add(&treepath) {
-            Some((treepath, item))
-        } else {
-            None
-        }
+        self.track_tree.add(&treepath).map(|item| (treepath, item))
     }
 
     pub fn history_add_to(&mut self, treepath: TreePath) -> bool {
