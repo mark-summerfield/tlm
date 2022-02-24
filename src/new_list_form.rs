@@ -257,6 +257,13 @@ fn add_event_handlers(
                     .folder_or_playlist_label
                     .set_label(&playlist_filename(current_track.clone()));
             }
+            if ui_widgets.name_input.value().is_empty() {
+                ui_widgets.name_input.set_value(&util::canonicalize(
+                    &PathBuf::from(
+                        ui_widgets.folder_or_playlist_label.label(),
+                    ),
+                ));
+            }
             update_ui(&mut ui_widgets);
         }
     });

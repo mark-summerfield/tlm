@@ -59,7 +59,7 @@ impl Application {
         playlist: &Path,
     ) {
         let name = if name.is_empty() {
-            util::file_stem(playlist)
+            util::canonicalize(playlist)
         } else {
             name.to_string()
         };
@@ -74,7 +74,7 @@ impl Application {
         include_subdirs: bool,
     ) {
         let name = if name.is_empty() {
-            util::file_stem(folder)
+            util::canonicalize(folder)
         } else {
             name.to_string()
         };

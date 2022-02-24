@@ -289,6 +289,9 @@ pub fn canonicalize(track: &Path) -> String {
         s = t.to_string();
     }
     s.replace(&['-', '_', '/', '\\'], " ")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 pub fn popup_error_message(message: &str) {
