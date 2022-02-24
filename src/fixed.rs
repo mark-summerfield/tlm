@@ -120,7 +120,6 @@ pub enum Action {
     ListExport,
     ListImport,
     ListDelete,
-    ListUndelete,
     PlayHistoryTrack,
     OnStartup,
     Tick,
@@ -139,7 +138,6 @@ pub enum Action {
     TrackHistory,
     TrackFind,
     TrackDelete,
-    TrackUndelete,
     TreeItemDoubleClicked,
     VolumeUpdate,
 }

@@ -162,10 +162,6 @@ impl Application {
         println!("on_track_delete"); // TODO
     }
 
-    pub(crate) fn on_track_undelete(&mut self) {
-        println!("on_track_undelete"); // TODO
-    }
-
     pub(crate) fn load_track(&mut self) {
         if self.playing {
             self.on_track_play_or_pause(); // PAUSE

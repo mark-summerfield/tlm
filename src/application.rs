@@ -130,7 +130,6 @@ impl Application {
                     Action::ListExport => self.on_list_export(),
                     Action::ListImport => self.on_list_import(),
                     Action::ListDelete => self.on_list_delete(),
-                    Action::ListUndelete => self.on_list_undelete(),
                     Action::HelpAbout => self.on_help_about(),
                     Action::HelpHelp => self.on_help_help(),
                     Action::OnStartup => self.on_startup(),
@@ -155,7 +154,6 @@ impl Application {
                     Action::TrackHistory => self.on_track_history(),
                     Action::TrackFind => self.on_track_find(),
                     Action::TrackDelete => self.on_track_delete(),
-                    Action::TrackUndelete => self.on_track_undelete(),
                     Action::TreeItemDoubleClicked => {
                         self.on_tree_item_double_clicked()
                     }

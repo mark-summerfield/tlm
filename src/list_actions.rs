@@ -105,8 +105,4 @@ impl Application {
     pub(crate) fn on_list_delete(&mut self) {
         println!("on_list_delete"); // TODO
     }
-
-    pub(crate) fn on_list_undelete(&mut self) {
-        println!("on_list_undelete"); // TODO
-    }
 }

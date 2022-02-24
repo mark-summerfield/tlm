@@ -14,8 +14,7 @@
 	- E&xport... # to .m3u, .pls, .xspf, etc.
 	- &Import... # from .m3u, .pls, .xspf, etc. (like List→New)
 	-------------
-	- D&elete...
-	- Unde&lete
+	- D&elete... # See TODOs
 
     &Track
 	- &New...		  # (file open)
@@ -36,5 +35,4 @@
 	- &Move to List # move to another list or to top-level
 	- &Copy to List # add to another list (same track in multi list is fine)
 	-------------
-	- D&elete...
-	- Unde&lete
+	- D&elete... # See TODOs

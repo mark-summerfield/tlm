@@ -211,13 +211,6 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::ListDelete,
     );
     menubar.add_emit(
-        "&List/Unde&lete\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::ListUndelete,
-    );
-    menubar.add_emit(
         "&Track/&New…\t",
         Shortcut::None,
         MenuFlag::MenuDivider,
@@ -314,13 +307,6 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         MenuFlag::Normal,
         sender,
         Action::TrackDelete,
-    );
-    menubar.add_emit(
-        "&Track/Unde&lete\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::TrackUndelete,
     );
     menubar.add_emit(
         "&Help/&Help\t",
