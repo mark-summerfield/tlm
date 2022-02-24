@@ -3,6 +3,7 @@
 
 use crate::application::Application;
 use crate::new_list_form;
+use crate::util;
 use std::path::Path;
 
 impl Application {
@@ -18,7 +19,7 @@ impl Application {
             }
         }
         let form =
-            new_list_form::Form::new(&self.current_track, &top_levels);
+            new_list_form::Form::new(&self.current.track, &top_levels);
         if *form.ok.borrow() {
             let name = &*form.name.borrow();
             let parent_list = &*form.parent_list.borrow();
@@ -44,7 +45,11 @@ impl Application {
     }
 
     fn new_empty_list(&mut self, parent_list: &str, name: &str) {
-        dbg!("new_empty_list", parent_list, name); // TODO
+        if let Some((treepath, item)) =
+            self.tlm.add_empty_list(parent_list, name)
+        {
+            self.select_track_in_tree(treepath, item)
+        }
     }
 
     fn new_list_from_playlist(
@@ -53,7 +58,11 @@ impl Application {
         name: &str,
         playlist: &Path,
     ) {
-        // if name is empty use playlist dirname
+        let name = if name.is_empty() {
+            util::file_stem(playlist)
+        } else {
+            name.to_string()
+        };
         dbg!("new_list_from_playlist", parent_list, name, playlist); // TODO
     }
 
@@ -64,7 +73,11 @@ impl Application {
         folder: &Path,
         include_subdirs: bool,
     ) {
-        // if name is empty use folder name
+        let name = if name.is_empty() {
+            util::file_stem(folder)
+        } else {
+            name.to_string()
+        };
         dbg!(
             "new_list_from_folder",
             parent_list,

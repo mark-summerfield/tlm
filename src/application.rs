@@ -5,7 +5,7 @@ use super::CONFIG;
 use crate::fixed::{Action, MENU_CHARS, PATH_SEP, TINY_TIMEOUT};
 use crate::html_form;
 use crate::main_window;
-use crate::model::{Model, TrackID, TreePath};
+use crate::model::{Current, Model};
 use fltk::{
     app,
     app::{channel, App, Receiver, Scheme, Sender},
@@ -19,7 +19,6 @@ use fltk::{
     window::Window,
 };
 use soloud::{audio::Wav, prelude::*, Soloud};
-use std::path::PathBuf;
 
 pub struct Application {
     pub(crate) app: App,
@@ -40,9 +39,7 @@ pub struct Application {
     pub(crate) wav: Wav,
     pub(crate) handle: soloud::Handle,
     pub(crate) playing: bool,
-    pub(crate) current_treepath: TreePath,
-    pub(crate) current_track: PathBuf,
-    pub(crate) current_tid: TrackID,
+    pub(crate) current: Current,
     pub(crate) tlm: Model,
     pub(crate) sender: Sender<Action>,
     pub(crate) receiver: Receiver<Action>,
@@ -80,9 +77,7 @@ impl Application {
             wav: Wav::default(),
             handle: unsafe { soloud::Handle::from_raw(0) },
             playing: false,
-            current_treepath: TreePath::new(),
-            current_track: PathBuf::new(),
-            current_tid: 0,
+            current: Current::default(),
             tlm: Model::new(widgets.track_tree),
             sender,
             receiver,

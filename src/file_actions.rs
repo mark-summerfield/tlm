@@ -3,16 +3,14 @@
 
 use super::CONFIG;
 use crate::application::Application;
-use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES, TINY_TIMEOUT};
+use crate::fixed::{APPNAME, INFO_TIMEOUT, MAX_RECENT_FILES};
 use crate::list_form::{self, Reply};
-use crate::model::TrackID;
 use crate::options_form;
 use crate::util::{self, PathBufExt};
 use fltk::{
     app,
     dialog::{FileDialog, FileDialogOptions, FileDialogType},
     prelude::*,
-    tree::TreeItem,
 };
 use std::path::{Path, PathBuf};
 
@@ -138,35 +136,6 @@ impl Application {
                 }
             }
         }
-    }
-
-    pub(crate) fn select_track_in_tree(
-        &mut self,
-        treepath: String,
-        item: TreeItem,
-    ) {
-        if let Some(tid) = unsafe { item.user_data::<TrackID>() } {
-            if let Some(track_item) = self.tlm.track_for_tid.get(&tid) {
-                self.current_tid = tid;
-                if let Some(treepath) = treepath.strip_prefix("ROOT/") {
-                    self.current_treepath = treepath.to_string();
-                } else {
-                    self.current_treepath = treepath.clone();
-                }
-                self.current_track = track_item.filename.clone();
-                self.load_track();
-            }
-        }
-        let mut opt_parent = item.parent();
-        while let Some(mut parent) = opt_parent {
-            parent.open();
-            opt_parent = parent.parent();
-        }
-        let _ = self.tlm.track_tree.select(&treepath, false);
-        let mut tree = self.tlm.track_tree.clone();
-        app::add_timeout3(TINY_TIMEOUT, move |_| {
-            tree.show_item_middle(&item);
-        });
     }
 
     fn update_recent_files(&mut self, filename: &Path) {

@@ -20,7 +20,7 @@ src/model.rs
 src/application.rs
 src/actions.rs
 src/file_actions.rs
-src/list_actions.rs # TODO on_list_new()
+src/list_actions.rs # TODO new_list_from_folder() & new_list_from_playlist()
 src/track_actions.rs
 src/help_actions.rs
 src/main_window.rs

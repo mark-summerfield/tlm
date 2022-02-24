@@ -3,7 +3,7 @@
 
 use super::CONFIG;
 use crate::application::Application;
-use crate::fixed::{Action, APPNAME, TICK_TIMEOUT};
+use crate::fixed::{Action, APPNAME, TICK_TIMEOUT, TINY_TIMEOUT};
 use crate::model::TrackID;
 use crate::util;
 use fltk::{app, dialog, prelude::*, tree::TreeItem};
@@ -58,7 +58,7 @@ impl Application {
     pub(crate) fn maybe_play_or_replay(&mut self, item: TreeItem) {
         match unsafe { item.user_data::<TrackID>() } {
             Some(tid) => {
-                if tid == self.current_tid {
+                if tid == self.current.tid {
                     self.on_track_replay();
                     return;
                 }
@@ -77,6 +77,35 @@ impl Application {
         }
         self.select_track_in_tree(treepath, item);
         self.on_track_replay();
+    }
+
+    pub(crate) fn select_track_in_tree(
+        &mut self,
+        treepath: String,
+        item: TreeItem,
+    ) {
+        if let Some(tid) = unsafe { item.user_data::<TrackID>() } {
+            if let Some(track_item) = self.tlm.track_for_tid.get(&tid) {
+                self.current.tid = tid;
+                if let Some(treepath) = treepath.strip_prefix("ROOT/") {
+                    self.current.treepath = treepath.to_string();
+                } else {
+                    self.current.treepath = treepath.clone();
+                }
+                self.current.track = track_item.filename.clone();
+                self.load_track();
+            }
+        }
+        let mut opt_parent = item.parent();
+        while let Some(mut parent) = opt_parent {
+            parent.open();
+            opt_parent = parent.parent();
+        }
+        let _ = self.tlm.track_tree.select(&treepath, false);
+        let mut tree = self.tlm.track_tree.clone();
+        app::add_timeout3(TINY_TIMEOUT, move |_| {
+            tree.show_item_middle(&item);
+        });
     }
 
     pub(crate) fn ok_to_clear(&mut self) -> bool {

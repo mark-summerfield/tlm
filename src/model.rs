@@ -1,11 +1,15 @@
 // Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
-use crate::fixed::{MAX_HISTORY_SIZE, TIME_ICONS};
+use crate::fixed::{MAX_HISTORY_SIZE, TIME_ICONS, TOP_LEVEL_NAME};
 use crate::util;
 use anyhow::{bail, Result};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
-use fltk::{enums::Color, image::SvgImage, tree::Tree};
+use fltk::{
+    enums::Color,
+    image::SvgImage,
+    tree::{Tree, TreeItem},
+};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::{
     collections::vec_deque::Iter,
@@ -19,6 +23,31 @@ use std::{
 pub type TreePath = String;
 pub type TrackID = i32;
 type TrackForTID = HashMap<TrackID, Track>;
+const INVALID_TID: i32 = -1;
+
+pub struct Current {
+    pub treepath: TreePath,
+    pub track: PathBuf,
+    pub tid: TrackID,
+}
+
+impl Default for Current {
+    fn default() -> Self {
+        Self {
+            treepath: TreePath::new(),
+            track: PathBuf::new(),
+            tid: INVALID_TID,
+        }
+    }
+}
+
+impl Current {
+    pub fn has_track(&self) -> bool {
+        self.tid != INVALID_TID
+            && !self.treepath.is_empty()
+            && self.track.exists()
+    }
+}
 
 #[derive(Debug)]
 pub struct Track {
@@ -43,18 +72,6 @@ impl Model {
             history: VecDeque::default(),
             dirty: false,
         }
-    }
-
-    pub fn add_to_history(&mut self, treepath: TreePath) -> bool {
-        let changed = util::maybe_add_to_deque(
-            &mut self.history,
-            treepath,
-            MAX_HISTORY_SIZE,
-        );
-        if changed {
-            self.dirty = true;
-        }
-        changed
     }
 
     pub fn load(&mut self, filename: &Path) -> Result<()> {
@@ -94,6 +111,36 @@ impl Model {
         self.track_tree.clear();
     }
 
+    pub fn add_empty_list(
+        &mut self,
+        parent: &str,
+        name: &str,
+    ) -> Option<(TreePath, TreeItem)> {
+        let treepath = if parent == TOP_LEVEL_NAME {
+            name.to_string()
+        } else {
+            format!("{parent}/{name}")
+        };
+        self.dirty = true;
+        if let Some(item) = self.track_tree.add(&treepath) {
+            Some((treepath, item))
+        } else {
+            None
+        }
+    }
+
+    pub fn history_add_to(&mut self, treepath: TreePath) -> bool {
+        let changed = util::maybe_add_to_deque(
+            &mut self.history,
+            treepath,
+            MAX_HISTORY_SIZE,
+        );
+        if changed {
+            self.dirty = true;
+        }
+        changed
+    }
+
     pub fn history_delete_item(&mut self, index: usize) {
         self.history.remove(index);
         self.dirty = true;
@@ -120,7 +167,8 @@ impl Model {
         let mut tid = 1;
         let mut treepath: Vec<TreePath> = vec![];
         let mut state = State::WantMagic;
-        let mut seen = HashSet::<TreePath>::default();
+        let mut lists_seen = HashSet::<TreePath>::default();
+        let mut tracks_seen = HashSet::<TreePath>::default();
         for (i, line) in text.lines().enumerate() {
             let lino = i + 1;
             if line.is_empty() {
@@ -141,10 +189,14 @@ impl Model {
                 state = State::InTracks;
             } else if state == State::InTracks {
                 if line.starts_with(INDENT) {
-                    self.read_list(&mut treepath, line);
+                    self.read_list(&mut treepath, &mut lists_seen, line);
                 } else {
                     tid = self.read_track(
-                        tid, &treepath, &mut seen, lino, line,
+                        tid,
+                        &treepath,
+                        &mut tracks_seen,
+                        lino,
+                        line,
                     )?;
                 }
             } else if state == State::InHistory {
@@ -156,7 +208,12 @@ impl Model {
         Ok(())
     }
 
-    fn read_list(&mut self, treepath: &mut Vec<TreePath>, line: &str) {
+    fn read_list(
+        &mut self,
+        treepath: &mut Vec<TreePath>,
+        lists_seen: &mut HashSet<TreePath>,
+        line: &str,
+    ) {
         let name = line.trim_start_matches(INDENT);
         let indent = line.len() - name.len();
         let prev_indent = treepath.len();
@@ -170,13 +227,19 @@ impl Model {
             }
         }
         treepath.push(name.to_string());
+        // Needed to ensure that empty lists are shown
+        let full_treepath = treepath.join("/");
+        if !lists_seen.contains(&full_treepath) {
+            self.track_tree.add(&full_treepath);
+            lists_seen.insert(full_treepath);
+        }
     }
 
     fn read_track(
         &mut self,
         tid: TrackID,
         treepath: &[TreePath],
-        seen: &mut HashSet<TreePath>,
+        tracks_seen: &mut HashSet<TreePath>,
         lino: usize,
         line: &str,
     ) -> Result<TrackID> {
@@ -189,7 +252,7 @@ impl Model {
                 tid,
                 &treepath.join("/"),
                 &filename,
-                seen,
+                tracks_seen,
             );
             if let Some(mut item) = self.track_tree.add(&treepath) {
                 item.set_label_fgcolor(Color::from_hex(0x000075));
@@ -208,17 +271,17 @@ impl Model {
         tid: TrackID,
         treepath: &str,
         filename: &Path,
-        seen: &mut HashSet<TreePath>,
+        tracks_seen: &mut HashSet<TreePath>,
     ) -> TreePath {
         let mut full_treepath =
             format!("{}/{}", treepath, util::canonicalize(filename));
-        if seen.contains(&full_treepath) {
+        if tracks_seen.contains(&full_treepath) {
             full_treepath.push(' ');
             full_treepath.push('(');
             full_treepath.push_str(&tid.to_string());
             full_treepath.push(')');
         } else {
-            seen.insert(full_treepath.clone());
+            tracks_seen.insert(full_treepath.clone());
         }
         full_treepath
     }

@@ -12,12 +12,6 @@ use soloud::prelude::*;
 use std::{thread, time::Duration};
 
 impl Application {
-    fn has_track(&self) -> bool {
-        self.current_tid != 0
-            && !self.current_treepath.is_empty()
-            && self.current_track.exists()
-    }
-
     pub(crate) fn on_track_new(&mut self) {
         println!("on_track_new"); // TODO
     }
@@ -51,7 +45,7 @@ impl Application {
     }
 
     pub(crate) fn on_track_replay(&mut self) {
-        if self.has_track() {
+        if self.current.has_track() {
             if self.playing {
                 self.on_track_play_or_pause(); // PAUSE
             }
@@ -167,7 +161,7 @@ impl Application {
             self.on_track_play_or_pause(); // PAUSE
             self.player.stop_all();
         }
-        let message = match self.wav.load(&self.current_track) {
+        let message = match self.wav.load(&self.current.track) {
             Ok(_) => {
                 self.handle = self.player.play(&self.wav);
                 self.player.set_pause(self.handle, true);
@@ -183,11 +177,11 @@ impl Application {
                     util::humanized_time(0.0),
                     util::humanized_time(self.wav.length())
                 ));
-                self.tlm.add_to_history(self.current_treepath.clone());
+                self.tlm.history_add_to(self.current.treepath.clone());
                 self.populate_history_menu_button();
-                util::get_track_data_html(&self.current_track)
+                util::get_track_data_html(&self.current.track)
             }
-            Err(_) => format!("Failed to open {:?}", &self.current_track),
+            Err(_) => format!("Failed to open {:?}", &self.current.track),
         };
         self.info_view.set_value(&message);
         self.update_ui();

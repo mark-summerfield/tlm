@@ -1,7 +1,9 @@
 // Copyright © 2022 Mark Summerfield. All rights reserved.
 // License: GPLv3
 
-use crate::fixed::{APPNAME, BUTTON_HEIGHT, BUTTON_WIDTH, ICON, PAD};
+use crate::fixed::{
+    APPNAME, BUTTON_HEIGHT, BUTTON_WIDTH, ICON, PAD, TOP_LEVEL_NAME,
+};
 use crate::util;
 use fltk::{
     app,
@@ -129,7 +131,7 @@ fn make_widgets(top_levels: &[String]) -> Widgets {
     parent_list_button.set_frame(FrameType::NoBox);
     parent_list_button.visible_focus(false);
     let mut parent_list_combo = Choice::default();
-    parent_list_combo.add_choice("<Top-Level>");
+    parent_list_combo.add_choice(TOP_LEVEL_NAME);
     for top_level in top_levels {
         parent_list_combo.add_choice(top_level);
     }
