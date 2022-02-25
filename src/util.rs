@@ -275,15 +275,31 @@ fn get_year_from_date(date: &str) -> i32 {
     }
 }
 
+pub fn sanitize(name: &str, default: &str) -> String {
+    let s = name
+        .trim_end_matches(&['-', '_', ' ', '>'])
+        .trim_start_matches(&['-', '_', ' ', '<'])
+        .replace(&['/', '\\'], " ")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+    if s.is_empty() {
+        default.to_string()
+    } else {
+        s
+    }
+}
+
 // Returns a name suitable as the last component of a tree path
 pub fn canonicalize(track: &Path) -> String {
     let mut s = String::new();
     if let Some(stem) = track.file_stem() {
         s = stem.to_string_lossy().to_string();
     }
-    s = s.trim_end_matches(&['-', '_', ' ']).to_string();
+    s = s.trim_end_matches(&['-', '_', ' ', '>']).to_string();
     let t = &s.trim_start_matches(&[
-        '-', '_', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '-', '_', ' ', '<', '0', '1', '2', '3', '4', '5', '6', '7', '8',
+        '9',
     ]);
     if !t.is_empty() {
         s = t.to_string();

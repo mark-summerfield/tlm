@@ -13,6 +13,7 @@ use std::{thread, time::Duration};
 
 impl Application {
     pub(crate) fn on_track_new(&mut self) {
+        // util::sanitize(name, "New Track")
         println!("on_track_new"); // TODO
     }
 

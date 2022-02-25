@@ -45,8 +45,9 @@ impl Application {
     }
 
     fn new_empty_list(&mut self, parent_list: &str, name: &str) {
+        let name = util::sanitize(name, "New List");
         if let Some((treepath, item)) =
-            self.tlm.add_empty_list(parent_list, name)
+            self.tlm.add_empty_list(parent_list, &name)
         {
             self.select_track_in_tree(treepath, item)
         }
@@ -61,7 +62,7 @@ impl Application {
         let name = if name.is_empty() {
             util::canonicalize(playlist)
         } else {
-            name.to_string()
+            util::sanitize(name, "New List")
         };
         dbg!("new_list_from_playlist", parent_list, name, playlist); // TODO
     }
@@ -76,7 +77,7 @@ impl Application {
         let name = if name.is_empty() {
             util::canonicalize(folder)
         } else {
-            name.to_string()
+            util::sanitize(name, "New List")
         };
         dbg!(
             "new_list_from_folder",
@@ -88,6 +89,7 @@ impl Application {
     }
 
     pub(crate) fn on_list_rename(&mut self) {
+        // util::sanitize(new_name, old_name)
         println!("on_list_rename"); // TODO
     }
 
