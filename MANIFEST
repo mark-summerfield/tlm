@@ -28,6 +28,7 @@ src/new_list_form.rs
 src/html_form.rs
 src/options_form.rs
 src/list_form.rs
+src/playlists.rs # TODO m3u & pls parsers: see ~/app/ple/playlist.py
 src/fixed.rs # VERSION
 src/util.rs
 

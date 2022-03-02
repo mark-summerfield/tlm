@@ -49,7 +49,7 @@ impl Current {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Track {
     pub filename: PathBuf,
     pub secs: f64,
@@ -59,6 +59,7 @@ pub struct Model {
     pub filename: PathBuf,
     pub track_tree: Tree,
     pub track_for_tid: TrackForTID,
+    pub next_tid: TrackID,
     history: VecDeque<TreePath>,
     dirty: bool,
 }
@@ -69,6 +70,7 @@ impl Model {
             filename: PathBuf::new(),
             track_tree,
             track_for_tid: TrackForTID::default(),
+            next_tid: 1,
             history: VecDeque::default(),
             dirty: false,
         }
@@ -111,20 +113,6 @@ impl Model {
         self.track_tree.clear();
     }
 
-    pub fn add_empty_list(
-        &mut self,
-        parent: &str,
-        name: &str,
-    ) -> Option<(TreePath, TreeItem)> {
-        let treepath = if parent == TOP_LEVEL_NAME {
-            name.to_string()
-        } else {
-            format!("{parent}/{name}")
-        };
-        self.dirty = true;
-        self.track_tree.add(&treepath).map(|item| (treepath, item))
-    }
-
     pub fn history_add_to(&mut self, treepath: TreePath) -> bool {
         let changed = util::maybe_add_to_deque(
             &mut self.history,
@@ -160,7 +148,6 @@ impl Model {
     }
 
     fn parse(&mut self, text: String) -> Result<()> {
-        let mut tid = 1;
         let mut treepath: Vec<TreePath> = vec![];
         let mut state = State::WantMagic;
         let mut lists_seen = HashSet::<TreePath>::default();
@@ -187,8 +174,7 @@ impl Model {
                 if line.starts_with(INDENT) {
                     self.read_list(&mut treepath, &mut lists_seen, line);
                 } else {
-                    tid = self.read_track(
-                        tid,
+                    self.read_track(
                         &treepath,
                         &mut tracks_seen,
                         lino,
@@ -233,30 +219,32 @@ impl Model {
 
     fn read_track(
         &mut self,
-        tid: TrackID,
         treepath: &[TreePath],
         tracks_seen: &mut HashSet<TreePath>,
         lino: usize,
         line: &str,
-    ) -> Result<TrackID> {
+    ) -> Result<()> {
         if let Some((filename, secs)) = line.split_once(TAB) {
             let secs = f64::from_str(secs).unwrap_or(0.0);
             let filename = PathBuf::from(filename);
-            self.track_for_tid
-                .insert(tid, Track { filename: filename.clone(), secs });
+            self.track_for_tid.insert(
+                self.next_tid,
+                Track { filename: filename.clone(), secs },
+            );
             let treepath = self.full_treepath(
-                tid,
+                self.next_tid,
                 &treepath.join("/"),
                 &filename,
                 tracks_seen,
             );
             if let Some(mut item) = self.track_tree.add(&treepath) {
                 item.set_label_fgcolor(Color::from_hex(0x000075));
-                item.set_user_data(tid);
+                item.set_user_data(self.next_tid);
                 let icon = image_for_secs(secs);
                 item.set_user_icon(Some(icon));
             }
-            Ok(tid + 1)
+            self.next_tid += 1;
+            Ok(())
         } else {
             bail!("error:{lino}: failed to read track {line}");
         }
@@ -280,6 +268,34 @@ impl Model {
             tracks_seen.insert(full_treepath.clone());
         }
         full_treepath
+    }
+
+    pub fn add_empty_list(
+        &mut self,
+        parent: &str,
+        name: &str,
+    ) -> Option<(TreePath, TreeItem)> {
+        let treepath = if parent == TOP_LEVEL_NAME {
+            name.to_string()
+        } else {
+            format!("{parent}/{name}")
+        };
+        self.dirty = true;
+        self.track_tree.add(&treepath).map(|item| (treepath, item))
+    }
+
+    pub fn add_track(&mut self, treepath: &TreePath, track: Track) {
+        self.track_for_tid.insert(self.next_tid, track.clone());
+        let treepath =
+            format!("{}/{}", treepath, util::canonicalize(&track.filename));
+        if let Some(mut item) = self.track_tree.add(&treepath) {
+            item.set_label_fgcolor(Color::from_hex(0x000075));
+            item.set_user_data(self.next_tid);
+            let icon = image_for_secs(track.secs);
+            item.set_user_icon(Some(icon));
+        }
+        self.next_tid += 1;
+        self.dirty = true;
     }
 
     pub fn save(&mut self) -> Result<()> {

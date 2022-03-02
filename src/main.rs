@@ -15,6 +15,7 @@ mod main_window;
 mod model;
 mod new_list_form;
 mod options_form;
+mod playlists;
 mod track_actions;
 mod util;
 

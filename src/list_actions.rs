@@ -3,7 +3,9 @@
 
 use crate::application::Application;
 use crate::new_list_form;
+use crate::playlists;
 use crate::util;
+use anyhow::{anyhow, Result};
 use std::path::Path;
 
 impl Application {
@@ -64,7 +66,31 @@ impl Application {
         } else {
             util::sanitize(name, "New List")
         };
-        dbg!("new_list_from_playlist", parent_list, name, playlist); // TODO
+        if let Some((treepath, item)) =
+            self.tlm.add_empty_list(parent_list, &name)
+        {
+            dbg!("new_list_from_playlist", parent_list, name, playlist); // TODO
+            let reply = if playlist.ends_with(".m3u")
+                || playlist.ends_with(".M3U")
+            {
+                playlists::read_m3u(playlist)
+            } else if playlist.ends_with(".pls")
+                || playlist.ends_with(".PLS")
+            {
+                playlists::read_pls(playlist)
+            } else {
+                Err(anyhow!("can only read .m3u and .pls playlists"))
+            };
+            match reply {
+                Ok(tracks) => {
+                    for track in tracks {
+                        self.tlm.add_track(&treepath, track);
+                    }
+                }
+                Err(err) => (), // TODO error message box
+            };
+            self.select_track_in_tree(treepath, item)
+        }
     }
 
     fn new_list_from_folder(
@@ -79,13 +105,23 @@ impl Application {
         } else {
             util::sanitize(name, "New List")
         };
-        dbg!(
-            "new_list_from_folder",
-            parent_list,
-            name,
-            folder,
-            include_subdirs
-        ); // TODO
+        if let Some((treepath, item)) =
+            self.tlm.add_empty_list(parent_list, &name)
+        {
+            dbg!(
+                "new_list_from_folder",
+                parent_list,
+                name,
+                folder,
+                include_subdirs
+            ); // TODO
+               /*
+                  for track in tracks {
+                   self.tlm.add_track(&treepath, track);
+                  }
+               */
+            self.select_track_in_tree(treepath, item)
+        }
     }
 
     pub(crate) fn on_list_rename(&mut self) {
