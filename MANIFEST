@@ -5,13 +5,11 @@ tlm.adoc # notes
 # update_ui() to activate/deactivate all menu options & toobar buttons
 # depending on the state (has_track, has_history, has_list <since all
 # tracks could be list-less at the top-level>).
-# TODO For List|Delete and Track|Delete by default pop up a dialog offering
-# [&Delete] [&Cancel]
-# if the user is trying to delete a top-level list called <Deleted>;
-# otherwise
-# [&Delete] [&Move to <Deleted>] [&Cancel]
-# If the user chooses Move to <Deleted> a top-level list called
-# <Deleted> must be created if it doesn't already exist.
+# TODO For List|Delete and Track|Delete
+# If the list or track is inside the <Deleted> list, then up a dialog
+# offering [&Delete] [&Cancel]
+# Otherwise simply move the list or track to the top-level <Deleted> list
+# (creating this list first if it doesn't already exist).
 # TODO data/help.html
 
 src/main.rs

@@ -25,6 +25,7 @@ Example:
     #EXTINF:-1,You and I
     /home/mark/music/Queen/05-You_and_I.mp3
 */
+
 pub fn read_m3u(filename: &Path) -> Result<Vec<Track>> {
     static EXTM3U: &str = "#EXTM3U";
     static EXTINF: &str = "#EXTINF:";
@@ -61,7 +62,7 @@ pub fn read_m3u(filename: &Path) -> Result<Vec<Track>> {
                     let line = line
                         .trim_start_matches(EXTINF)
                         .trim_start_matches(':');
-                    if let Some((left, _)) = line.split_once(',') {
+                    if let Some((left, _title)) = line.split_once(',') {
                         secs = f64::from_str(left).unwrap_or(0.0);
                         state = Want::FILENAME;
                     } else {

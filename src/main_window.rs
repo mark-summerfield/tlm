@@ -204,7 +204,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::ListImport,
     );
     menubar.add_emit(
-        "&List/D&elete…\t",
+        "&List/D&elete\t",
         Shortcut::None,
         MenuFlag::Normal,
         sender,
@@ -302,7 +302,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::TrackCopyToList,
     );
     menubar.add_emit(
-        "&Track/D&elete…\t",
+        "&Track/D&elete\t",
         Shortcut::None,
         MenuFlag::Normal,
         sender,
