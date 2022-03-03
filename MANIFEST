@@ -20,7 +20,7 @@ src/model.rs
 src/application.rs
 src/actions.rs
 src/file_actions.rs
-src/list_actions.rs # TODO new_list_from_playlist() & new_list_from_folder()
+src/list_actions.rs # TODO new_list_from_folder()
 src/track_actions.rs
 src/help_actions.rs
 src/main_window.rs
@@ -28,7 +28,7 @@ src/new_list_form.rs
 src/html_form.rs
 src/options_form.rs
 src/list_form.rs
-src/playlists.rs # TODO m3u & pls parsers: see ~/app/ple/playlist.py
+src/playlists.rs # TODO pls parser: see ~/app/ple/playlist.py
 src/fixed.rs # VERSION
 src/util.rs
 

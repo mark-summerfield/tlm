@@ -5,7 +5,7 @@ use crate::application::Application;
 use crate::new_list_form;
 use crate::playlists;
 use crate::util;
-use anyhow::{anyhow, Result};
+use anyhow::anyhow;
 use std::path::Path;
 
 impl Application {
@@ -69,28 +69,41 @@ impl Application {
         if let Some((treepath, item)) =
             self.tlm.add_empty_list(parent_list, &name)
         {
-            dbg!("new_list_from_playlist", parent_list, name, playlist); // TODO
-            let reply = if playlist.ends_with(".m3u")
-                || playlist.ends_with(".M3U")
-            {
-                playlists::read_m3u(playlist)
-            } else if playlist.ends_with(".pls")
-                || playlist.ends_with(".PLS")
-            {
-                playlists::read_pls(playlist)
-            } else {
-                Err(anyhow!("can only read .m3u and .pls playlists"))
+            static MESSAGE: &str = "can only read .m3u and .pls playlists";
+            let reply = match playlist.extension() {
+                Some(suffix) => {
+                    if let Some(suffix) = suffix.to_str() {
+                        match suffix {
+                            "m3u" | "M3U" => playlists::read_m3u(playlist),
+                            "pls" | "PLS" => playlists::read_pls(playlist),
+                            _ => Err(anyhow!(MESSAGE)),
+                        }
+                    } else {
+                        Err(anyhow!(MESSAGE))
+                    }
+                }
+                None => Err(anyhow!(MESSAGE)),
             };
+            let mut first = None;
             match reply {
                 Ok(tracks) => {
                     for track in tracks {
-                        self.tlm.add_track(&treepath, track);
+                        if let Some((path, item)) =
+                            self.tlm.add_track(&treepath, track)
+                        {
+                            if first.is_none() {
+                                first = Some((path, item));
+                            }
+                        }
+                    }
+                    if let Some((treepath, item)) = first {
+                        self.select_track_in_tree(treepath, item);
+                    } else {
+                        self.select_track_in_tree(treepath, item);
                     }
                 }
-                Err(err) => (), // TODO error message box
+                Err(err) => util::popup_error_message(&err.to_string()),
             };
-            // NOTE No! select _first_ child i.e., the first track
-            self.select_track_in_tree(treepath, item)
         }
     }
 
@@ -117,12 +130,16 @@ impl Application {
                 include_subdirs
             ); // TODO
                /*
-                  for track in tracks {
-                   self.tlm.add_track(&treepath, track);
-                  }
-               */
-            // NOTE No! select _first_ child i.e., the first track
-            self.select_track_in_tree(treepath, item)
+               let mut first = None;
+                for track in tracks {
+                    self.tlm.add_track(&treepath, track);
+                }
+               if let Some((treepath, item)) = first {
+                   self.select_track_in_tree(treepath, item);
+               } else {
+                   self.select_track_in_tree(treepath, item);
+               }
+                  */
         }
     }
 

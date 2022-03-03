@@ -55,6 +55,12 @@ pub struct Track {
     pub secs: f64,
 }
 
+impl Track {
+    pub fn new(filename: PathBuf, secs: f64) -> Self {
+        Self { filename, secs }
+    }
+}
+
 pub struct Model {
     pub filename: PathBuf,
     pub track_tree: Tree,
@@ -227,10 +233,8 @@ impl Model {
         if let Some((filename, secs)) = line.split_once(TAB) {
             let secs = f64::from_str(secs).unwrap_or(0.0);
             let filename = PathBuf::from(filename);
-            self.track_for_tid.insert(
-                self.next_tid,
-                Track { filename: filename.clone(), secs },
-            );
+            self.track_for_tid
+                .insert(self.next_tid, Track::new(filename.clone(), secs));
             let treepath = self.full_treepath(
                 self.next_tid,
                 &treepath.join("/"),
@@ -284,7 +288,11 @@ impl Model {
         self.track_tree.add(&treepath).map(|item| (treepath, item))
     }
 
-    pub fn add_track(&mut self, treepath: &TreePath, track: Track) {
+    pub fn add_track(
+        &mut self,
+        treepath: &TreePath,
+        track: Track,
+    ) -> Option<(TreePath, TreeItem)> {
         self.track_for_tid.insert(self.next_tid, track.clone());
         let treepath =
             format!("{}/{}", treepath, util::canonicalize(&track.filename));
@@ -293,9 +301,12 @@ impl Model {
             item.set_user_data(self.next_tid);
             let icon = image_for_secs(track.secs);
             item.set_user_icon(Some(icon));
+            self.next_tid += 1;
+            self.dirty = true;
+            Some((treepath, item))
+        } else {
+            None
         }
-        self.next_tid += 1;
-        self.dirty = true;
     }
 
     pub fn save(&mut self) -> Result<()> {
