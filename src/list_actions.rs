@@ -89,6 +89,7 @@ impl Application {
                 }
                 Err(err) => (), // TODO error message box
             };
+            // NOTE No! select _first_ child i.e., the first track
             self.select_track_in_tree(treepath, item)
         }
     }
@@ -120,6 +121,7 @@ impl Application {
                    self.tlm.add_track(&treepath, track);
                   }
                */
+            // NOTE No! select _first_ child i.e., the first track
             self.select_track_in_tree(treepath, item)
         }
     }
