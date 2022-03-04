@@ -170,15 +170,20 @@ impl Application {
                     self.handle,
                     self.volume_slider.value() as f32,
                 );
-                self.time_slider.set_range(0.0, self.wav.length());
-                self.time_slider.set_step(self.wav.length(), 20);
+                let secs = self.wav.length();
+                self.time_slider.set_range(0.0, secs);
+                self.time_slider.set_step(secs, 20);
                 self.time_slider.set_value(0.0);
                 self.time_label.set_label(&format!(
                     "{}/{}",
                     util::humanized_time(0.0),
-                    util::humanized_time(self.wav.length())
+                    util::humanized_time(secs)
                 ));
-                self.tlm.history_add_to(self.current.treepath.clone());
+                self.tlm.history_add_to(
+                    self.current.treepath.clone(),
+                    self.current.tid,
+                    secs,
+                );
                 self.populate_history_menu_button();
                 util::get_track_data_html(&self.current.track)
             }

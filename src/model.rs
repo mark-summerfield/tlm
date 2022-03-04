@@ -119,12 +119,23 @@ impl Model {
         self.track_tree.clear();
     }
 
-    pub fn history_add_to(&mut self, treepath: TreePath) -> bool {
-        let changed = util::maybe_add_to_deque(
+    pub fn history_add_to(
+        &mut self,
+        treepath: TreePath,
+        tid: TrackID,
+        secs: f64
+    ) -> bool {
+        let mut changed = util::maybe_add_to_deque(
             &mut self.history,
             treepath,
             MAX_HISTORY_SIZE,
         );
+        if let Some(track) = self.track_for_tid.get_mut(&tid) {
+            if !util::isclose64(secs, track.secs) {
+                track.secs = secs;
+                changed = true;
+            }
+        }
         if changed {
             self.dirty = true;
         }

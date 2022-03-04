@@ -40,6 +40,10 @@ where
     }
 }
 
+pub fn isclose64(a: f64, b: f64) -> bool {
+    (a..=(a + f64::EPSILON)).contains(&b)
+}
+
 pub fn isclose32(a: f32, b: f32) -> bool {
     (a..=(a + f32::EPSILON)).contains(&b)
 }
