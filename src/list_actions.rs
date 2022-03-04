@@ -7,6 +7,7 @@ use crate::playlists;
 use crate::util;
 use anyhow::anyhow;
 use std::path::Path;
+use walkdir;
 
 impl Application {
     pub(crate) fn on_list_new(&mut self) {
@@ -69,13 +70,12 @@ impl Application {
         if let Some((treepath, item)) =
             self.tlm.add_empty_list(parent_list, &name)
         {
-            static MESSAGE: &str = "can only read .m3u and .pls playlists";
+            static MESSAGE: &str = "can only read .m3u playlists";
             let reply = match playlist.extension() {
                 Some(suffix) => {
                     if let Some(suffix) = suffix.to_str() {
                         match suffix {
                             "m3u" | "M3U" => playlists::read_m3u(playlist),
-                            "pls" | "PLS" => playlists::read_pls(playlist),
                             _ => Err(anyhow!(MESSAGE)),
                         }
                     } else {
@@ -119,27 +119,37 @@ impl Application {
         } else {
             util::sanitize(name, "New List")
         };
+        dbg!(
+            "new_list_from_folder",
+            &parent_list,
+            &name,
+            &folder,
+            include_subdirs
+        ); // TODO delete
         if let Some((treepath, item)) =
             self.tlm.add_empty_list(parent_list, &name)
         {
-            dbg!(
-                "new_list_from_folder",
-                parent_list,
-                name,
-                folder,
-                include_subdirs
-            ); // TODO
-               /*
-               let mut first = None;
-                for track in tracks {
-                    self.tlm.add_track(&treepath, track);
-                }
-               if let Some((treepath, item)) = first {
-                   self.select_track_in_tree(treepath, item);
-               } else {
-                   self.select_track_in_tree(treepath, item);
-               }
-                  */
+            let walker = if include_subdirs {
+                walkdir::WalkDir::new(folder).sort_by_file_name()
+            } else {
+                walkdir::WalkDir::new(folder)
+                    .sort_by_file_name()
+                    .max_depth(2)
+            };
+            for entry in walker.into_iter().filter_map(|e| e.ok()) {
+                println!("{:?}", entry);
+            }
+            /*
+            let mut first = None;
+             for track in tracks {
+                 self.tlm.add_track(&treepath, track);
+             }
+            if let Some((treepath, item)) = first {
+                self.select_track_in_tree(treepath, item);
+            } else {
+                self.select_track_in_tree(treepath, item);
+            }
+               */
         }
     }
 

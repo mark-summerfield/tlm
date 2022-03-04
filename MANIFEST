@@ -26,7 +26,7 @@ src/new_list_form.rs
 src/html_form.rs
 src/options_form.rs
 src/list_form.rs
-src/playlists.rs # TODO pls parser: see ~/app/ple/playlist.py
+src/playlists.rs
 src/fixed.rs # VERSION
 src/util.rs
 

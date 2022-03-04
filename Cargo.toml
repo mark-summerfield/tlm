@@ -27,6 +27,7 @@ num = "^0.4"
 rust-ini = "^0.18"
 rustc_version_runtime = "^0.2"
 state = "^0.5"
+walkdir = "^2"
 
 [dependencies.fltk]
 version = "^1.2"
