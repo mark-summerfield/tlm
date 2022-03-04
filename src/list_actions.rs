@@ -134,7 +134,7 @@ impl Application {
             } else {
                 walkdir::WalkDir::new(folder)
                     .sort_by_file_name()
-                    .max_depth(2)
+                    .max_depth(1)
             };
             for entry in walker.into_iter().filter_map(|e| e.ok()) {
                 println!("{:?}", entry);
