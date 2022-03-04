@@ -119,6 +119,12 @@ impl Model {
         self.track_tree.clear();
     }
 
+    pub(crate) fn clear_selection(&mut self) {
+        if let Some(item) = self.track_tree.first() {
+            let _ = self.track_tree.deselect_all(&item, false); // skip err
+        }
+    }
+
     pub fn history_add_to(
         &mut self,
         treepath: TreePath,

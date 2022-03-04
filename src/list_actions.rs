@@ -2,6 +2,7 @@
 // License: GPLv3
 
 use crate::application::Application;
+use crate::model::Track;
 use crate::new_list_form;
 use crate::playlists;
 use crate::util;
@@ -96,6 +97,7 @@ impl Application {
                             }
                         }
                     }
+                    self.tlm.clear_selection();
                     if let Some((treepath, item)) = first {
                         self.select_track_in_tree(treepath, item);
                     } else {
@@ -119,13 +121,6 @@ impl Application {
         } else {
             util::sanitize(name, "New List")
         };
-        dbg!(
-            "new_list_from_folder",
-            &parent_list,
-            &name,
-            &folder,
-            include_subdirs
-        ); // TODO delete
         if let Some((treepath, item)) =
             self.tlm.add_empty_list(parent_list, &name)
         {
@@ -136,20 +131,26 @@ impl Application {
                     .sort_by_file_name()
                     .max_depth(1)
             };
-            for entry in walker.into_iter().filter_map(|e| e.ok()) {
-                println!("{:?}", entry);
-            }
-            /*
             let mut first = None;
-             for track in tracks {
-                 self.tlm.add_track(&treepath, track);
-             }
+            for entry in walker.into_iter().filter_map(|e| e.ok()) {
+                if !entry.path().is_file() {
+                    continue;
+                }
+                if let Some((path, item)) = self.tlm.add_track(
+                    &treepath,
+                    Track::new(entry.into_path(), 0.0),
+                ) {
+                    if first.is_none() {
+                        first = Some((path, item));
+                    }
+                }
+            }
+            self.tlm.clear_selection();
             if let Some((treepath, item)) = first {
                 self.select_track_in_tree(treepath, item);
             } else {
                 self.select_track_in_tree(treepath, item);
             }
-               */
         }
     }
 

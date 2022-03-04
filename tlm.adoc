@@ -3,7 +3,7 @@
 == Menus
 
     &List
-	- &New...	    # list (enter one line of text dialog)
+	+ &New...
 	- &Rename...
 	-------------
 	- &Promote
