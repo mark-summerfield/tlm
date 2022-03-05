@@ -11,7 +11,7 @@ use std::path::Path;
 use walkdir;
 
 impl Application {
-    pub(crate) fn on_list_new(&mut self) {
+    pub(crate) fn on_list_add(&mut self) {
         let mut top_levels = vec![];
         if let Some(root) = self.tlm.track_tree.first() {
             let mut opt_item = root.next(); // first top-level child

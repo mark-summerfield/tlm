@@ -24,7 +24,7 @@
 	+ &Replay	    F6
 	+ Play Nex&t	    F7
 	-------------
-	- &Find...    ^F # on success adds/replaces Search Results/Found in tree
+	- &Find...    ^F # on success adds/replaces Found in tree
 	+ &History... ^G 
 	-------------
 	+ Decre&ase Volume  F8

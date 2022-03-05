@@ -116,7 +116,7 @@ impl Application {
                     Action::FileSaveAs => self.on_file_save_as(),
                     Action::FileConfigure => self.on_file_configure(),
                     Action::FileQuit => self.on_file_quit(),
-                    Action::ListNew => self.on_list_new(),
+                    Action::ListAdd => self.on_list_add(),
                     Action::ListRename => self.on_list_rename(),
                     Action::ListPromote => self.on_list_promote(),
                     Action::ListMoveUp => self.on_list_move_up(),
@@ -133,7 +133,7 @@ impl Application {
                     }
                     Action::Tick => self.on_tick(),
                     Action::TimeUpdate => self.on_time_update(),
-                    Action::TrackNew => self.on_track_new(),
+                    Action::TrackAdd => self.on_track_add(),
                     Action::TrackPrevious => self.on_track_previous(),
                     Action::TrackPlayOrPause => {
                         self.on_track_play_or_pause()

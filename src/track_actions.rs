@@ -12,9 +12,9 @@ use soloud::prelude::*;
 use std::{thread, time::Duration};
 
 impl Application {
-    pub(crate) fn on_track_new(&mut self) {
+    pub(crate) fn on_track_add(&mut self) {
         // util::sanitize(name, "New Track")
-        println!("on_track_new"); // TODO
+        println!("on_track_add"); // TODO
     }
 
     pub(crate) fn on_track_previous(&mut self) {

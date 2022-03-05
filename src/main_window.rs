@@ -6,10 +6,10 @@ use crate::fixed::{
     Action, APPNAME, BUTTON_HEIGHT, FILE_NEW_ICON, FILE_OPEN_ICON,
     FILE_SAVE_ICON, HISTORY_ICON, ICON, LIST_DEMOTE_ICON, LIST_ICON,
     LIST_IMPORT_ICON, LIST_MOVE_DOWN_ICON, LIST_MOVE_UP_ICON,
-    LIST_NEW_ICON, LIST_PROMOTE_ICON, NEXT_ICON, PAD, PLAY_ICON, PREV_ICON,
+    LIST_ADD_ICON, LIST_PROMOTE_ICON, NEXT_ICON, PAD, PLAY_ICON, PREV_ICON,
     REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
     TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON, TRACK_MOVE_UP_ICON,
-    TRACK_NEW_ICON, TREE_ICON_SIZE, VOLUME_ICON, WINDOW_HEIGHT_MIN,
+    TRACK_ADD_ICON, TREE_ICON_SIZE, VOLUME_ICON, WINDOW_HEIGHT_MIN,
     WINDOW_WIDTH_MIN,
 };
 use crate::util;
@@ -148,11 +148,11 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::FileQuit,
     );
     menubar.add_emit(
-        "&List/&New…\t",
-        Shortcut::Shift | Shortcut::Ctrl | 'n',
+        "&List/&Add…\t",
+        Shortcut::Ctrl | 'l',
         MenuFlag::Normal,
         sender,
-        Action::ListNew,
+        Action::ListAdd,
     );
     menubar.add_emit(
         "&List/&Rename\t",
@@ -211,11 +211,11 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::ListDelete,
     );
     menubar.add_emit(
-        "&Track/&New…\t",
-        Shortcut::None,
+        "&Track/&Add…\t",
+        Shortcut::Ctrl | 't',
         MenuFlag::MenuDivider,
         sender,
-        Action::TrackNew,
+        Action::TrackAdd,
     );
     menubar.add_emit(
         "&Track/Play Pre&vious\t",
@@ -521,8 +521,8 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
     add_toolbutton(
         sender,
         "New List…",
-        Action::ListNew,
-        LIST_NEW_ICON,
+        Action::ListAdd,
+        LIST_ADD_ICON,
         &mut row,
     );
     add_toolbutton(
@@ -564,8 +564,8 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
     add_toolbutton(
         sender,
         "New Track…",
-        Action::TrackNew,
-        TRACK_NEW_ICON,
+        Action::TrackAdd,
+        TRACK_ADD_ICON,
         &mut row,
     );
     add_toolbutton(

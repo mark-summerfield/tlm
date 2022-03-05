@@ -18,8 +18,8 @@ src/model.rs
 src/application.rs
 src/actions.rs
 src/file_actions.rs
-src/list_actions.rs
-src/track_actions.rs
+src/list_actions.rs # TODO Delete (see above)
+src/track_actions.rs # TODO Delete (see above)
 src/help_actions.rs
 src/main_window.rs
 src/new_list_form.rs

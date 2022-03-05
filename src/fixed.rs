@@ -11,7 +11,7 @@ use std::sync;
 pub static APPNAME: &str = "TLM";
 pub static VERSION: &str = "1.0.0";
 pub static TOP_LEVEL_NAME: &str = "<Top-Level>";
-pub static SEARCH_RESULTS_NAME: &str = "<Search Results>";
+pub static FOUND_NAME: &str = "<Found>";
 pub static DELETED_NAME: &str = "<Deleted>";
 pub static HELP_HTML: &str = include_str!("../data/help.html");
 pub const ICON: &str = include_str!("../images/tlm.svg");
@@ -21,7 +21,7 @@ pub const FILE_OPEN_ICON: &str =
 pub const FILE_SAVE_ICON: &str =
     include_str!("../images/document-save.svg");
 pub const LIST_ICON: &str = include_str!("../images/list.svg");
-pub const LIST_NEW_ICON: &str = include_str!("../images/list-new.svg");
+pub const LIST_ADD_ICON: &str = include_str!("../images/list-new.svg");
 pub const LIST_PROMOTE_ICON: &str =
     include_str!("../images/list-promote.svg");
 pub const LIST_MOVE_UP_ICON: &str =
@@ -31,7 +31,7 @@ pub const LIST_MOVE_DOWN_ICON: &str =
 pub const LIST_DEMOTE_ICON: &str =
     include_str!("../images/list-demote.svg");
 pub const LIST_IMPORT_ICON: &str = include_str!("../images/import.svg");
-pub const TRACK_NEW_ICON: &str = include_str!("../images/track-new.svg");
+pub const TRACK_ADD_ICON: &str = include_str!("../images/track-new.svg");
 pub const TRACK_MOVE_UP_ICON: &str =
     include_str!("../images/track-move-up.svg");
 pub const TRACK_MOVE_DOWN_ICON: &str =
@@ -114,7 +114,7 @@ pub enum Action {
     FileSaveAs,
     HelpAbout,
     HelpHelp,
-    ListNew,
+    ListAdd,
     ListRename,
     ListPromote,
     ListMoveUp,
@@ -127,7 +127,7 @@ pub enum Action {
     OnStartup,
     Tick,
     TimeUpdate,
-    TrackNew,
+    TrackAdd,
     TrackPrevious,
     TrackPlayOrPause,
     TrackReplay,
