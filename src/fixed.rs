@@ -22,20 +22,12 @@ pub const FILE_SAVE_ICON: &str =
     include_str!("../images/document-save.svg");
 pub const LIST_ICON: &str = include_str!("../images/list.svg");
 pub const LIST_ADD_ICON: &str = include_str!("../images/list-new.svg");
-pub const LIST_PROMOTE_ICON: &str =
-    include_str!("../images/list-promote.svg");
-pub const LIST_MOVE_UP_ICON: &str =
-    include_str!("../images/list-move-up.svg");
-pub const LIST_MOVE_DOWN_ICON: &str =
-    include_str!("../images/list-move-down.svg");
-pub const LIST_DEMOTE_ICON: &str =
-    include_str!("../images/list-demote.svg");
+pub const PROMOTE_ICON: &str = include_str!("../images/promote.svg");
+pub const DEMOTE_ICON: &str = include_str!("../images/demote.svg");
+pub const MOVE_UP_ICON: &str = include_str!("../images/move-up.svg");
+pub const MOVE_DOWN_ICON: &str = include_str!("../images/move-down.svg");
 pub const LIST_IMPORT_ICON: &str = include_str!("../images/import.svg");
 pub const TRACK_ADD_ICON: &str = include_str!("../images/track-new.svg");
-pub const TRACK_MOVE_UP_ICON: &str =
-    include_str!("../images/track-move-up.svg");
-pub const TRACK_MOVE_DOWN_ICON: &str =
-    include_str!("../images/track-move-down.svg");
 pub const TRACK_FIND_ICON: &str = include_str!("../images/track-find.svg");
 pub const HISTORY_ICON: &str = include_str!("../images/history.svg");
 pub const PREV_ICON: &str =
@@ -105,6 +97,13 @@ pub fn initialize_time_icons() {
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {
     ClearInfo,
+    EditCopyToList,
+    EditDelete,
+    EditDemote,
+    EditMoveDown,
+    EditMoveToList,
+    EditMoveUp,
+    EditPromote,
     FileConfigure,
     FileNew,
     FileOpen,
@@ -115,32 +114,22 @@ pub enum Action {
     HelpAbout,
     HelpHelp,
     ListAdd,
-    ListRename,
-    ListPromote,
-    ListMoveUp,
-    ListMoveDown,
-    ListDemote,
     ListExport,
     ListImport,
-    ListDelete,
-    PlayHistoryTrack,
+    ListRename,
     OnStartup,
+    PlayHistoryTrack,
     Tick,
     TimeUpdate,
     TrackAdd,
-    TrackPrevious,
-    TrackPlayOrPause,
-    TrackReplay,
-    TrackNext,
-    TrackLouder,
-    TrackQuieter,
-    TrackMoveUp,
-    TrackMoveDown,
-    TrackMoveToList,
-    TrackCopyToList,
-    TrackHistory,
     TrackFind,
-    TrackDelete,
+    TrackHistory,
+    TrackLouder,
+    TrackNext,
+    TrackPlayOrPause,
+    TrackPrevious,
+    TrackQuieter,
+    TrackReplay,
     TreeItemDoubleClicked,
     VolumeUpdate,
 }

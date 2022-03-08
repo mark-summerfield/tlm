@@ -3,14 +3,12 @@
 
 use super::CONFIG;
 use crate::fixed::{
-    Action, APPNAME, BUTTON_HEIGHT, FILE_NEW_ICON, FILE_OPEN_ICON,
-    FILE_SAVE_ICON, HISTORY_ICON, ICON, LIST_DEMOTE_ICON, LIST_ICON,
-    LIST_IMPORT_ICON, LIST_MOVE_DOWN_ICON, LIST_MOVE_UP_ICON,
-    LIST_ADD_ICON, LIST_PROMOTE_ICON, NEXT_ICON, PAD, PLAY_ICON, PREV_ICON,
-    REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT, TOOLBUTTON_SIZE,
-    TRACK_FIND_ICON, TRACK_MOVE_DOWN_ICON, TRACK_MOVE_UP_ICON,
-    TRACK_ADD_ICON, TREE_ICON_SIZE, VOLUME_ICON, WINDOW_HEIGHT_MIN,
-    WINDOW_WIDTH_MIN,
+    Action, APPNAME, BUTTON_HEIGHT, DEMOTE_ICON, FILE_NEW_ICON,
+    FILE_OPEN_ICON, FILE_SAVE_ICON, HISTORY_ICON, ICON, LIST_ADD_ICON,
+    LIST_ICON, LIST_IMPORT_ICON, MOVE_DOWN_ICON, MOVE_UP_ICON, NEXT_ICON,
+    PAD, PLAY_ICON, PREV_ICON, PROMOTE_ICON, REPLAY_ICON, TIME_ICON,
+    TOOLBAR_HEIGHT, TOOLBUTTON_SIZE, TRACK_ADD_ICON, TRACK_FIND_ICON,
+    TREE_ICON_SIZE, VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
 use crate::util;
 use fltk::{
@@ -148,6 +146,55 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::FileQuit,
     );
     menubar.add_emit(
+        "&Edit/Move &Up\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::EditMoveUp,
+    );
+    menubar.add_emit(
+        "&Edit/Move &Down\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::EditMoveDown,
+    );
+    menubar.add_emit(
+        "&Edit/&Promote\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::EditPromote,
+    );
+    menubar.add_emit(
+        "&Edit/De&mote\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::EditDemote,
+    );
+    menubar.add_emit(
+        "&Edit/Move to &List…\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::EditMoveToList,
+    );
+    menubar.add_emit(
+        "&Edit/&Copy to List…\t",
+        Shortcut::None,
+        MenuFlag::MenuDivider,
+        sender,
+        Action::EditCopyToList,
+    );
+    menubar.add_emit(
+        "&Edit/D&elete\t",
+        Shortcut::None,
+        MenuFlag::Normal,
+        sender,
+        Action::EditDelete,
+    );
+    menubar.add_emit(
         "&List/&Add…\t",
         Shortcut::Ctrl | 'l',
         MenuFlag::Normal,
@@ -162,35 +209,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::ListRename,
     );
     menubar.add_emit(
-        "&List/&Promote\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::ListPromote,
-    );
-    menubar.add_emit(
-        "&List/Move &Up\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::ListMoveUp,
-    );
-    menubar.add_emit(
-        "&List/Move &Down\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::ListMoveDown,
-    );
-    menubar.add_emit(
-        "&List/De&mote\t",
-        Shortcut::None,
-        MenuFlag::MenuDivider,
-        sender,
-        Action::ListDemote,
-    );
-    menubar.add_emit(
-        "&List/E&xport…\t",
+        "&List/&Export…\t",
         Shortcut::None,
         MenuFlag::Normal,
         sender,
@@ -199,16 +218,9 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
     menubar.add_emit(
         "&List/&Import…\t",
         Shortcut::None,
-        MenuFlag::MenuDivider,
-        sender,
-        Action::ListImport,
-    );
-    menubar.add_emit(
-        "&List/D&elete\t",
-        Shortcut::None,
         MenuFlag::Normal,
         sender,
-        Action::ListDelete,
+        Action::ListImport,
     );
     menubar.add_emit(
         "&Track/&Add…\t",
@@ -239,7 +251,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::TrackPlayOrPause,
     );
     menubar.add_emit(
-        "&Track/Play Ne&xt\t",
+        "&Track/Play &Next\t",
         Shortcut::from_key(Key::F7),
         MenuFlag::MenuDivider,
         sender,
@@ -260,7 +272,7 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::TrackHistory,
     );
     menubar.add_emit(
-        "&Track/Decre&ase Volume\t",
+        "&Track/&Decrease Volume\t",
         Shortcut::from_key(Key::F8),
         MenuFlag::Normal,
         sender,
@@ -269,44 +281,9 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
     menubar.add_emit(
         "&Track/&Increase Volume\t",
         Shortcut::from_key(Key::F9),
-        MenuFlag::MenuDivider,
+        MenuFlag::Normal,
         sender,
         Action::TrackLouder,
-    );
-    menubar.add_emit(
-        "&Track/Move &Up\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::TrackMoveUp,
-    );
-    menubar.add_emit(
-        "&Track/Move &Down\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::TrackMoveDown,
-    );
-    menubar.add_emit(
-        "&Track/&Move to List…\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::TrackMoveToList,
-    );
-    menubar.add_emit(
-        "&Track/&Copy to List…\t",
-        Shortcut::None,
-        MenuFlag::MenuDivider,
-        sender,
-        Action::TrackCopyToList,
-    );
-    menubar.add_emit(
-        "&Track/D&elete\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::TrackDelete,
     );
     menubar.add_emit(
         "&Help/&Help\t",
@@ -520,37 +497,38 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
     add_separator(&mut row);
     add_toolbutton(
         sender,
-        "New List…",
+        "Move Up",
+        Action::EditMoveUp,
+        MOVE_UP_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "Move Down",
+        Action::EditMoveDown,
+        MOVE_DOWN_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "Promote",
+        Action::EditPromote,
+        PROMOTE_ICON,
+        &mut row,
+    );
+    add_toolbutton(
+        sender,
+        "Demote",
+        Action::EditDemote,
+        DEMOTE_ICON,
+        &mut row,
+    );
+    add_separator(&mut row);
+    add_toolbutton(
+        sender,
+        "Add List…",
         Action::ListAdd,
         LIST_ADD_ICON,
-        &mut row,
-    );
-    add_toolbutton(
-        sender,
-        "Promote List",
-        Action::ListPromote,
-        LIST_PROMOTE_ICON,
-        &mut row,
-    );
-    add_toolbutton(
-        sender,
-        "Move List Up",
-        Action::ListMoveUp,
-        LIST_MOVE_UP_ICON,
-        &mut row,
-    );
-    add_toolbutton(
-        sender,
-        "Move List Down",
-        Action::ListMoveDown,
-        LIST_MOVE_DOWN_ICON,
-        &mut row,
-    );
-    add_toolbutton(
-        sender,
-        "Demote List",
-        Action::ListDemote,
-        LIST_DEMOTE_ICON,
         &mut row,
     );
     add_toolbutton(
@@ -563,23 +541,9 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
     add_separator(&mut row);
     add_toolbutton(
         sender,
-        "New Track…",
+        "Add Track…",
         Action::TrackAdd,
         TRACK_ADD_ICON,
-        &mut row,
-    );
-    add_toolbutton(
-        sender,
-        "Move Track Up",
-        Action::TrackMoveUp,
-        TRACK_MOVE_UP_ICON,
-        &mut row,
-    );
-    add_toolbutton(
-        sender,
-        "Move Track Down",
-        Action::TrackMoveDown,
-        TRACK_MOVE_DOWN_ICON,
         &mut row,
     );
     add_toolbutton(

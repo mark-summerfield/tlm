@@ -5,6 +5,7 @@
 mod actions;
 mod application;
 mod config;
+mod edit_actions;
 mod file_actions;
 mod fixed;
 mod help_actions;

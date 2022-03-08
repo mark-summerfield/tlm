@@ -1,4 +1,3 @@
-tlm.adoc # notes
 # TODO List menu
 # TODO Track menu
 # TODO Add update_ui() calls wherever appropriate & implement
@@ -18,6 +17,7 @@ src/model.rs
 src/application.rs
 src/actions.rs
 src/file_actions.rs
+src/edit_actions.rs
 src/list_actions.rs # TODO Delete (see above)
 src/track_actions.rs # TODO Delete (see above)
 src/help_actions.rs

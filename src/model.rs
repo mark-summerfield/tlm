@@ -129,7 +129,7 @@ impl Model {
         &mut self,
         treepath: TreePath,
         tid: TrackID,
-        secs: f64
+        secs: f64,
     ) -> bool {
         let mut changed = util::maybe_add_to_deque(
             &mut self.history,

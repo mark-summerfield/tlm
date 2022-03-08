@@ -137,26 +137,6 @@ impl Application {
         app::redraw(); // redraws the world
     }
 
-    pub(crate) fn on_track_move_up(&mut self) {
-        println!("on_track_move_up"); // TODO
-    }
-
-    pub(crate) fn on_track_move_down(&mut self) {
-        println!("on_track_move_down"); // TODO
-    }
-
-    pub(crate) fn on_track_move_to_list(&mut self) {
-        println!("on_track_move_to_list"); // TODO
-    }
-
-    pub(crate) fn on_track_copy_to_list(&mut self) {
-        println!("on_track_copy_to_list"); // TODO
-    }
-
-    pub(crate) fn on_track_delete(&mut self) {
-        println!("on_track_delete"); // TODO
-    }
-
     pub(crate) fn load_track(&mut self) {
         if self.playing {
             self.on_track_play_or_pause(); // PAUSE
