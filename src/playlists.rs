@@ -30,11 +30,11 @@ pub fn read_m3u(filename: &Path) -> Result<Vec<Track>> {
     static EXTM3U: &str = "#EXTM3U";
     static EXTINF: &str = "#EXTINF:";
     enum Expect {
-        HEADER,
-        INFO,
-        FILENAME,
+        Header,
+        Info,
+        Filename,
     }
-    let mut state = Expect::HEADER;
+    let mut state = Expect::Header;
     let mut secs = 0.0;
     let mut tracks = vec![];
     let file = File::open(filename)?;
@@ -46,16 +46,16 @@ pub fn read_m3u(filename: &Path) -> Result<Vec<Track>> {
                 continue; // ignore blank lines
             }
             match state {
-                Expect::HEADER => {
+                Expect::Header => {
                     if line != EXTM3U {
                         bail!(
                             "{}:expected {EXTM3U} header: {line}",
                             lino + 1
                         )
                     }
-                    state = Expect::INFO;
+                    state = Expect::Info;
                 }
-                Expect::INFO => {
+                Expect::Info => {
                     if !line.starts_with(EXTINF) {
                         bail!("{}:expected {EXTINF} line: {line}", lino + 1)
                     }
@@ -64,12 +64,12 @@ pub fn read_m3u(filename: &Path) -> Result<Vec<Track>> {
                         .trim_start_matches(':');
                     if let Some((left, _title)) = line.split_once(',') {
                         secs = f64::from_str(left).unwrap_or(0.0);
-                        state = Expect::FILENAME;
+                        state = Expect::Filename;
                     } else {
                         bail!("{}:invalid {EXTINF} line: {line}", lino + 1)
                     }
                 }
-                Expect::FILENAME => {
+                Expect::Filename => {
                     if line.starts_with(EXTINF) {
                         bail!(
                             "{}:unexpected {EXTINF} line: {line}",
@@ -83,7 +83,7 @@ pub fn read_m3u(filename: &Path) -> Result<Vec<Track>> {
                         println!("skipping missing track: {}", line);
                     }
                     secs = 0.0;
-                    state = Expect::INFO;
+                    state = Expect::Info;
                 }
             };
         }

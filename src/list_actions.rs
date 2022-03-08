@@ -8,7 +8,6 @@ use crate::playlists;
 use crate::util;
 use anyhow::anyhow;
 use std::path::Path;
-use walkdir;
 
 impl Application {
     pub(crate) fn on_list_add(&mut self) {
