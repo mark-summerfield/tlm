@@ -1,8 +1,3 @@
-# TODO For Edit|Delete
-# If the list or track is inside the <Deleted> list, then up a dialog
-# offering [&Delete] [&Cancel]
-# Otherwise simply move the list or track to the top-level <Deleted> list
-# (creating this list first if it doesn't already exist).
 # TODO Edit menu
 # TODO List menu
 # TODO Track menu
@@ -18,7 +13,7 @@ src/model.rs
 src/application.rs
 src/actions.rs
 src/file_actions.rs
-src/edit_actions.rs # TODO Delete (see above); then the rest
+src/edit_actions.rs # TODO
 src/list_actions.rs
 src/track_actions.rs
 src/help_actions.rs

@@ -28,6 +28,10 @@ impl Application {
         println!("on_edit_copy_to_list"); // TODO
     }
 
+    // TODO If the list or track is inside the <Deleted> list, then up a
+    // dialog offering [&Delete] [&Cancel] Otherwise simply move the list or
+    // track to the top-level <Deleted> list (creating this list first if it
+    // doesn't already exist).
     pub(crate) fn on_edit_delete(&mut self) {
         println!("on_edit_delete"); // TODO
     }
