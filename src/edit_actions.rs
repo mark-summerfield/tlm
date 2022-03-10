@@ -2,7 +2,8 @@
 // License: GPLv3
 
 use crate::application::Application;
-use fltk::{app, prelude::*};
+use crate::model::TrackID;
+use fltk::prelude::*;
 
 impl Application {
     pub(crate) fn on_edit_move_up(&mut self) {
@@ -50,15 +51,23 @@ impl Application {
     }
 
     /*
-    Move the selected item to be the last child of the first _following_
-    sibling that is a _list_ (i.e., that has no TID) if there is one.
+    Move the selected item to be the last child of the previous
+    sibling if there is one and it is a _list_ (i.e., that has no TID).
     */
     pub(crate) fn on_edit_demote(&mut self) {
-        println!("on_edit_demote"); // TODO
-
-        // TODO check this works for promoting _both_
-        // individual tracks _and_ lists with all their
-        // children (and children's children, etc.)
+        if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
+            if let Some(prev) = item.prev_sibling() {
+                let tid = unsafe { prev.user_data::<TrackID>() };
+                if tid.is_none() {
+                    // List not Track
+                    let index = prev.children();
+                    if item.move_into(&prev, index).is_ok() {
+                        self.tlm.set_dirty();
+                        self.tlm.track_tree.redraw();
+                    }
+                }
+            }
+        }
     }
 
     pub(crate) fn on_edit_move_to_list(&mut self) {
