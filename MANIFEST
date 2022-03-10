@@ -1,3 +1,5 @@
+# TODO try to replace app::redraw() with _widget_::redraw() for the
+# thing that actually changed
 # TODO Edit menu
 # TODO List menu
 # TODO Track menu

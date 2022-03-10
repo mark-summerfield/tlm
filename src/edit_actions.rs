@@ -2,14 +2,15 @@
 // License: GPLv3
 
 use crate::application::Application;
-use fltk::app;
+use fltk::{app, prelude::*};
 
 impl Application {
     pub(crate) fn on_edit_move_up(&mut self) {
         if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
             if let Some(prev) = item.prev_sibling() {
                 if item.move_above(&prev).is_ok() {
-                    app::redraw(); // redraws the world
+                    self.tlm.set_dirty();
+                    self.tlm.track_tree.redraw();
                 }
             }
         }
@@ -19,7 +20,8 @@ impl Application {
         if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
             if let Some(next) = item.next_sibling() {
                 if item.move_below(&next).is_ok() {
-                    app::redraw(); // redraws the world
+                    self.tlm.set_dirty();
+                    self.tlm.track_tree.redraw();
                 }
             }
         }
@@ -31,25 +33,17 @@ impl Application {
     be promoted.)
     */
     pub(crate) fn on_edit_promote(&mut self) {
-        if let Some(item) = self.tlm.track_tree.first_selected_item() {
+        if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
             if let Some(parent) = item.parent() {
                 if parent.is_root() {
                     return; // can't promote beyond the root
                 }
-                if let Some(mut grand_parent) = parent.parent() {
-                    let index = grand_parent.children() + 1;
-                    let err = grand_parent.move_into(&item, index);
-                    // let err = grand_parent.move_into(&item, index);
-                    dbg!(
-                        item.label(),
-                        parent.label(),
-                        grand_parent.label(),
-                        index,
-                        err
-                    );
-                    // TODO check this works for promoting _both_
-                    // individual tracks _and_ lists with all their
-                    // children (and children's children, etc.)
+                if let Some(grand_parent) = parent.parent() {
+                    let index = grand_parent.children();
+                    if item.move_into(&grand_parent, index).is_ok() {
+                        self.tlm.set_dirty();
+                        self.tlm.track_tree.redraw();
+                    }
                 }
             }
         }

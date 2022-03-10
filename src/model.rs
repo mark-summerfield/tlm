@@ -170,6 +170,10 @@ impl Model {
         self.dirty
     }
 
+    pub fn set_dirty(&mut self) {
+        self.dirty = true;
+    }
+
     fn parse(&mut self, text: String) -> Result<()> {
         let mut treepath: Vec<TreePath> = vec![];
         let mut state = State::WantMagic;
