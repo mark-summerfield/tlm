@@ -40,7 +40,16 @@ impl Application {
                     let index = grand_parent.children() + 1;
                     let err = grand_parent.move_into(&item, index);
                     // let err = grand_parent.move_into(&item, index);
-                    dbg!(item.label(), parent.label(), grand_parent.label(), index, err);
+                    dbg!(
+                        item.label(),
+                        parent.label(),
+                        grand_parent.label(),
+                        index,
+                        err
+                    );
+                    // TODO check this works for promoting _both_
+                    // individual tracks _and_ lists with all their
+                    // children (and children's children, etc.)
                 }
             }
         }
@@ -52,6 +61,10 @@ impl Application {
     */
     pub(crate) fn on_edit_demote(&mut self) {
         println!("on_edit_demote"); // TODO
+
+        // TODO check this works for promoting _both_
+        // individual tracks _and_ lists with all their
+        // children (and children's children, etc.)
     }
 
     pub(crate) fn on_edit_move_to_list(&mut self) {
