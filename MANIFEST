@@ -1,3 +1,13 @@
+# TODO
+# No <Found>; instead
+#   Edit→Find ^F
+#   Edit→Find Again F3
+# Find means
+#   (i) pop up a dialog to get text and
+#   (ii) search from the _next_ item after the current selected item;
+# Find Again means if no search text then (i) and (ii) above; otherwise
+# if there is search text then just (ii) above
+#
 # TODO Add update_ui() calls wherever appropriate & implement
 # update_ui() to activate/deactivate all menu options & toobar buttons
 # depending on the state (has_track, has_history, has_list <since all
