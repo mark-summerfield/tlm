@@ -97,11 +97,9 @@ pub fn initialize_time_icons() {
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Action {
     ClearInfo,
-    EditCopyToList,
     EditDelete,
     EditDemote,
     EditMoveDown,
-    EditMoveToList,
     EditMoveUp,
     EditPromote,
     FileConfigure,

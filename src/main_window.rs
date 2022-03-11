@@ -174,20 +174,6 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::EditDemote,
     );
     menubar.add_emit(
-        "&Edit/Move to &List…\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::EditMoveToList,
-    );
-    menubar.add_emit(
-        "&Edit/&Copy to List…\t",
-        Shortcut::None,
-        MenuFlag::MenuDivider,
-        sender,
-        Action::EditCopyToList,
-    );
-    menubar.add_emit(
         "&Edit/D&elete\t",
         Shortcut::None,
         MenuFlag::Normal,

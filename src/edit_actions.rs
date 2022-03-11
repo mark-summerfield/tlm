@@ -70,14 +70,6 @@ impl Application {
         }
     }
 
-    pub(crate) fn on_edit_move_to_list(&mut self) {
-        println!("on_edit_move_to_list"); // TODO
-    }
-
-    pub(crate) fn on_edit_copy_to_list(&mut self) {
-        println!("on_edit_copy_to_list"); // TODO
-    }
-
     // TODO If the list or track is inside the <Deleted> list, then up a
     // dialog offering [&Delete] [&Cancel] Otherwise simply move the list or
     // track to the top-level <Deleted> list (creating this list first if it

@@ -121,8 +121,6 @@ impl Application {
                     Action::EditMoveUp => self.on_edit_move_up(),
                     Action::EditMoveDown => self.on_edit_move_down(),
                     Action::EditDelete => self.on_edit_delete(),
-                    Action::EditMoveToList => self.on_edit_move_to_list(),
-                    Action::EditCopyToList => self.on_edit_copy_to_list(),
                     Action::ListAdd => self.on_list_add(),
                     Action::ListRename => self.on_list_rename(),
                     Action::ListExport => self.on_list_export(),

@@ -1,6 +1,3 @@
-# TODO Edit menu
-# TODO List menu
-# TODO Track menu
 # TODO Add update_ui() calls wherever appropriate & implement
 # update_ui() to activate/deactivate all menu options & toobar buttons
 # depending on the state (has_track, has_history, has_list <since all
@@ -13,9 +10,9 @@ src/model.rs
 src/application.rs
 src/actions.rs
 src/file_actions.rs
-src/edit_actions.rs # TODO
-src/list_actions.rs
-src/track_actions.rs
+src/edit_actions.rs # TODO delete
+src/list_actions.rs # TODO rename - export - import
+src/track_actions.rs # TODO add - find
 src/help_actions.rs
 src/main_window.rs
 src/new_list_form.rs
