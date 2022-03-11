@@ -15,6 +15,11 @@ impl Application {
     pub(crate) fn on_track_add(&mut self) {
         // util::sanitize(name, "New Track")
         println!("on_track_add"); // TODO
+        /*
+        self.tlm.set_dirty(); // unless already done
+        self.tlm.track_tree.redraw();
+        self.update_ui();
+        */
     }
 
     pub(crate) fn on_track_previous(&mut self) {

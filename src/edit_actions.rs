@@ -76,5 +76,10 @@ impl Application {
     // doesn't already exist).
     pub(crate) fn on_edit_delete(&mut self) {
         println!("on_edit_delete"); // TODO
+        /*
+        self.tlm.set_dirty(); // unless already done
+        self.tlm.track_tree.redraw();
+        self.update_ui();
+        */
     }
 }

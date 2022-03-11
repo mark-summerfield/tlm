@@ -52,7 +52,8 @@ impl Application {
         if let Some((treepath, item)) =
             self.tlm.add_empty_list(parent_list, &name)
         {
-            self.select_track_in_tree(treepath, item)
+            self.select_track_in_tree(treepath, item);
+            self.update_ui();
         }
     }
 
@@ -102,6 +103,7 @@ impl Application {
                     } else {
                         self.select_track_in_tree(treepath, item);
                     }
+                    self.update_ui();
                 }
                 Err(err) => util::popup_error_message(&err.to_string()),
             };
@@ -150,12 +152,18 @@ impl Application {
             } else {
                 self.select_track_in_tree(treepath, item);
             }
+            self.update_ui();
         }
     }
 
     pub(crate) fn on_list_rename(&mut self) {
         // util::sanitize(new_name, old_name)
         println!("on_list_rename"); // TODO
+        /*
+        self.tlm.set_dirty(); // unless already done
+        self.tlm.track_tree.redraw();
+        self.update_ui();
+        */
     }
 
     pub(crate) fn on_list_export(&mut self) {
@@ -164,5 +172,6 @@ impl Application {
 
     pub(crate) fn on_list_import(&mut self) {
         println!("on_list_import"); // TODO
+        self.update_ui();
     }
 }
