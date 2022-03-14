@@ -122,6 +122,10 @@ impl Application {
         println!("on_track_find"); // TODO
     }
 
+    pub(crate) fn on_track_find_again(&mut self) {
+        println!("on_track_find_again"); // TODO
+    }
+
     pub(crate) fn on_volume_down(&mut self) {
         self.change_volume(
             (self.volume_slider.value() as f32 - 0.05).max(0.0),

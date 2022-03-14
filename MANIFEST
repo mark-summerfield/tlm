@@ -1,5 +1,4 @@
 # TODO
-# No <Found>; instead
 #   Edit→Find ^F
 #   Edit→Find Again F3
 # Find means
@@ -21,8 +20,8 @@ src/application.rs
 src/actions.rs
 src/file_actions.rs
 src/edit_actions.rs # TODO delete
-src/list_actions.rs # TODO rename - export - import
-src/track_actions.rs # TODO add - find
+src/list_actions.rs # TODO rename
+src/track_actions.rs # TODO add - find - find again
 src/help_actions.rs
 src/main_window.rs
 src/new_list_form.rs

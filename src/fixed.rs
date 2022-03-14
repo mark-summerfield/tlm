@@ -25,7 +25,6 @@ pub const PROMOTE_ICON: &str = include_str!("../images/promote.svg");
 pub const DEMOTE_ICON: &str = include_str!("../images/demote.svg");
 pub const MOVE_UP_ICON: &str = include_str!("../images/move-up.svg");
 pub const MOVE_DOWN_ICON: &str = include_str!("../images/move-down.svg");
-pub const LIST_IMPORT_ICON: &str = include_str!("../images/import.svg");
 pub const TRACK_ADD_ICON: &str = include_str!("../images/track-new.svg");
 pub const TRACK_FIND_ICON: &str = include_str!("../images/track-find.svg");
 pub const HISTORY_ICON: &str = include_str!("../images/history.svg");
@@ -111,8 +110,6 @@ pub enum Action {
     HelpAbout,
     HelpHelp,
     ListAdd,
-    ListExport,
-    ListImport,
     ListRename,
     OnStartup,
     PlayHistoryTrack,
@@ -120,6 +117,7 @@ pub enum Action {
     TimeUpdate,
     TrackAdd,
     TrackFind,
+    TrackFindAgain,
     TrackHistory,
     TrackLouder,
     TrackNext,

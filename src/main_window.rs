@@ -5,10 +5,10 @@ use super::CONFIG;
 use crate::fixed::{
     Action, APPNAME, BUTTON_HEIGHT, DEMOTE_ICON, FILE_NEW_ICON,
     FILE_OPEN_ICON, FILE_SAVE_ICON, HISTORY_ICON, ICON, LIST_ADD_ICON,
-    LIST_ICON, LIST_IMPORT_ICON, MOVE_DOWN_ICON, MOVE_UP_ICON, NEXT_ICON,
-    PAD, PLAY_ICON, PREV_ICON, PROMOTE_ICON, REPLAY_ICON, TIME_ICON,
-    TOOLBAR_HEIGHT, TOOLBUTTON_SIZE, TRACK_ADD_ICON, TRACK_FIND_ICON,
-    TREE_ICON_SIZE, VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
+    LIST_ICON, MOVE_DOWN_ICON, MOVE_UP_ICON, NEXT_ICON, PAD, PLAY_ICON,
+    PREV_ICON, PROMOTE_ICON, REPLAY_ICON, TIME_ICON, TOOLBAR_HEIGHT,
+    TOOLBUTTON_SIZE, TRACK_ADD_ICON, TRACK_FIND_ICON, TREE_ICON_SIZE,
+    VOLUME_ICON, WINDOW_HEIGHT_MIN, WINDOW_WIDTH_MIN,
 };
 use crate::util;
 use fltk::{
@@ -195,20 +195,6 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::ListRename,
     );
     menubar.add_emit(
-        "&List/&Export…\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::ListExport,
-    );
-    menubar.add_emit(
-        "&List/&Import…\t",
-        Shortcut::None,
-        MenuFlag::Normal,
-        sender,
-        Action::ListImport,
-    );
-    menubar.add_emit(
         "&Track/&Add…\t",
         Shortcut::Ctrl | 't',
         MenuFlag::MenuDivider,
@@ -249,6 +235,13 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         MenuFlag::Normal,
         sender,
         Action::TrackFind,
+    );
+    menubar.add_emit(
+        "&Track/Find A&gain\t",
+        Shortcut::from_key(Key::F3),
+        MenuFlag::Normal,
+        sender,
+        Action::TrackFindAgain,
     );
     menubar.add_emit(
         "&Track/&History…\t",
@@ -517,13 +510,6 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
         LIST_ADD_ICON,
         &mut row,
     );
-    add_toolbutton(
-        sender,
-        "Import List…",
-        Action::ListImport,
-        LIST_IMPORT_ICON,
-        &mut row,
-    );
     add_separator(&mut row);
     add_toolbutton(
         sender,
@@ -540,7 +526,7 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
         &mut row,
     );
     let history_menu_button =
-        add_menubutton("History…", HISTORY_ICON, &mut row);
+        add_menubutton("History", HISTORY_ICON, &mut row);
     row.end();
     (history_menu_button, row)
 }

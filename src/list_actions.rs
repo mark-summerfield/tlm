@@ -165,13 +165,4 @@ impl Application {
         self.update_ui();
         */
     }
-
-    pub(crate) fn on_list_export(&mut self) {
-        println!("on_list_export"); // TODO
-    }
-
-    pub(crate) fn on_list_import(&mut self) {
-        println!("on_list_import"); // TODO
-        self.update_ui();
-    }
 }

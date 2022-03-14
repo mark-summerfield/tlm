@@ -123,8 +123,6 @@ impl Application {
                     Action::EditDelete => self.on_edit_delete(),
                     Action::ListAdd => self.on_list_add(),
                     Action::ListRename => self.on_list_rename(),
-                    Action::ListExport => self.on_list_export(),
-                    Action::ListImport => self.on_list_import(),
                     Action::HelpAbout => self.on_help_about(),
                     Action::HelpHelp => self.on_help_help(),
                     Action::OnStartup => self.on_startup(),
@@ -144,6 +142,7 @@ impl Application {
                     Action::TrackQuieter => self.on_volume_down(),
                     Action::TrackHistory => self.on_track_history(),
                     Action::TrackFind => self.on_track_find(),
+                    Action::TrackFindAgain => self.on_track_find_again(),
                     Action::TreeItemDoubleClicked => {
                         self.on_tree_item_double_clicked()
                     }
