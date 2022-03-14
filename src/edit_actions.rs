@@ -2,8 +2,9 @@
 // License: GPLv3
 
 use crate::application::Application;
+use crate::fixed::{DELETED_NAME, TOP_LEVEL_NAME};
 use crate::model::TrackID;
-use fltk::prelude::*;
+use fltk::{prelude::*, tree::TreeItem};
 
 impl Application {
     pub(crate) fn on_edit_move_up(&mut self) {
@@ -75,7 +76,54 @@ impl Application {
     // track to the top-level <Deleted> list (creating this list first if it
     // doesn't already exist).
     pub(crate) fn on_edit_delete(&mut self) {
-        println!("on_edit_delete"); // TODO
+        if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
+            println!("{} {:?}", item.depth(), item.label());
+            let mut opt_parent = item.parent();
+            while let Some(parent) = opt_parent {
+                opt_parent = parent.parent();
+                if parent.depth() == 1 {
+                    if let Some(name) = parent.label() {
+                        if name == DELETED_NAME {
+                            self.maybe_delete(&mut item);
+                        } else {
+                            self.move_to_deleted(&mut item);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fn move_to_deleted(&mut self, item: &mut TreeItem) {
+        if let Some(root) = self.tlm.track_tree.root() {
+            let deleted_root = if let Some(child) =
+                root.find_child_item(DELETED_NAME)
+            {
+                Some(child)
+            } else {
+                if let Some((_, child)) =
+                    self.tlm.add_empty_list(TOP_LEVEL_NAME, DELETED_NAME)
+                {
+                    Some(child)
+                } else {
+                    None
+                }
+            };
+            if let Some(deleted_root) = deleted_root {
+                if item
+                    .move_into(&deleted_root, deleted_root.children())
+                    .is_ok()
+                {
+                    self.tlm.set_dirty(); // unless already done
+                    self.tlm.track_tree.redraw();
+                    self.update_ui();
+                }
+            }
+        }
+    }
+
+    fn maybe_delete(&mut self, item: &mut TreeItem) {
+        println!("maybe_delete: {:?}", item.label());
         /*
         self.tlm.set_dirty(); // unless already done
         self.tlm.track_tree.redraw();
