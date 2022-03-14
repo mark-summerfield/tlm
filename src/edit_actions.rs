@@ -91,19 +91,16 @@ impl Application {
 
     fn move_to_deleted(&mut self, item: &mut TreeItem) {
         if let Some(root) = self.tlm.track_tree.root() {
-            let deleted_root = if let Some(child) =
-                root.find_child_item(DELETED_NAME)
-            {
-                Some(child)
-            } else {
-                if let Some((_, child)) =
+            let deleted_root =
+                if let Some(child) = root.find_child_item(DELETED_NAME) {
+                    Some(child)
+                } else if let Some((_, child)) =
                     self.tlm.add_empty_list(TOP_LEVEL_NAME, DELETED_NAME)
                 {
                     Some(child)
                 } else {
                     None
-                }
-            };
+                };
             if let Some(deleted_root) = deleted_root {
                 if item
                     .move_into(&deleted_root, deleted_root.children())
@@ -121,12 +118,10 @@ impl Application {
         let tid = unsafe { item.user_data::<TrackID>() };
         let name = if let Some(name) = item.label() {
             name
+        } else if tid.is_none() {
+            "List".to_string()
         } else {
-            if tid.is_none() {
-                "List".to_string()
-            } else {
-                "Track".to_string()
-            }
+            "Track".to_string()
         };
         let message = format!(
             "Permanently delete the “{name}” {}?",
@@ -140,12 +135,10 @@ impl Application {
         if let Some(i) =
             dialog::choice2_default(&message, "&Cancel", "D&elete", "")
         {
-            if i == 1 {
-                if self.tlm.track_tree.remove(&item).is_ok() {
-                    self.tlm.set_dirty();
-                    self.tlm.track_tree.redraw();
-                    self.update_ui();
-                }
+            if i == 1 && self.tlm.track_tree.remove(item).is_ok() {
+                self.tlm.set_dirty();
+                self.tlm.track_tree.redraw();
+                self.update_ui();
             }
         }
     }
