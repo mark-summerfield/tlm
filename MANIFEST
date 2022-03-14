@@ -19,7 +19,7 @@ src/model.rs
 src/application.rs
 src/actions.rs
 src/file_actions.rs
-src/edit_actions.rs # TODO delete
+src/edit_actions.rs
 src/list_actions.rs # TODO rename
 src/track_actions.rs # TODO add - find - find again
 src/help_actions.rs

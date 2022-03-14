@@ -2,9 +2,9 @@
 // License: GPLv3
 
 use crate::application::Application;
-use crate::fixed::{DELETED_NAME, TOP_LEVEL_NAME};
+use crate::fixed::{APPNAME, DELETED_NAME, TOP_LEVEL_NAME};
 use crate::model::TrackID;
-use fltk::{prelude::*, tree::TreeItem};
+use fltk::{dialog, prelude::*, tree::TreeItem};
 
 impl Application {
     pub(crate) fn on_edit_move_up(&mut self) {
@@ -71,13 +71,8 @@ impl Application {
         }
     }
 
-    // TODO If the list or track is inside the <Deleted> list, then up a
-    // dialog offering [&Delete] [&Cancel] Otherwise simply move the list or
-    // track to the top-level <Deleted> list (creating this list first if it
-    // doesn't already exist).
     pub(crate) fn on_edit_delete(&mut self) {
         if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
-            println!("{} {:?}", item.depth(), item.label());
             let mut opt_parent = item.parent();
             while let Some(parent) = opt_parent {
                 opt_parent = parent.parent();
@@ -114,7 +109,7 @@ impl Application {
                     .move_into(&deleted_root, deleted_root.children())
                     .is_ok()
                 {
-                    self.tlm.set_dirty(); // unless already done
+                    self.tlm.set_dirty();
                     self.tlm.track_tree.redraw();
                     self.update_ui();
                 }
@@ -123,11 +118,35 @@ impl Application {
     }
 
     fn maybe_delete(&mut self, item: &mut TreeItem) {
-        println!("maybe_delete: {:?}", item.label());
-        /*
-        self.tlm.set_dirty(); // unless already done
-        self.tlm.track_tree.redraw();
-        self.update_ui();
-        */
+        let tid = unsafe { item.user_data::<TrackID>() };
+        let name = if let Some(name) = item.label() {
+            name
+        } else {
+            if tid.is_none() {
+                "List".to_string()
+            } else {
+                "Track".to_string()
+            }
+        };
+        let message = format!(
+            "Permanently delete the “{name}” {}?",
+            if tid.is_none() {
+                "list and any tracks and lists it contains"
+            } else {
+                "track"
+            }
+        );
+        dialog::message_title(&format!("Delete — {APPNAME}"));
+        if let Some(i) =
+            dialog::choice2_default(&message, "&Cancel", "D&elete", "")
+        {
+            if i == 1 {
+                if self.tlm.track_tree.remove(&item).is_ok() {
+                    self.tlm.set_dirty();
+                    self.tlm.track_tree.redraw();
+                    self.update_ui();
+                }
+            }
+        }
     }
 }
