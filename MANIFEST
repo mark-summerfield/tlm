@@ -22,8 +22,8 @@ src/application.rs
 src/actions.rs
 src/file_actions.rs
 src/edit_actions.rs
-src/list_actions.rs # TODO rename
-src/track_actions.rs # TODO add - find - find again
+src/list_actions.rs
+src/track_actions.rs # TODO find - find again
 src/help_actions.rs
 src/main_window.rs
 src/new_list_form.rs

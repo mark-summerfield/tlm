@@ -2,11 +2,13 @@
 // License: GPLv3
 
 use crate::application::Application;
-use crate::model::Track;
+use crate::fixed::APPNAME;
+use crate::model::{Track, TrackID};
 use crate::new_list_form;
 use crate::playlists;
 use crate::util;
 use anyhow::anyhow;
+use fltk::{dialog, prelude::*};
 use std::path::Path;
 
 impl Application {
@@ -157,12 +159,21 @@ impl Application {
     }
 
     pub(crate) fn on_list_rename(&mut self) {
-        // util::sanitize(new_name, old_name)
-        println!("on_list_rename"); // TODO
-        /*
-        self.tlm.set_dirty(); // unless already done
-        self.tlm.track_tree.redraw();
-        self.update_ui();
-        */
+        if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
+            let tid = unsafe { item.user_data::<TrackID>() };
+            // Lists _can_ be renamed
+            if tid.is_none() {
+                let old_name = item.label().unwrap_or("List".to_string());
+                if let Some(new_name) = dialog::input_default(
+                    &format!("Rename List — {APPNAME}"),
+                    &old_name,
+                ) {
+                    item.set_label(&util::sanitize(&new_name, &old_name));
+                    self.tlm.set_dirty(); // unless already done
+                    self.tlm.track_tree.redraw();
+                    self.update_ui();
+                }
+            }
+        }
     }
 }

@@ -3,8 +3,8 @@
 
 use super::CONFIG;
 use crate::fixed::APPNAME;
-use fltk::app;
-use fltk::dialog;
+use crate::model::TreePath;
+use fltk::{app, dialog, tree::TreeItem};
 use lofty::{self, Accessor, ItemKey, ItemValue, Probe};
 use std::{
     cmp,
@@ -317,6 +317,25 @@ pub fn canonicalize(track: &Path) -> String {
 pub fn popup_error_message(message: &str) {
     dialog::message_title(&format!("Error — {APPNAME}"));
     dialog::message(x() - 200, y() - 100, message);
+}
+
+pub fn treepath_for_item(item: Option<TreeItem>) -> TreePath {
+    let mut treepath = String::new();
+    let mut opt_item = item;
+    while let Some(item) = opt_item {
+        opt_item = item.parent();
+        if item.depth() > 0 {
+            if let Some(name) = item.label() {
+                treepath.insert(0, '/');
+                treepath.insert_str(0, &name);
+            }
+        }
+    }
+    if let Some(treepath) = treepath.strip_prefix('/') {
+        treepath.to_string()
+    } else {
+        treepath
+    }
 }
 
 pub fn maybe_add_to_deque<T: cmp::PartialEq>(

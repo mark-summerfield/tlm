@@ -3,23 +3,60 @@
 
 use crate::application::Application;
 use crate::fixed::{
-    Action, PATH_SEP, PAUSE_ICON, PLAY_ICON, TINY_TIMEOUT, TOOLBUTTON_SIZE,
+    Action, APPNAME, PATH_SEP, PAUSE_ICON, PLAY_ICON, TINY_TIMEOUT,
+    TOOLBUTTON_SIZE,
 };
 use crate::list_form::{self, Reply};
+use crate::model::Track;
 use crate::util;
-use fltk::{app, image::SvgImage, prelude::*};
+use fltk::{
+    app,
+    dialog::{FileDialog, FileDialogType},
+    image::SvgImage,
+    prelude::*,
+};
 use soloud::prelude::*;
-use std::{thread, time::Duration};
+use std::{path::PathBuf, thread, time::Duration};
 
 impl Application {
     pub(crate) fn on_track_add(&mut self) {
-        // util::sanitize(name, "New Track")
-        println!("on_track_add"); // TODO
-        /*
-        self.tlm.set_dirty(); // unless already done
-        self.tlm.track_tree.redraw();
-        self.update_ui();
-        */
+        let mut folder = None;
+        let mut parent_item = None;
+        if let Some(item) = self.tlm.track_tree.first_selected_item() {
+            if let Some(track) = self.tlm.track_for_item(&item) {
+                if let Some(parent) = track.filename.parent() {
+                    folder = Some(parent.to_path_buf());
+                    parent_item = item.parent(); // item is a Track
+                }
+            } else {
+                parent_item = Some(item); // item is a List
+            }
+        };
+        if parent_item.is_none() {
+            parent_item = self.tlm.track_tree.root();
+        }
+        if folder.is_none() {
+            folder = Some(util::get_track_dir(&PathBuf::new()));
+        }
+        let mut form = FileDialog::new(FileDialogType::BrowseFile);
+        form.set_title(&format!("Add Track — {APPNAME}"));
+        let _ = form.set_directory(&folder.unwrap());
+        form.set_filter("Audio Files\t*.{flac,mogg,mp3,oga,ogg,wav}");
+        form.show();
+        let track = form.filename();
+        if track.exists() {
+            if self
+                .tlm
+                .add_track(
+                    &util::treepath_for_item(parent_item),
+                    Track::new(track, 0.0),
+                )
+                .is_some()
+            {
+                self.tlm.track_tree.redraw();
+                self.update_ui();
+            }
+        }
     }
 
     pub(crate) fn on_track_previous(&mut self) {

@@ -378,6 +378,19 @@ impl Model {
         self.filename = filename.to_path_buf();
         self.save()
     }
+
+    pub fn track_for_item(&self, item: &TreeItem) -> Option<Track> {
+        let tid = unsafe { item.user_data::<TrackID>() };
+        if let Some(tid) = tid {
+            if let Some(track) = self.track_for_tid.get(&tid) {
+                Some(track.clone())
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
 }
 
 fn image_for_secs(secs: f64) -> SvgImage {
