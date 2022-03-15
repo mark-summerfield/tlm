@@ -12,7 +12,7 @@
 # depending on the state (has_track, has_history, has_list <since all
 # tracks could be list-less at the top-level>).
 # TODO data/help.html
-# TODO subtle bug: if a list is followed by a track the track gets
+# NOTE subtle bug: if a list is followed by a track the track gets
 # subsumed as the last item of the list
 
 src/main.rs
