@@ -163,7 +163,8 @@ impl Application {
             let tid = unsafe { item.user_data::<TrackID>() };
             // Lists _can_ be renamed
             if tid.is_none() {
-                let old_name = item.label().unwrap_or("List".to_string());
+                let old_name =
+                    item.label().unwrap_or_else(|| "List".to_string());
                 if let Some(new_name) = dialog::input_default(
                     &format!("Rename List — {APPNAME}"),
                     &old_name,

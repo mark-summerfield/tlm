@@ -44,18 +44,17 @@ impl Application {
         form.set_filter("Audio Files\t*.{flac,mogg,mp3,oga,ogg,wav}");
         form.show();
         let track = form.filename();
-        if track.exists() {
-            if self
+        if track.exists()
+            && self
                 .tlm
                 .add_track(
                     &util::treepath_for_item(parent_item),
                     Track::new(track, 0.0),
                 )
                 .is_some()
-            {
-                self.tlm.track_tree.redraw();
-                self.update_ui();
-            }
+        {
+            self.tlm.track_tree.redraw();
+            self.update_ui();
         }
     }
 
