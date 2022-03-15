@@ -73,6 +73,12 @@ impl Application {
 
     pub(crate) fn on_edit_delete(&mut self) {
         if let Some(mut item) = self.tlm.track_tree.first_selected_item() {
+            if let Some(name) = item.label() {
+                if item.depth() == 1 && name == DELETED_NAME {
+                    self.maybe_delete(&mut item);
+                    return;
+                }
+            }
             let mut opt_parent = item.parent();
             while let Some(parent) = opt_parent {
                 opt_parent = parent.parent();
