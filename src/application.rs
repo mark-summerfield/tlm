@@ -41,6 +41,7 @@ pub struct Application {
     pub(crate) playing: bool,
     pub(crate) current: Current,
     pub(crate) tlm: Model,
+    pub(crate) find_text: String,
     pub(crate) sender: Sender<Action>,
     pub(crate) receiver: Receiver<Action>,
 }
@@ -79,6 +80,7 @@ impl Application {
             playing: false,
             current: Current::default(),
             tlm: Model::new(widgets.track_tree),
+            find_text: String::new(),
             sender,
             receiver,
         };
@@ -120,6 +122,8 @@ impl Application {
                     Action::EditDemote => self.on_edit_demote(),
                     Action::EditMoveUp => self.on_edit_move_up(),
                     Action::EditMoveDown => self.on_edit_move_down(),
+                    Action::EditFind => self.on_edit_find(),
+                    Action::EditFindAgain => self.on_edit_find_again(),
                     Action::EditDelete => self.on_edit_delete(),
                     Action::ListAdd => self.on_list_add(),
                     Action::ListRename => self.on_list_rename(),
@@ -141,8 +145,6 @@ impl Application {
                     Action::TrackLouder => self.on_volume_up(),
                     Action::TrackQuieter => self.on_volume_down(),
                     Action::TrackHistory => self.on_track_history(),
-                    Action::TrackFind => self.on_track_find(),
-                    Action::TrackFindAgain => self.on_track_find_again(),
                     Action::TreeItemDoubleClicked => {
                         self.on_tree_item_double_clicked()
                     }

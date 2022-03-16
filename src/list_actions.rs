@@ -165,10 +165,10 @@ impl Application {
             if tid.is_none() {
                 let old_name =
                     item.label().unwrap_or_else(|| "List".to_string());
-                if let Some(new_name) = dialog::input_default(
-                    &format!("Rename List — {APPNAME}"),
-                    &old_name,
-                ) {
+                dialog::message_title(&format!("Rename List — {APPNAME}"));
+                if let Some(new_name) =
+                    dialog::input_default("Name", &old_name)
+                {
                     item.set_label(&util::sanitize(&new_name, &old_name));
                     self.tlm.set_dirty(); // unless already done
                     self.tlm.track_tree.redraw();

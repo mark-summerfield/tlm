@@ -2,9 +2,9 @@
 // License: GPLv3
 
 use crate::application::Application;
-use crate::fixed::{APPNAME, DELETED_NAME, TOP_LEVEL_NAME};
+use crate::fixed::{APPNAME, DELETED_NAME, TINY_TIMEOUT, TOP_LEVEL_NAME};
 use crate::model::TrackID;
-use fltk::{dialog, prelude::*, tree::TreeItem};
+use fltk::{app, dialog, prelude::*, tree::TreeItem};
 
 impl Application {
     pub(crate) fn on_edit_move_up(&mut self) {
@@ -69,6 +69,75 @@ impl Application {
                 }
             }
         }
+    }
+
+    pub(crate) fn on_edit_find(&mut self) {
+        dialog::message_title(&format!("Find — {APPNAME}"));
+        if let Some(find_text) =
+            dialog::input_default("Find", &self.find_text)
+        {
+            self.find_text = find_text;
+            self.find();
+        }
+    }
+
+    pub(crate) fn on_edit_find_again(&mut self) {
+        if self.find_text.is_empty() {
+            self.on_edit_find();
+        } else {
+            self.find();
+        }
+    }
+
+    fn find(&mut self) {
+        if self.find_text.is_empty() {
+            return;
+        }
+        let find_text = self.find_text.to_uppercase();
+        let mut opt_item = self.tlm.track_tree.first_selected_item();
+        if let Some(item) = opt_item {
+            opt_item = item.next(); // start from one following current
+        } else {
+            return; // done
+        }
+        while let Some(item) = opt_item {
+            opt_item = item.next();
+            if let Some(text) = item.label() {
+                if text.to_uppercase().contains(&find_text) {
+                    if let Some(mut prev) =
+                        self.tlm.track_tree.first_selected_item()
+                    {
+                        prev.deselect();
+                    }
+                    self.select_item(item);
+                    break;
+                }
+            }
+        }
+    }
+
+    fn select_item(&mut self, item: TreeItem) {
+        let mut treepath = String::new();
+        if let Some(name) = item.label() {
+            treepath.insert_str(0, &name);
+        }
+        let mut opt_parent = item.parent();
+        while let Some(mut parent) = opt_parent {
+            parent.open();
+            if parent.depth() < 1 {
+                break;
+            }
+            if let Some(name) = parent.label() {
+                treepath.insert(0, '/');
+                treepath.insert_str(0, &name);
+            }
+            opt_parent = parent.parent();
+        }
+        let _ = self.tlm.track_tree.select(&treepath, false);
+        let mut tree = self.tlm.track_tree.clone();
+        app::add_timeout3(TINY_TIMEOUT, move |_| {
+            tree.show_item_middle(&item);
+        });
     }
 
     pub(crate) fn on_edit_delete(&mut self) {

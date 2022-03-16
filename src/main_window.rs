@@ -174,6 +174,20 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         Action::EditDemote,
     );
     menubar.add_emit(
+        "&Edit/&Find…\t",
+        Shortcut::Ctrl | 'f',
+        MenuFlag::Normal,
+        sender,
+        Action::EditFind,
+    );
+    menubar.add_emit(
+        "&Edit/Find &Again\t",
+        Shortcut::from_key(Key::F3),
+        MenuFlag::MenuDivider,
+        sender,
+        Action::EditFindAgain,
+    );
+    menubar.add_emit(
         "&Edit/D&elete\t",
         Shortcut::None,
         MenuFlag::Normal,
@@ -228,20 +242,6 @@ fn add_menubar(sender: Sender<Action>, width: i32) -> SysMenuBar {
         MenuFlag::MenuDivider,
         sender,
         Action::TrackNext,
-    );
-    menubar.add_emit(
-        "&Track/&Find…\t",
-        Shortcut::Ctrl | 'f',
-        MenuFlag::Normal,
-        sender,
-        Action::TrackFind,
-    );
-    menubar.add_emit(
-        "&Track/Find A&gain\t",
-        Shortcut::from_key(Key::F3),
-        MenuFlag::Normal,
-        sender,
-        Action::TrackFindAgain,
     );
     menubar.add_emit(
         "&Track/&History…\t",
@@ -502,6 +502,13 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
         DEMOTE_ICON,
         &mut row,
     );
+    add_toolbutton(
+        sender,
+        "Find…",
+        Action::EditFind,
+        TRACK_FIND_ICON,
+        &mut row,
+    );
     add_separator(&mut row);
     add_toolbutton(
         sender,
@@ -516,13 +523,6 @@ fn add_toolbar(sender: Sender<Action>, width: i32) -> (MenuButton, Flex) {
         "Add Track…",
         Action::TrackAdd,
         TRACK_ADD_ICON,
-        &mut row,
-    );
-    add_toolbutton(
-        sender,
-        "Find Track…",
-        Action::TrackFind,
-        TRACK_FIND_ICON,
         &mut row,
     );
     let history_menu_button =
