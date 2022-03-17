@@ -98,7 +98,7 @@ impl Application {
         if let Some(item) = opt_item {
             opt_item = item.next(); // start from one following current
         } else {
-            return; // done
+            opt_item = self.tlm.track_tree.first();
         }
         while let Some(item) = opt_item {
             opt_item = item.next();
