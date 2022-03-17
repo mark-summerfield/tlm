@@ -167,6 +167,7 @@ impl Application {
         // TODO
         /*
         if has_track {
+            activate track menu
             self.prev_button.activate();
             self.replay_button.activate();
             self.play_pause_button.activate();
@@ -174,12 +175,25 @@ impl Application {
             self.history_menu_button.activate();
             self.time_slider.activate();
         } else {
+            deactivate track menu
             self.prev_button.deactivate();
             self.replay_button.deactivate();
             self.play_pause_button.deactivate();
             self.next_button.deactivate();
             self.history_menu_button.deactivate();
             self.time_slider.deactivate();
+        }
+        if tree has root and root children {
+            activate edit menu
+            activate edit toolbuttons (move up, move down, promote, demote, find)
+        } else {
+            deactivate edit menu
+            deactivate edit toolbuttons (move up, move down, promote, demote, find)
+        }
+        if tree has at least one list {
+            activate list|rename
+        } else {
+            deactivate list|rename
         }
         if has_history {
             self.track_history_button.activate();
