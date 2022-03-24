@@ -9,7 +9,7 @@ use std::env;
 use std::sync;
 
 pub static APPNAME: &str = "TLM";
-pub static VERSION: &str = "1.0.0";
+pub static VERSION: &str = "0.9.0";
 pub static TOP_LEVEL_NAME: &str = "<Top-Level>";
 pub static DELETED_NAME: &str = "<Deleted>";
 pub static HELP_HTML: &str = include_str!("../data/help.html");
