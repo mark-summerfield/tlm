@@ -1,12 +1,12 @@
-# TODO Add Track→&Clone 0.9.2
+# TODO Add Track→&Clone 0.9.3
 # This will _copy_ the current track in the current list (ready to be
 # moved elsewhere so as to make it easy to add the same track to
 # multiple lists).
-# TODO Add Track→&Bookmark 0.9.3
+# TODO Add Track→&Bookmark 0.9.4
 # This will _copy_ the current track into the <Bookmarks> list which
 # will be created as the _first_ list if it doesn't exist already (just
 # like the <Deleted> list).
-# TODO Implement update_ui() 0.9.4
+# TODO Implement update_ui() 0.9.5
 # This should activate/deactivate all menu options & toobar buttons
 # depending on the state (has_track, has_history, has_list <since all
 # tracks could be list-less at the top-level>).
